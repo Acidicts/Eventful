@@ -1,16 +1,35 @@
 class User < ApplicationRecord
   belongs_to :organisation, optional: true
 
+  # use positional argument style to avoid Ruby 3 keyword demotion issues
+  # global role; use `member` key instead of `user` to avoid generating a
+  # `user?` predicate that collides with other enums.
+  enum :role, { member: "user", admin: "admin", superadmin: "superadmin" }
+  enum :organisation_role, { member: "member", admin: "admin" }, prefix: :org
+
   validates :provider, :uid, presence: true
+  validates :role, presence: true, inclusion: { in: roles.keys }
+  validates :organisation_role, presence: true, inclusion: { in: organisation_roles.keys }
+
+  # helper predicate used in views/controllers
+  # the `role` enum already defines an `admin?` method, so this is mostly
+  # here for clarity and to emphasise the difference from ``org_admin?``.
+  def admin?
+    role == "admin"
+  end
 
   # Build or update a User record from OmniAuth auth hash
+  # NOTE: role is **not** automatically assigned here; it defaults to "user"
+  # and must be set manually by an administrator or another process.
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_initialize.tap do |user|
       user.name                = auth.info.name
       user.email               = auth.info.email
       user.slack_id            = auth.info.slack_id
       user.verification_status = auth.info.verification_status
-      user.admin               = false
+      # organisation_role is independent of OAuth; default to member on
+      # first sign‑in if it hasn’t been set yet.
+      user.role ||= "member"
 
       # store the OAuth tokens so we can make API requests on behalf of the
       # user and refresh them later if necessary.  OmniAuth/OAuth2 puts the

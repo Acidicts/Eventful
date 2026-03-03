@@ -48,6 +48,8 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal "token123", user.access_token
     assert_equal "refresh123", user.refresh_token
     assert user.expires_at > Time.current
+    assert_equal "member", user.role
+    assert_equal "member", user.organisation_role
 
     delete logout_path
     assert_redirected_to root_path

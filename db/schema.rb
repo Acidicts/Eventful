@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_224107) do
+  create_table "attendees", force: :cascade do |t|
+    t.integer "age"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.integer "applied"
+    t.integer "attendee_id", null: false
+    t.integer "capacity"
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name"
+    t.integer "organisation_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attendee_id"], name: "index_events_on_attendee_id"
+    t.index ["organisation_id"], name: "index_events_on_organisation_id"
+  end
+
   create_table "organisations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "events_id", null: false
@@ -22,14 +43,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_180000) do
 
   create_table "users", force: :cascade do |t|
     t.string "access_token"
-    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.string "email"
     t.datetime "expires_at"
     t.string "name"
     t.integer "organisation_id"
+    t.string "organisation_role", default: "member", null: false
     t.string "provider", null: false
     t.string "refresh_token"
+    t.string "role", default: "user", null: false
     t.string "slack_id"
     t.string "uid", null: false
     t.datetime "updated_at", null: false
@@ -40,6 +62,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_180000) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
+  add_foreign_key "events", "attendees"
+  add_foreign_key "events", "organisations"
   add_foreign_key "organisations", "events", column: "events_id"
   add_foreign_key "organisations", "users"
   add_foreign_key "users", "organisations"
