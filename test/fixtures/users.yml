@@ -1,0 +1,8 @@
+one:
+  provider: hackclub
+  uid: '123'
+  name: 'Test User'
+  email: 'test@example.com'
+  slack_id: 'U123'
+  verification_status: verified
+  admin: false

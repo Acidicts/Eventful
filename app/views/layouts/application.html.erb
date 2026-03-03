@@ -24,6 +24,17 @@
   </head>
 
   <body>
+    <header>
+      <% if user_signed_in? %>
+        <p>
+          Signed in as <strong><%= current_user.name || current_user.email %></strong>
+          | <%= link_to 'Sign out', logout_path, method: :delete, data: { turbo: false } %>
+        </p>
+      <% else %>
+        <p><%= button_to 'Sign in with Hack Club', '/auth/hackclub', data: { turbo: false } %></p>
+      <% end %>
+    </header>
+
     <%= yield %>
   </body>
 </html>

@@ -1,0 +1,389 @@
+EVENTFUL NONCOMMERCIAL PUBLIC LICENSE
+                    Version 1, 3 March 2026
+
+ Copyright (C) 2026 Eventful Contributors
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  This Noncommercial Public License is a free, copyleft license for
+software and other kinds of works, designed to ensure that the software
+remains freely available to all for noncommercial purposes.
+
+  The licenses for most software are designed either to take away your
+freedom to share and change the works, or to permit unrestricted use
+including commercial exploitation. This license takes a middle path: it
+guarantees your freedom to share, study, and modify the software, while
+ensuring that neither the original work nor derivative works may be used
+for commercial purposes.
+
+  When we speak of free software under this license, we are referring to
+freedom of access and modification, not price. This license ensures that
+you have the freedom to distribute copies of the software, that you
+receive source code or can obtain it, that you can change the software or
+use pieces of it in new programs, and that you know you can do these
+things — provided such activities are conducted on a strictly
+noncommercial basis.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  "This License" refers to version 1 of the Eventful Noncommercial
+Public License.
+
+  "The Program" refers to any copyrightable work licensed under this
+License. Each licensee is addressed as "you". "Licensees" and
+"recipients" may be individuals or organizations.
+
+  "Source Code" means the preferred form of the work for making
+modifications to it. "Object Code" means any non-source form of a work.
+
+  To "modify" a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy. The resulting work is called a "modified version" of the
+earlier work or a work "based on" the earlier work.
+
+  A "covered work" means either the unmodified Program or a work based
+on the Program.
+
+  To "propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy. Propagation includes copying,
+distribution (with or without modification), and making available to the
+public.
+
+  To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies.
+
+  "Commercial Use" means any use primarily intended for or directed
+toward commercial advantage, monetary compensation, or financial gain.
+This includes, but is not limited to:
+
+    a) Selling, licensing, or sublicensing the Program or any covered
+    work, or any portion thereof, for a fee;
+
+    b) Using the Program or any covered work, or any portion thereof, to
+    provide commercial services, including but not limited to
+    software-as-a-service (SaaS), platform-as-a-service (PaaS), or any
+    hosted or managed service offering;
+
+    c) Incorporating the Program or any covered work, or any portion
+    thereof, into a product or service that is sold, licensed, or
+    otherwise commercially distributed;
+
+    d) Using the Program or any covered work in the course of conducting
+    business operations that generate revenue, except where the Program
+    is used solely as an internal tool and is not itself the basis for
+    the revenue-generating activity;
+
+    e) Using the Program or any covered work for advertising, marketing,
+    or promotional purposes in connection with a commercial product or
+    service.
+
+  "Noncommercial Use" means any use that does not constitute Commercial
+Use as defined above. Examples of Noncommercial Use include, but are not
+limited to: personal use, academic research, educational purposes,
+use by charitable or nonprofit organizations in furtherance of their
+nonprofit missions, and contributions to the Program itself.
+
+  1. Source Code.
+
+  The "Corresponding Source" for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities. However, it does not include the work's
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.
+
+  The Corresponding Source need not include anything that users can
+regenerate automatically from other parts of the Corresponding Source.
+
+  The Corresponding Source for a work in source code form is that same
+work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met. This License explicitly affirms your unlimited
+permission to run the unmodified Program for Noncommercial Use.
+
+  You may make, run, and propagate covered works that you do not convey,
+without conditions so long as your license otherwise remains in force
+and your use is Noncommercial.
+
+  You may convey covered works to others, provided that you comply with
+the terms of this License, including the prohibition on Commercial Use,
+in conveying all material for which you do not control copyright.
+
+  3. Prohibition on Commercial Use.
+
+  You may not use, copy, modify, merge, distribute, sublicense, or
+convey the Program or any covered work for Commercial Use, unless you
+have obtained a separate written commercial license from the copyright
+holders.
+
+  Any attempt to use the Program or a covered work for Commercial Use
+without such a license is a violation of this License and will
+automatically terminate your rights hereunder.
+
+  If you wish to use the Program or any covered work for Commercial Use,
+you must contact the copyright holders to negotiate a separate
+commercial license agreement.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program's source code as you
+receive it, in any medium, provided that:
+
+    a) Your use and the recipient's intended use are Noncommercial;
+
+    b) You conspicuously and appropriately publish on each copy an
+    appropriate copyright notice;
+
+    c) You keep intact all notices stating that this License applies to
+    the code;
+
+    d) You keep intact all notices of the absence of any warranty; and
+
+    e) You give all recipients a copy of this License along with the
+    Program.
+
+  You may not charge a fee for copies that you convey, except that you
+may charge a reasonable fee solely to cover the costs of physical media
+or distribution, provided that such fee does not constitute Commercial
+Use.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the terms
+of section 4, provided that you also meet all of these conditions:
+
+    a) Your use and distribution are strictly Noncommercial;
+
+    b) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date;
+
+    c) The work must carry prominent notices stating that it is released
+    under this License;
+
+    d) You must license the entire work, as a whole, under this License
+    to anyone who comes into possession of a copy. This License will
+    therefore apply to the whole of the work, and all its parts,
+    regardless of how they are packaged;
+
+    e) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices, including notice of the Noncommercial
+    restriction.
+
+  6. Conveying Non-Source Forms.
+
+  You may convey a covered work in object code form under the terms of
+sections 4 and 5, provided that you also convey the machine-readable
+Corresponding Source under the terms of this License, in one of these
+ways:
+
+    a) Convey the object code accompanied by the Corresponding Source
+    on a durable medium or via network download;
+
+    b) Convey the object code with a written offer, valid for at least
+    three years, to give anyone the Corresponding Source at no charge
+    (except reasonable media costs);
+
+    c) Convey the object code by offering access from a designated place,
+    and offer equivalent access to the Corresponding Source in the same
+    way through the same place at no further charge.
+
+  7. No Sublicensing Under Different Terms.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License, except that you may not
+remove the prohibition on Commercial Use. You may not sublicense the
+Program or any covered work under terms that permit Commercial Use.
+
+  Any covered work that incorporates all or part of the Program must be
+licensed as a whole under this License, including the prohibition on
+Commercial Use. No covered work may be distributed under terms that
+grant broader rights than those provided here.
+
+  8. Termination.
+
+  You may not propagate or modify a covered work except as expressly
+provided under this License. Any attempt otherwise to propagate or
+modify it is void, and will automatically terminate your rights under
+this License.
+
+  In particular, any Commercial Use of the Program or a covered work
+without a separate commercial license constitutes a material breach
+and results in immediate and automatic termination of all rights
+granted hereunder.
+
+  However, if you cease all violation of this License, then your license
+from a particular copyright holder is reinstated:
+
+    a) Provisionally, unless and until the copyright holder explicitly
+    and finally terminates your license; and
+
+    b) Permanently, if the copyright holder fails to notify you of the
+    violation by some reasonable means prior to 60 days after the
+    cessation.
+
+  Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License from that copyright holder,
+and you cure the violation prior to 30 days after your receipt of the
+notice.
+
+  Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License, provided they remain in full compliance.
+
+  9. Acceptance Not Required for Having Copies.
+
+  You are not required to accept this License in order to receive or run
+a copy of the Program for Noncommercial Use. However, nothing other than
+this License grants you permission to propagate or modify any covered
+work. These actions infringe copyright if you do not accept this License.
+Therefore, by modifying or propagating a covered work, you indicate your
+acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+  Each time you convey a covered work, the recipient automatically
+receives a license from the original licensors, to run, modify, and
+propagate that work for Noncommercial Use, subject to this License. You
+are not responsible for enforcing compliance by third parties with this
+License.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License. For example, you may not
+impose a license fee, royalty, or other charge for exercise of rights
+granted under this License.
+
+  11. Patents.
+
+  A "contributor" is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based. The
+work thus licensed is called the contributor's "contributor version".
+
+  Each contributor grants you a non-exclusive, worldwide, royalty-free
+patent license under the contributor's essential patent claims, to make,
+use, import, and otherwise run, modify, and propagate the contents of
+its contributor version, solely for Noncommercial Use as permitted by
+this License.
+
+  If you convey a covered work, knowingly relying on a patent license,
+and the Corresponding Source of the work is not available for anyone to
+copy, free of charge and under the terms of this License, through a
+publicly available network server or other readily accessible means,
+then you must either (1) cause the Corresponding Source to be so
+available, or (2) arrange to deprive yourself of the benefit of the
+patent license for this particular work, or (3) arrange, in a manner
+consistent with the requirements of this License, to extend the patent
+license to downstream recipients.
+
+  12. No Surrender of Others' Freedom.
+
+  If conditions are imposed on you (whether by court order, agreement, or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License. If you cannot convey a
+covered work so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you
+may not convey it at all.
+
+  13. Revised Versions of this License.
+
+  The copyright holders of the Program may publish revised and/or new
+versions of this License from time to time. Such new versions will be
+similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+  Each version is given a distinguishing version number. If the Program
+specifies that a certain numbered version of this License "or any later
+version" applies to it, you have the option of following the terms and
+conditions either of that numbered version or of any later version
+published by the copyright holders. If the Program does not specify a
+version number, you may choose any version ever published.
+
+  14. Disclaimer of Warranty.
+
+  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT
+WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF
+THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME
+THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+  15. Limitation of Liability.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR
+CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT
+NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES
+SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE
+WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+  16. Interpretation of Sections 14 and 15.
+
+  If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates an
+absolute waiver of all civil liability in connection with the Program,
+unless a warranty or assumption of liability accompanies a copy of the
+Program in return for a fee.
+
+                     END OF TERMS AND CONDITIONS
+
+            How to Apply These Terms to Your New Programs
+
+  If you develop a new program, and you want it to be freely available
+for noncommercial use while preventing commercial exploitation, you may
+license it under these terms.
+
+  To do so, attach the following notices to the program. It is safest to
+attach them to the start of each source file to most effectively state
+the exclusion of warranty and commercial use restriction; and each file
+should have at least the "copyright" line and a pointer to where the
+full notice is found.
+
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) <year>  <name of author>
+
+    This program is free software for noncommercial use: you can
+    redistribute it and/or modify it under the terms of the Eventful
+    Noncommercial Public License as published by the copyright holders,
+    either version 1 of the License, or (at your option) any later
+    version.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    Eventful Noncommercial Public License for more details.
+
+    You should have received a copy of the Eventful Noncommercial Public
+    License along with this program. If not, see the LICENCE file in the
+    source repository.
+
+    COMMERCIAL USE OF THIS SOFTWARE IS STRICTLY PROHIBITED without a
+    separate written license from the copyright holders.
+
+Also add information on how to contact you by electronic and paper mail.
+
+  If the program does terminal interaction, make it output a short
+notice like this when it starts in an interactive mode:
+
+    <program>  Copyright (C) <year>  <name of author>
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software for noncommercial use only; type `show c' for details.
+    Commercial use is prohibited without a separate license.
