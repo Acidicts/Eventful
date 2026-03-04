@@ -78,7 +78,7 @@ jobs:
           bundle install --jobs 4
 
       - name: Set up Node.js
-        if: ${{ exists('package.json') }}
+        if: ${{ fileExists('package.json') }}
         uses: actions/setup-node@v6
         with:
           node-version: '18'
@@ -86,6 +86,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install JS dependencies
+        if: ${{ fileExists('package.json') }}
         run: |
           if [ -f package.json ]; then
             npm ci
