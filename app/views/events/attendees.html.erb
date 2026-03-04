@@ -1,0 +1,13 @@
+<h1>Attendees for Event <%= @event.id %></h1>
+
+<% if defined?(@attendees) && @attendees %>
+  <ul>
+    <% @attendees.each do |a| %>
+      <li><%= a.name || a.id %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No attendees association defined on Event.</p>
+<% end %>
+
+<%= link_to 'Back to Event', organisation_event_path(@organisation, @event) %>

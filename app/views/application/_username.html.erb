@@ -1,0 +1,37 @@
+<%# optional local to shrink/scale the username output %>
+<% scale ||= 1 %>
+
+<% role = current_user.role %>
+<% if role == "superadmin" %>
+    <% colour = "blue" %>
+    <% text_colour = "white" %>
+<% elsif role == "admin" %>
+    <% text_colour = "white" %>
+    <% colour = "red" %>
+<% else %>
+    <% text_colour = "white" %>
+    <% colour = "gray" %>
+<% end %>
+
+<style>
+    #role {
+            display: inline-block;
+            padding: 0.25em 0.5em;
+            background-color: <%= colour %>;
+            color: <%= text_colour %>;
+            border-radius: 25px;
+            border: 1px solid <%= text_colour %>;
+            /* scale the role badge itself */
+            transform: scale(<%= scale %>);
+            transform-origin: left center;
+        }
+
+        /* wrapper stays normal; only role is resized */
+        .username-wrapper {
+          display: inline-block;
+        }
+</style>
+
+<span class="username-wrapper">
+  <strong><%= current_user.name %> <span id="role"><%= role.humanize %></span></strong>
+</span>

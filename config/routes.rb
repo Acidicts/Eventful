@@ -17,9 +17,21 @@ Rails.application.routes.draw do
   root "home#index"
 
   # QR code generator/decoder
-  resource :qr_code, only: [:new, :create] do
+  resource :qr_code, only: [ :new, :create ] do
     collection do
       get :decode
+    end
+  end
+
+  # organisations with nested events
+  resources :organisations, path: "org" do
+    resources :events do
+      member do
+        get "attendees", to: "events#attendees"
+        get "actions/sign-in",  to: "events#sign_in"
+        get "actions/sign-out", to: "events#sign_out"
+        get "actions/get-info", to: "events#get_info"
+      end
     end
   end
 end

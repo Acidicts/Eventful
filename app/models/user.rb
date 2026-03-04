@@ -44,6 +44,14 @@ class User < ApplicationRecord
     end
   end
 
+  def admin?
+    self.role == "admin" || self.role == "superadmin"
+  end
+
+  def superadmin?
+    self.role == "superadmin"
+  end
+
   # Refresh the access token using the stored refresh token.  Hack Club's
   # OAuth implementation returns a new access/refresh pair each time, so we
   # rotate the stored values.  This mirrors the instructions in the API

@@ -1,0 +1,32 @@
+<p>
+  <strong>ID:</strong>
+  <%= @event.id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @event.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @event.description %>
+</p>
+
+<p>
+  <strong>Capacity:</strong>
+  <%= @event.capacity %>
+</p>
+
+<p>
+  <strong>Applied:</strong>
+  <%= @event.applied %>
+</p>
+
+<p>
+  <strong>Attendee:</strong>
+  <%= @event.attendee_id %>
+</p>
+
+<%= link_to 'Edit', edit_organisation_event_path(@organisation, @event) %> |
+<%= link_to 'Back', organisation_events_path(@organisation) %>

@@ -1,0 +1,26 @@
+<%= form_with(model: organisation, local: true) do |form| %>
+  <% if organisation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(organisation.errors.count, "error") %> prohibited this organisation from being saved:</h2>
+      <ul>
+        <% organisation.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :signing_user %>
+    <%= render "application/dropdown", options: @users, label_method: :name, value_method: :id, name: "organisation[signing_user_id]", prompt: "Select Signing User", selected: organisation.signing_user_id, multiple: false %>
+  </div>
+
+  <div class="field">
+    <%= form.label :events_id %>
+    <%= form.number_field :events_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

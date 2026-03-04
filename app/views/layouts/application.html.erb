@@ -25,15 +25,21 @@
 
   <body>
     <header>
-      <% if user_signed_in? %>
+      <% if logged_in? %>
         <p>
-          Signed in as <strong><%= current_user.name || current_user.email %></strong>
+          Signed in as <strong><%= render 'application/username', scale: 0.8 %></strong>
           | <%= link_to 'Sign out', logout_path, method: :delete, data: { turbo: false } %>
         </p>
       <% else %>
         <p><%= button_to 'Sign in with Hack Club', '/auth/hackclub', data: { turbo: false } %></p>
       <% end %>
     </header>
+
+    <% flash.each do |type, message| %>
+      <div class="flash flash-<%= type %>">
+        <%= message %>
+      </div>
+    <% end %>
 
     <%= yield %>
   </body>

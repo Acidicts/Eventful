@@ -1,0 +1,52 @@
+<%#
+  Generic dropdown partial
+  Locals:
+    options: can be an Array or Hash. Passed directly to options_for_select.
+             - simple Array of strings: ["One","Two"]
+             - array of pairs: [["Label", "value"], ...]
+             - Hash of value => label
+             - an array of objects (e.g. ActiveRecord models); see below
+    multiple: boolean (default false) whether the select allows multiple choices
+    name: the name attribute for the <select>; defaults to "dropdown"
+    prompt: optional prompt text (seen only when multiple is false)
+    selected: value(s) to mark as selected
+    label_method: when "options" is an array of objects, the method to call
+                  on each element for the label (default: to_s)
+    value_method: when "options" is an array of objects, the method to call
+                  for the value (default: to_s)
+
+  Usage examples (adapt in your own views):
+    <!-- simple strings -->
+    <!-- render "application/dropdown", options: ["a","b"], name: "thing" -->
+
+    <!-- hash of value => label -->
+    <!-- render "application/dropdown", options: {1 => "One", 2 => "Two"}, name: "organisation[type]", prompt: "Choose", selected: 2 -->
+
+    <!-- collection of records -->
+    <!-- render "application/dropdown", options: @users, label_method: :name, value_method: :id, name: "organisation[signing_user_id]" -->
+%>
+
+<% name ||= "dropdown" %>
+<% html_options = {} %>
+<% html_options[:multiple] = true if multiple %>
+<% html_options[:id] ||= name.gsub(/\[|\]/, "_") %>
+<% if prompt && !multiple %>
+  <% html_options[:prompt] = prompt %>
+<% end %>
+<%
+  # when provided with a collection of objects convert them to pairs for
+  # options_for_select.  label_method/value_method default to to_s when
+  # absent.
+  processed_options =
+    if options.respond_to?(:map) && (label_method || value_method)
+      options.map do |item|
+        label = label_method ? item.public_send(label_method) : item.to_s
+        value = value_method ? item.public_send(value_method) : item.to_s
+        [label, value]
+      end
+    else
+      options
+    end
+%>
+
+<%= select_tag name, options_for_select(processed_options, selected), html_options %>
