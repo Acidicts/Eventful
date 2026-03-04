@@ -42,6 +42,17 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# QR code generation utility
+# https://github.com/whomwah/rqrcode
+# we'll generate SVGs server-side and render them in forms
+gem "rqrcode"
+
+# the zxing gem depends on a java executable; we only load it lazily when
+# decoding is requested so tests and development don't fail if java isn't
+# installed.  require:false prevents bundler from automatically requiring it
+# during application boot.
+gem "zxing", require: false
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

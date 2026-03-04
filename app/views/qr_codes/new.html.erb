@@ -1,0 +1,24 @@
+<h1>QR Code Generator</h1>
+
+<%= form_with url: qr_code_path, method: :post, local: true do |f| %>
+  <div class="field">
+    <%= f.label :data, "Text to encode" %><br>
+    <%= f.text_field :data, value: @data, required: true, pattern: "[A-Za-z0-9 ]+", autofocus: true %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Generate" %>
+  </div>
+<% end %>
+
+<% if @qr_image.present? %>
+  <h2>Output</h2>
+  <div class="qr-output">
+    <%# we expect svg string by default; raw to avoid escaping %>
+    <%= raw @qr_image %>
+  </div>
+<% end %>
+
+<p>
+  <%= link_to "Decode a QR code with your camera", decode_qr_code_path %>
+</p>

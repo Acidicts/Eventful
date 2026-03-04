@@ -59,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_224107) do
     t.index ["access_token"], name: "index_users_on_access_token"
     t.index ["email"], name: "index_users_on_email"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
+    t.index ["organisation_role"], name: "index_users_on_organisation_role"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 

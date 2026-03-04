@@ -15,4 +15,11 @@ Rails.application.routes.draw do
 
   # a simple root for now
   root "home#index"
+
+  # QR code generator/decoder
+  resource :qr_code, only: [:new, :create] do
+    collection do
+      get :decode
+    end
+  end
 end

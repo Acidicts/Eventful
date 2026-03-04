@@ -1,0 +1,12 @@
+<h1>QR Code Scanner</h1>
+
+<p>Point your phone/tablet camera at a QR code and the decoded text will
+appear below.</p>
+
+<div data-controller="qr-decoder">
+  <video data-qr-decoder-target="video" style="width:100%;max-width:400px;border:1px solid #ccc"></video>
+  <canvas data-qr-decoder-target="canvas" style="display:none"></canvas>
+  <p>Decoded text: <span data-qr-decoder-target="output"></span></p>
+</div>
+
+<p><%= link_to "Back to generator", new_qr_code_path %></p>
