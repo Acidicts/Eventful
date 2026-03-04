@@ -77,8 +77,17 @@ jobs:
           bundle config set frozen false || true
           bundle install --jobs 4
 
+      - name: Check for JavaScript manifest
+        id: js_check
+        run: |
+          if [ -f package.json ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up Node.js
-        if: ${{ fileExists('package.json') }}
+        if: steps.js_check.outputs.exists == 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '18'
@@ -86,13 +95,9 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install JS dependencies
-        if: ${{ fileExists('package.json') }}
+        if: steps.js_check.outputs.exists == 'true'
         run: |
-          if [ -f package.json ]; then
-            npm ci
-          else
-            echo "No package.json found — skipping npm install."
-          fi
+          npm ci
 
       - name: Auto-correct RuboCop offenses
         run: |
