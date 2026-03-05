@@ -1,10 +1,16 @@
 class EventsController < ApplicationController
-  before_action :set_organisation
-  # make sure we load @event for the member actions too
-  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees]
+  # only look up an organisation when the request is scoped to one
+  before_action :set_organisation, if: -> { params[:organisation_id].present? }
+  # make sure we load @event for the member actions too (nested only)
+  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees], if: -> { params[:organisation_id].present? }
 
   def index
-    @events = @organisation.events
+    # top‑level /events should show every event; nested route shows org-specific
+    if @organisation
+      @events = @organisation.events
+    else
+      @events = Event.all
+    end
   end
 
   def show

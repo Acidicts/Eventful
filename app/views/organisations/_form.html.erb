@@ -10,14 +10,15 @@
     </div>
   <% end %>
 
+  <%# ensure the owning user is sent along; this mirrors the
+      controller behaviour and makes it easier to inspect POST payloads
+      during development.  the value is filled with `current_user` from the
+      view context (inherited from ApplicationController). %>
+  <%= form.hidden_field :user_id, value: current_user.id %>
+
   <div class="field">
     <%= form.label :signing_user %>
     <%= render "application/dropdown", options: @users, label_method: :name, value_method: :id, name: "organisation[signing_user_id]", prompt: "Select Signing User", selected: organisation.signing_user_id, multiple: false %>
-  </div>
-
-  <div class="field">
-    <%= form.label :events_id %>
-    <%= form.number_field :events_id %>
   </div>
 
   <div class="actions">

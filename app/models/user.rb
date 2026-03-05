@@ -1,5 +1,11 @@
 class User < ApplicationRecord
+  # users can be members of an organisation, and they may also be the owner
+  # of one or more organisations.  the inverse relation is declared on
+  # Organisation so that controllers can do `current_user.organisations.build`
+  # when creating new records.
   belongs_to :organisation, optional: true
+  has_many :organisations, dependent: :nullify
+
 
   # use positional argument style to avoid Ruby 3 keyword demotion issues
   # global role; use `member` key instead of `user` to avoid generating a

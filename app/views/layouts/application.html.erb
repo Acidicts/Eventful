@@ -25,6 +25,9 @@
 
   <body>
     <header>
+      <%= link_to 'Home', root_path %>
+      <%= link_to 'Organisations', organisations_path %>
+      <%= link_to 'Events', events_path %>
       <% if logged_in? %>
         <p>
           Signed in as <strong><%= render 'application/username', scale: 0.8 %></strong>

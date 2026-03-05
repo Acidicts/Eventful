@@ -23,8 +23,16 @@ Rails.application.routes.draw do
     end
   end
 
+  # top‑level events index (lists all events). keeps the existing nested
+  # routes for organisation-specific events.
+  resources :events, only: [ :index ]
+
   # organisations with nested events
   resources :organisations, path: "org" do
+    collection do
+      get :setting
+    end
+
     resources :events do
       member do
         get "attendees", to: "events#attendees"
