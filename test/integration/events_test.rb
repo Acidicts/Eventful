@@ -1,17 +1,99 @@
 require "test_helper"
 
 class EventsTest < ActionDispatch::IntegrationTest
-  test "top-level events path is reachable" do
-    # no data required; index should still render (empty list)
-    get events_path
-    assert_response :success
+  setup do
+    OmniAuth.config.test_mode = true
+    OmniAuth.config.mock_auth[:hackclub] = OmniAuth::AuthHash.new(
+      provider: "hackclub",
+      uid: "int123",
+      info: {
+        name: "Test User",
+        email: "test@example.com",
+        slack_id: "U123",
+        verification_status: "verified",
+        admin: false
+      },
+      credentials: {
+        token: "tok",
+        refresh_token: "ref",
+        expires_at: 1.day.from_now.to_i
+      }
+    )
+  end
+
+  teardown do
+    OmniAuth.config.test_mode = false
+  end
+
+  # provide a sane user agent so the allow_browser filter doesn't block us
+  def headers
+    {
+      "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " \
+          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36",
+      "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    }
+  end
+
+  # The top-level /events route has been removed in favor of org-scoped
+  # URLs. hitting the former path should raise a routing error, which the
+  # integration test framework simulates by raising ActionController::RoutingError.
+  test "top-level events helpers are gone" do
+    assert_raises(NameError) { events_path }
+    # hitting the literal URL should return 404 since the route is gone
+    get "/events", headers: headers
+    assert_response :not_found
   end
 
   test "nested events index still works" do
     user = User.create!(name: "Foo", email: "foo@example.com", provider: "hackclub", uid: "u1")
     org  = Organisation.create!(user: user, signing_user: user, users: [ user ])
 
-    get organisation_events_path(org)
+    get organisation_events_path(org), headers: headers
     assert_response :success
+  end
+
+  test "dashboard attendees page lists all organisation attendees" do
+    # sign in first so require_login passes
+    get root_path, headers: headers
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    user = User.find(session[:user_id])
+
+    org = Organisation.create!(user: user, signing_user: user, users: [ user ])
+    event = org.events.create!(name: "Test", capacity: 10)
+    attendee = event.attendees.create!(name: "Bob", age: 30)
+
+    get dashboard_events_attendees_organisation_path(org), headers: headers
+    assert_response :success
+    assert_select "td", text: /Bob/  # attendee name appears
+  end
+
+  test "dashboard attendee can be edited" do
+    # sign in again
+    get root_path, headers: headers
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    user = User.find(session[:user_id])
+
+    org = Organisation.create!(user: user, signing_user: user, users: [ user ])
+    event = org.events.create!(name: "Test", capacity: 10)
+    attendee = event.attendees.create!(name: "Bob", age: 30)
+
+    # navigate to edit page
+    get edit_attendee_organisation_event_path(org, event, attendee_id: attendee.id), headers: headers
+    assert_response :success
+    assert_select "form" do
+      assert_select "input[name='attendee[name]'][value='Bob']"
+    end
+
+    # perform update
+    patch attendee_organisation_event_path(org, event, attendee_id: attendee.id),
+          params: { attendee: { name: "Robert", age: 31 } },
+          headers: headers
+    assert_redirected_to attendee_organisation_event_path(org, event, attendee_id: attendee.id)
+    follow_redirect!
+    assert_select "p", text: /Robert/  # updated name shown
   end
 end

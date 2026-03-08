@@ -1,0 +1,31 @@
+<h1>Edit Attendee for <%= @event.name %></h1>
+
+<%= form_with model: @attendee,
+              url: attendee_organisation_event_path(
+                     @organisation,
+                     @event,
+                     attendee_id: @attendee.id
+                   ),
+              method: :patch do |form| %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :email %>
+    <%= form.email_field :email %>
+  </div>
+
+  <div class="field">
+    <%= form.label :age %>
+    <%= form.number_field :age %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Update Attendee" %>
+  </div>
+<% end %>
+
+<%= link_to "Back to attendee list",
+            attendees_organisation_event_path(@organisation, @event) %>

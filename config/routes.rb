@@ -23,19 +23,43 @@ Rails.application.routes.draw do
     end
   end
 
-  # top‑level events index (lists all events). keeps the existing nested
-  # routes for organisation-specific events.
-  resources :events, only: [ :index ]
+  # we no longer expose a global /events index; everything is scoped to an
+  # organisation. any remaining references to non-nested event routes should
+  # be removed or updated accordingly.
+
+  # public apply page using only the alphanumeric token (no org context)
+  get "/:apply_token/apply", to: "events#apply_by_token", as: :public_apply_event
+  post "/:apply_token/apply", to: "events#apply_create"
 
   # organisations with nested events
   resources :organisations, path: "org" do
     collection do
       get :setting
+      get :admin
+    end
+
+    # introduce a member dashboard route that delegates to a dedicated
+    # controller so that views may live under app/views/organisations/dashboard
+    member do
+      get :dashboard, to: "organisations/dashboard#index"
+      # route for organisation dashboard events list
+      get "dashboard/events", to: "organisations/dashboard/events#index", as: :dashboard_events
+      get "dashboard/events/attendees", to: "organisations/dashboard/events#attendees", as: :dashboard_events_attendees
     end
 
     resources :events do
       member do
         get "attendees", to: "events#attendees"
+        # show a specific attendee linked from the events list
+        # view a specific attendee for this event
+        get "attendee/:attendee_id", to: "events#attendee", as: :attendee
+        # editing existing attendee
+        get "attendee/:attendee_id/edit", to: "events#edit_attendee", as: :edit_attendee
+        patch "attendee/:attendee_id", to: "events#update_attendee"
+
+        # sign‑up form and submission
+        get "apply", to: "events#apply"
+        post "apply", to: "events#apply_create"
         get "actions/sign-in",  to: "events#sign_in"
         get "actions/sign-out", to: "events#sign_out"
         get "actions/get-info", to: "events#get_info"

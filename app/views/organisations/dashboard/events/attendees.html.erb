@@ -1,0 +1,47 @@
+<style>
+    .table-data {
+        text-align: center;
+        padding-right: 10px;
+    }
+    .table-head {
+        text-align: center;
+        padding: 15px;
+    }
+</style>
+
+
+<h1><%= @organisation.name %> Events</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th class="table-head">Name</th>
+      <th class="table-head">Age</th>
+      <th class="table-head">Code(ID)</th>
+      <th class="table-head">Event</th>
+      <th class="table-head">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @attendees.each do |attendee| %>
+      <tr>
+        <td class="table-data"><%= attendee.name %></td>
+        <td class="table-data"><%= attendee.age %></td>
+        <td class="table-data"><%= attendee.code %></td>
+        <td class="table-data"><%= attendee.event&.name %></td>
+        <td>
+          <%= link_to 'View', attendee_organisation_event_path(
+                @organisation,
+                attendee.event,
+                attendee_id: attendee.id
+              ) %>
+          <%= link_to 'Edit', edit_attendee_organisation_event_path(
+                @organisation,
+                attendee.event,
+                attendee_id: attendee.id
+              ) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

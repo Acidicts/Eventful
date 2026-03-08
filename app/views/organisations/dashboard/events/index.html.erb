@@ -1,0 +1,35 @@
+<style>
+    .table-data {
+        text-align: center;
+    }
+    .table-head {
+        text-align: center;
+        padding: 10px;
+    }
+</style>
+
+
+<h1><%= @organisation.name %> Events</h1>
+
+<%= button_to "Create Event", new_organisation_event_path(@organisation), method: :get, class: "btn btn-primary" %>
+
+<table>
+  <thead>
+    <tr>
+      <th class="table-head">Name</th>
+      <th class="table-head">Capacity</th>
+      <th class="table-head">Applied</th>
+      <th class="table-head">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @events.each do |event| %>
+      <tr>
+        <td class="table-data"><%= link_to event.name, organisation_event_path(@organisation, event) %></td>
+        <td class="table-data"><%= event.capacity %></td>
+        <td class="table-data"><%= event.attendees.count %></td>
+        <td><%= link_to 'Edit', edit_organisation_event_path(@organisation, event) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

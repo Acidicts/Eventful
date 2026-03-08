@@ -22,4 +22,26 @@ class OrganisationTest < ActiveSupport::TestCase
     org.users << other
     assert org.valid?
   end
+
+  test "for_user scope includes signing user even when not a member" do
+    org = Organisation.create!(user: @user, signing_user: @user, users: [ @user ])
+    # simulate a later edit that drops membership but leaves signing user
+    org.users.delete(@user)
+    assert_not org.users.include?(@user)
+
+    assert_includes Organisation.for_user(@user), org
+  end
+  test "attributes img, description and self_found are assignable" do
+    org = Organisation.new(user: @user, signing_user: @user)
+    # signing user must also be a member for validation to pass
+    org.users << @user
+
+    org.img = "http://example.com/hero.png"
+    org.description = "A cool organization"
+    org.self_found = true
+    assert org.valid?
+    assert_equal "http://example.com/hero.png", org.img
+    assert_equal "A cool organization", org.description
+    assert org.self_found
+  end
 end

@@ -1,0 +1,40 @@
+<p>
+  <strong>ID:</strong>
+  <%= @event.id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @event.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @event.description %>
+</p>
+
+<p>
+  <strong>Capacity:</strong>
+  <%= @event.capacity %>
+</p>
+
+<p>
+  <strong>Applied:</strong>
+  <%= @event.attendees.count %>
+</p>
+
+<p>
+  <strong>Attendee count:</strong>
+  <%= link_to "View Attendees", attendees_organisation_event_path(@organisation, @event) %>
+</p>
+
+<%= link_to 'Apply', apply_organisation_event_path(@organisation, @event) %>
+
+<% if @event.apply_token.present? %>
+  <p>Shareable apply link (no organisation required):
+    <%= link_to public_apply_event_url(@event.apply_token), public_apply_event_url(@event.apply_token) %>
+  </p>
+<% end %>
+
+<%= link_to 'Edit', edit_organisation_event_path(@organisation, @event) %> |
+<%= link_to 'Back', organisation_events_path(@organisation) %>

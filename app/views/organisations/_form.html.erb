@@ -21,6 +21,26 @@
     <%= render "application/dropdown", options: @users, label_method: :name, value_method: :id, name: "organisation[signing_user_id]", prompt: "Select Signing User", selected: organisation.signing_user_id, multiple: false %>
   </div>
 
+  <div class="field">
+    <%= form.label :self_found %>
+    <%= form.check_box :self_found %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, rows: 3 %>
+  </div>
+
+  <div class="field">
+    <%= form.label :img, "Image URL" %>
+    <%= form.text_field :img %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

@@ -1,3 +1,25 @@
+<style>
+    .org_container {
+        border: 1px solid black;
+        padding: 10px;
+        margin: 10px;
+        width: 15%;
+    }
+    .org_container h2 {
+        font-size: 1em;
+        margin: 0;
+    }
+</style>
+
 <div class="org_container">
-    
+    <% if organisation.img%>
+        <img src="<%= organisation.img %>" alt="<%= organisation.name %>">
+    <% end %>
+    <% if organisation.name %>
+        <h2><%= organisation.name %></h2>
+    <% end %>
+    <% if organisation.description %>
+        <p><%= organisation.description %></p>
+    <% end %>
+    <%= button_to "Goto", "/org/#{organisation.id}/dashboard", method: :get, class: "btn btn-primary" %>
 </div>
