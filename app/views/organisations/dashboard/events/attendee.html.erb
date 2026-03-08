@@ -1,0 +1,18 @@
+<h1>Attendee details</h1>
+
+<% if @attendee %>
+  <p>Name: <%= @attendee.name %></p>
+  <p>Age: <%= @attendee.age %></p>
+  <p>Code: <%= @attendee.code %></p>
+<% else %>
+  <p>Attendee not found.</p>
+<% end %>
+
+<% if @attendee %>
+  <%= link_to "Edit this attendee", edit_attendee_organisation_event_path(
+        @organisation,
+        @event,
+        attendee_id: @attendee.id
+      ) %>
+<% end %>
+<%= link_to "Back to attendee list", attendees_organisation_event_path(@organisation, @event) %>

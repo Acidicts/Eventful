@@ -1,0 +1,23 @@
+<h1>Sign Up For <%= @event.name %></h1>
+
+<% apply_url = @public_apply ? public_apply_event_path(@event.apply_token) : apply_organisation_event_path(@organisation, @event) %>
+<%= form_with model: @attendee, url: apply_url, method: :post do |form| %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :email %>
+    <%= form.email_field :email %>
+  </div>
+
+  <div class="field">
+    <%= form.label :age %>
+    <%= form.number_field :age %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Apply" %>
+  </div>
+<% end %>

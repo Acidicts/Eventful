@@ -37,7 +37,7 @@ class OrganisationsTest < ActionDispatch::IntegrationTest
     # creating an organisation no longer requires an associated event,
     # but the form still submits the hidden `user_id` field so include that
     # here to satisfy `params.require(:organisation)`.
-    post organisations_path, params: { organisation: { user_id: user.id, signing_user_id: user.id } }
+    post organisations_path, params: { organisation: { user_id: user.id, signing_user_id: user.id, name: "Acme", description: "An acme org", img: "http://img.example/1.png", self_found: true } }
     assert_response :redirect
     assert_equal "Organisation was successfully created.", flash[:notice]
 
@@ -63,5 +63,24 @@ class OrganisationsTest < ActionDispatch::IntegrationTest
     # the dropdown should include normal user and exclude superadmin
     assert_select "select[name='organisation[signing_user_id]'] option", text: /Normal/
     assert_select "select[name='organisation[signing_user_id]'] option", { text: /Super/, count: 0 }
+  end
+
+  test "signing user sees organisation in index even when removed from members" do
+    # sign in as test user
+    get root_path
+    post "/auth/hackclub"
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    user = User.find(session[:user_id])
+
+    # create organisation where the user is both owner and signing user
+    org = Organisation.create!(user: user, signing_user: user, users: [ user ], img: "http://img.example/1.png")
+    # then strip them out of the membership list
+    org.users.delete(user)
+
+    get organisations_path
+    assert_response :success
+    # partial renders basic attributes and should include image tag when img present
+    assert_select ".org_container img[src='http://img.example/1.png']"
   end
 end

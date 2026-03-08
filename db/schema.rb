@@ -10,31 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_05_174700) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_08_171224) do
   create_table "attendees", force: :cascade do |t|
     t.integer "age"
+    t.integer "attendance", default: 0
     t.string "code"
     t.datetime "created_at", null: false
+    t.string "email"
+    t.integer "event_id"
+    t.string "ip"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_attendees_on_event_id"
   end
 
   create_table "events", force: :cascade do |t|
     t.integer "applied"
-    t.integer "attendee_id", null: false
+    t.string "apply_token"
     t.integer "capacity"
     t.datetime "created_at", null: false
     t.string "description"
     t.string "name"
     t.integer "organisation_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["attendee_id"], name: "index_events_on_attendee_id"
+    t.index ["apply_token"], name: "index_events_on_apply_token", unique: true
     t.index ["organisation_id"], name: "index_events_on_organisation_id"
   end
 
   create_table "organisations", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "description"
+    t.string "img"
     t.string "name", default: "Unamed Organisation", null: false
+    t.boolean "self_found", default: false, null: false
     t.integer "signing_user_id"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -64,7 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_174700) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
-  add_foreign_key "events", "attendees"
+  add_foreign_key "attendees", "events"
   add_foreign_key "events", "organisations"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
