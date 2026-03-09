@@ -3,6 +3,8 @@
 <% if @attendee %>
   <p>Name: <%= @attendee.name %></p>
   <p>Age: <%= @attendee.age %></p>
+  <p>Diet: <%= @attendee.diet.humanize %></p>
+  <p>Allergies: <%= @attendee.allergies || "None" %></p>
   <p>Code: <%= @attendee.code %></p>
 <% else %>
   <p>Attendee not found.</p>

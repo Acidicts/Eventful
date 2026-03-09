@@ -9,6 +9,30 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+:root {
+  --blue-very-dark: #03045E;
+  --blue-dark: #023E8A;
+  --blue: #0077B6;
+  --blue-light: #0096C7;
+  --blue-lighter: #00B4D8;
+  --blue-baby: #48CAE4;
+  --blue-pale: #90E0EF;
+  --blue-hint: #ADE8F4;
+  --blue-white: #c0eff8;
+}
+
+@font-face {
+  font-family: "Lexend";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/Lexend-VariableFont_wght.ttf") format("truetype");
+}
+
+.lexend {
+  font-family: "Lexend";
+}
+
 .flash {
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;

@@ -129,7 +129,9 @@ class EventsController < ApplicationController
   def apply
     # prepare a fresh attendee instance for form builder
     @attendee = @event.attendees.build
-    render "organisations/dashboard/events/apply"
+
+    # render the form without the surrounding layout
+    render "organisations/dashboard/events/apply", layout: false
   end
 
   # GET /org/:org_id/events/:id/attendee/:attendee_id/edit

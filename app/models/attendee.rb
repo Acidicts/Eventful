@@ -10,6 +10,8 @@ class Attendee < ApplicationRecord
   # later migration fixes the spelling. declaring the attribute explicitly
   # allows the enum to boot even if the database hasn’t been migrated yet.
   attribute :attendance, :integer, default: 0
+  attribute :status, :integer, default: 0
+  attribute :diet, :integer, default: 0
 
   # use positional arguments to avoid Ruby keyword/positional ambiguity
   # (Rails 8's enum signature requires a name argument, so a pure
@@ -18,6 +20,18 @@ class Attendee < ApplicationRecord
   # (ActiveRecord::Base already defines `pending?`, hence the earlier
   # conflict). callers will use `attendance_pending?` etc.
   enum :attendance, { pending: 0, signed_in: 1, signed_out: 2, no_show: 3 }, prefix: true
+  enum :status, { pending: 0, approved: 1, denied: 2 }, prefix: true
+  enum :diet, { none: 0, pescitarian: 1, vegetarian: 2, vegan: 3, other: 4 }, prefix: true
+
+  validates :diet, inclusion: { in: diets.keys }        # ensures integrity
+  after_initialize { self.diet ||= :none }              # default
+
+  def diet_label
+    if diet == "other"
+      return "Other: Write In Allergies Section"
+    end
+    I18n.t("attendee.diets.#{diet}")
+  end
 
   def capacity_not_exceeded
     return unless event

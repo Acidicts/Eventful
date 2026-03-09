@@ -20,8 +20,8 @@
       - [x] Apply
         - [x] Name
         - [x] Age
-        - [ ] Allergies
-        - [ ] Dietary Preferences
+        - [x] Allergies
+        - [x] Dietary Requirements
         - [ ] Contact Information
           - [x] Email
           - [ ] Phone Number (optional)
