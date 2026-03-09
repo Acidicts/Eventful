@@ -1,3 +1,7 @@
+<head>
+    <title>QR Code for <%= @attendee.name %></title>
+</head>
+
 <h1>QR Code for <%= @attendee.name %></h1>
 <p>
   <strong>Event:</strong> <%= @event.name %><br>
@@ -8,3 +12,5 @@
   <!-- render the generated QR svg so this page can be printed/scanned -->
   <%= raw @qr_svg %>
 </p>
+
+<p><strong>Code:</strong> <%= @attendee.code %></p>

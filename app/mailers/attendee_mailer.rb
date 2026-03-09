@@ -10,17 +10,13 @@ class AttendeeMailer < ApplicationMailer
 
     # build an absolute URL that the QR scanner can hit.  the named helper
     # includes `attendee_id` as a query parameter so we mirror that here.
-    @url = attendee_organisation_event_url(
-      @event.organisation,
-      @event,
-      attendee_id: @attendee.id
-    )
+    @url = @attendee.code.to_s
 
     # also expose a simple endpoint that renders just the QR code image; this is
     # consumed by some clients that prefer a stable URL rather than embedded
     # data.  the path is expected to be `/qrcode/:code` on the public app host.
     base = ENV.fetch("APP_URL")
-    @qr_page = "#{base}/qrcode/#{@attendee.code}"
+    @qr_page = base + "/qrcode/" + @attendee.code.to_s
 
     # generate a PNG and attach it inline so mail clients that strip out
     # data URIs can still display the image.  we keep the base64 logic in the

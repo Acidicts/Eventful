@@ -46,4 +46,10 @@
 
     <%= yield %>
   </body>
+  <script>
+    // Auto-dismiss flash messages after 5 seconds
+    setTimeout(() => {
+      document.querySelectorAll('.flash').forEach(el => el.remove());
+    }, 3000);
+  </script>
 </html>

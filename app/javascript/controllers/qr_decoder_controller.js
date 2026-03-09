@@ -5,7 +5,12 @@ import jsQR from "jsqr"
 // jsQR library (loaded via importmap) to decode QR codes.
 // includes debug logging to help diagnose detection issues.
 export default class extends Controller {
-  static targets = ["video", "canvas", "output"]
+  static targets = ["video", "canvas", "output", "manualInput"]
+  static values = {
+    url: String,
+    codeParamField: String, // name of the JSON field to carry the decoded string
+    operation: String       // e.g. "sign_in", "sign_out", "lookup"
+  }
 
   connect() {
     this.startCamera()
@@ -13,6 +18,11 @@ export default class extends Controller {
 
   async startCamera() {
     try {
+      // if there's an existing stream, stop it first
+      if (this.videoTarget.srcObject) {
+        this.videoTarget.srcObject.getTracks().forEach(t => t.stop())
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" }
       })
@@ -45,9 +55,59 @@ export default class extends Controller {
         this.outputTarget.textContent = code.data
         // stop the camera once we have a result
         this.videoTarget.srcObject.getTracks().forEach(track => track.stop())
+
+        if (this.hasUrlValue) {
+          this.sendCode(code.data)
+        }
         return
       }
     }
     requestAnimationFrame(this.tick.bind(this))
+  }
+
+  // allow restarting the camera manually (bound via data-action)
+  restart() {
+    if (this.outputTarget) {
+      this.outputTarget.textContent = ""
+    }
+    this.startCamera()
+  }
+
+  // send a code value to the server using the same logic as the scanner
+  sendCode(code) {
+    const payload = {}
+    const field = this.hasCodeParamFieldValue ? this.codeParamFieldValue : 'text'
+    payload[field] = code
+    if (this.hasOperationValue) payload.operation = this.operationValue
+
+    fetch(this.urlValue, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content
+      },
+      body: JSON.stringify(payload)
+    }).then(resp => {
+      if (resp.redirected) {
+        window.location = resp.url
+      } else if (!resp.ok) {
+        console.error("scan POST failed", resp.status)
+      } else {
+        resp.json().then(json => {
+          if (json.message) this.outputTarget.textContent = json.message
+        }).catch(() => {})
+      }
+    }).catch(err => console.error("scan POST error", err))
+  }
+
+  // submit handler for manual entry form
+  manualSubmit(event) {
+    event.preventDefault()
+    if (!this.hasManualInputTarget) return
+    const code = this.manualInputTarget.value.trim()
+    if (code) {
+      this.sendCode(code)
+      this.manualInputTarget.value = ''
+    }
   }
 }

@@ -2,7 +2,7 @@ class EventsController < ApplicationController
   # only look up an organisation when the request is scoped to one
   before_action :set_organisation, if: -> { params[:organisation_id].present? }
   # make sure we load @event for the member actions too (nested only)
-  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee], if: -> { params[:organisation_id].present? }
+  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan], if: -> { params[:organisation_id].present? }
 
   def index
     # events are only accessible via an organisation context. if somehow we
@@ -65,6 +65,57 @@ class EventsController < ApplicationController
   def get_info
     # TODO: implement info retrieval logic
     render "organisations/dashboard/events/get_info"
+  end
+
+  # receive payload from QR scanner frontend and perform whatever checks
+  # are required (e.g. look up attendee by code, mark as signed in, etc).
+  # the request body will contain JSON `{ "text": "..." }`.
+  # keep logic in the controller or push into a service; nothing happens
+  # here yet so tests can be written around expected behaviour.
+  def scan
+    scanned_code = params[:code].presence || params[:text]
+    operation = params[:operation]
+    message = nil
+
+    if scanned_code.present? && operation.present?
+      attendee = @event.attendees.find_by(code: scanned_code)
+
+      case operation
+      when "sign_in"
+        if attendee
+          if attendee.attendance != "signed_in"
+            attendee.update(attendance: :signed_in)
+            message = "Attendee #{attendee.name} signed in successfully."
+          else
+            message = "Attendee #{attendee.name} is already signed in."
+          end
+        else
+          message = "Attendee not found."
+        end
+      when "sign_out"
+        if attendee
+          if attendee.attendance == "signed_in"
+            attendee.update(attendance: :signed_out)
+            message = "Attendee #{attendee.name} signed out successfully."
+          else
+            message = "Attendee #{attendee.name} is signed out already."
+          end
+        else
+          message = "Attendee not found."
+        end
+      when "get_info"
+        if attendee
+          redirect_to attendee_organisation_event_path(@organisation, @event, attendee_id: attendee.id) and return
+        else
+          message = "Attendee not found."
+        end
+      else
+        head :bad_request and return
+      end
+    end
+
+    flash[:notice] = message if message.present?
+    render json: { message: message }
   end
 
   def attendees

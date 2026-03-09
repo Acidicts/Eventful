@@ -51,7 +51,15 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal "member", user.role
     assert_equal "member", user.organisation_role
 
+    # test both DELETE and GET variants – both should clear the session
     delete logout_path
+    assert_nil session[:user_id]
+    # log back in so we can try GET route
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    get logout_path
+    assert_nil session[:user_id]
     assert_redirected_to root_path
     follow_redirect!
     assert_equal "Signed out", flash[:notice]

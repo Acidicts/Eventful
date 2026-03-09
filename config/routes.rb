@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   # Routes for authentication via OmniAuth
   get "/auth/:provider/callback", to: "sessions#create"
   delete "/logout", to: "sessions#destroy", as: :logout
+  # also handle simple GET for users without JS; perform same action
+  # (session destruction is idempotent and doesn’t require CSRF protection)
+  get "/logout", to: "sessions#destroy"
 
   # a simple root for now
   root "home#index"
@@ -68,6 +71,7 @@ Rails.application.routes.draw do
         get "actions/sign-in",  to: "events#sign_in"
         get "actions/sign-out", to: "events#sign_out"
         get "actions/get-info", to: "events#get_info"
+        post "actions/scan", to: "events#scan", as: :scan
       end
     end
   end

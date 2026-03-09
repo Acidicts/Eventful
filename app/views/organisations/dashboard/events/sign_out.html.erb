@@ -1,3 +1,31 @@
 <h1>Sign Out</h1>
 <p>Event: <%= @event.id %> (organisation <%= @organisation.id %>)</p>
-<!-- implement sign-out UI here -->
+
+<%= link_to "Sign In", actions_sign_in_organisation_event_path(@organisation, @event) %>
+
+<div data-controller="qr-decoder"
+     data-qr-decoder-url-value="<%= scan_organisation_event_path(@organisation, @event) %>"
+     data-qr-decoder-code-param-field-value="code"
+     data-qr-decoder-operation-value="sign_out">
+
+  <!-- manual entry form -->
+  <form data-action="submit->qr-decoder#manualSubmit" style="margin-bottom:1em;">
+    <label>
+      Enter code manually:
+      <input type="text" data-qr-decoder-target="manualInput" name="code" autocomplete="off" />
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+  <video data-qr-decoder-target="video" data-action="click->qr-decoder#restart"
+         style="width:100%;max-width:400px;border:1px solid #ccc"></video>
+  <canvas data-qr-decoder-target="canvas" style="display:none"></canvas>
+
+  <p>Attendee Code: <span data-qr-decoder-target="output"></span></p>
+</div>
+
+<button type="button" data-action="click->qr-decoder#restart">
+  Restart camera
+</button>
+
+<%= link_to "Back to dashboard", dashboard_organisation_path(@organisation) %>
+

@@ -125,6 +125,8 @@ class EventsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", text: /Bob/  # header shows attendee name
     assert_select "strong", text: /Event:/
+    # layout should be skipped; application header text not present
+    assert_select "header", count: 0
   end
   test "sending qr codes enqueues mailer jobs" do
     get root_path, headers: headers

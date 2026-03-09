@@ -32,4 +32,8 @@ class ApplicationController < ActionController::Base
   def flash_warn(message)
     flash[:alert] = message
   end
+
+  def flash_info(message)
+    flash[:notice] = message
+  end
 end

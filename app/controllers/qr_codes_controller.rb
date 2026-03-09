@@ -21,12 +21,27 @@ class QrCodesController < ApplicationController
 
   # GET /qrcode/:code
   def show
-    # look up attendee by their unique code and display minimal info
-    @attendee = Attendee.find_by!(code: params[:code])
+    # look up attendee by their unique code – if nothing is found we want a
+    # friendly message rather than a hard error, because scanners may point at
+    # expired or mistyped codes.
+    @attendee = Attendee.find_by(code: params[:code])
+
+    unless @attendee
+      # render a minimal error page (could be styled or localized) and skip
+      # application layout so it's easy to embed or print.
+      @error_message = "Attendee not found for code #{params[:code]}"
+      render "show_not_found", layout: false, status: :not_found and return
+    end
+
     @event = @attendee.event
     @organisation = @event.organisation
 
-    # render a simple QR image for the same link (self-referential)
-    @qr_svg = QrCodeGenerator.generate(request.url)
+    # render a simple QR image containing the attendee’s unique code
+    # (not the full link) so that scanners yield the raw code string.
+    @qr_svg = QrCodeGenerator.generate(@attendee.code)
+
+    # this page is often embedded in other systems or printed; keep it
+    # bare-bones by skipping the application layout entirely.
+    render layout: false
   end
 end

@@ -36,7 +36,7 @@ class Attendee < ApplicationRecord
     # persist it.
     if code.blank?
       self.code = "!" + SecureRandom.hex(6)
-    elsif Attendee.where(code: code).exists?
+    elsif Attendee.where(code: code).exists? && Attendee.find_by(code: code).id != id
       self.code = "!" + SecureRandom.hex(6)
       ensure_unique_identifier
     elsif !code.start_with?("!")

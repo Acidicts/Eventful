@@ -26,9 +26,13 @@
           - [x] Email
           - [ ] Phone Number (optional)
       - [ ] QR Code ID
-        - [ ] Quick Info Finder
+        - [x] Quick Info Finder
         - [ ] Attendence Tracking
-        - [ ] Event Check-in
+          - [x] Current
+          - [ ] Past
+        - [x] Event Check-in
+      - [x] QR Code Emails
+        - [x] QR Code
     - [ ] Event Details
         - [x] Name
         - [ ] Date
