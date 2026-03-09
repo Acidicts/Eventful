@@ -1,0 +1,15 @@
+<p>Hi <%= @attendee.name || "there" %>,</p>
+
+<p>Here's your QR code for <strong><%= @event.name %></strong>. Scan this
+when you arrive at the event to check in.</p>
+
+<p>
+  <%= image_tag @qr_png_cid, alt: "QR code for #{@event.name}", width: 300, height: 300, style: "max-width:100%;" %>
+</p>
+
+<p>You can also view the code directly at
+  <%= link_to @qr_page, @qr_page %>
+</p>
+
+<p>If your mail client doesn’t render images, you can also follow this link:
+<%= link_to @url, @url %></p>

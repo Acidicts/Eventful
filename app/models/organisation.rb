@@ -30,11 +30,42 @@ class Organisation < ApplicationRecord
       .distinct
   }
 
+  # callbacks -------------------------------------------------------------
+  # when the `self_found` flag is set we treat the owning user as the signing
+  # user and make sure that person is a member of the organisation. doing
+  # this in a callback keeps the logic close to the model and means the same
+  # behaviour applies on create *and* update (controllers no longer need to
+  # remember to wire it up).
+  before_validation :apply_self_found_logic
+
   # validations -----------------------------------------------------------
   validates :signing_user, presence: true
   validate  :signing_user_must_be_member
 
   private
+
+  # if the organisation is marked self‑found then the owner should act as the
+  # signer. we also take care of adding the signing user to the membership
+  # list so external callers (controllers, tests, etc.) don't have to do it
+  # themselves. mutating the `users` association during validation is safe
+  # because we're still working with an unsaved record; saving the
+  # organisation will persist any new join records automatically.
+  def apply_self_found_logic
+    return unless self_found
+
+    # force the signing user to the organisation owner.  unlike the previous
+    # implementation this ignores any `signing_user_id` that may have been
+    # supplied by the form when `self_found` is checked; the flag is meant to
+    # indicate that the creator is responsible for the organisation.
+    self.signing_user = user if user.present?
+
+    # ensure the signing user is a member as well. the custom validator below
+    # will add an error if this step fails, but pre‑emptively pushing the user
+    # into `users` makes the normal case much smoother.
+    if signing_user && !users.include?(signing_user)
+      users << signing_user
+    end
+  end
 
   # ensure the signing user is also part of the organisation's members.
   # previously this method attempted to mutate and save the record during

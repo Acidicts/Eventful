@@ -28,7 +28,10 @@
         <td class="table-data"><%= link_to event.name, organisation_event_path(@organisation, event) %></td>
         <td class="table-data"><%= event.capacity %></td>
         <td class="table-data"><%= event.attendees.count %></td>
-        <td><%= link_to 'Edit', edit_organisation_event_path(@organisation, event) %></td>
+        <td>
+          <%= link_to 'Edit', edit_organisation_event_path(@organisation, event) %>
+          <%= link_to 'Show', organisation_event_path(@organisation, event) %>
+        </td>
       </tr>
     <% end %>
   </tbody>

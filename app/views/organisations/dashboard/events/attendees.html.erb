@@ -19,6 +19,7 @@
       <th class="table-head">Age</th>
       <th class="table-head">Code(ID)</th>
       <th class="table-head">Event</th>
+      <th class="table-head">Current Attendance</th>
       <th class="table-head">Actions</th>
     </tr>
   </thead>
@@ -29,6 +30,7 @@
         <td class="table-data"><%= attendee.age %></td>
         <td class="table-data"><%= attendee.code %></td>
         <td class="table-data"><%= attendee.event&.name %></td>
+        <td class="table-data"><%= attendee.attendance.to_s.humanize %></td>
         <td>
           <%= link_to 'View', attendee_organisation_event_path(
                 @organisation,

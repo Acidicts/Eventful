@@ -1,6 +1,7 @@
 require "test_helper"
 
 class EventsTest < ActionDispatch::IntegrationTest
+  include ActiveJob::TestHelper
   setup do
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[:hackclub] = OmniAuth::AuthHash.new(
@@ -95,5 +96,55 @@ class EventsTest < ActionDispatch::IntegrationTest
     assert_redirected_to attendee_organisation_event_path(org, event, attendee_id: attendee.id)
     follow_redirect!
     assert_select "p", text: /Robert/  # updated name shown
+  end
+
+  test "public apply endpoint creates attendee" do
+    org = Organisation.create!(user: User.create!(name: "U", email: "u@example.com", provider: "hackclub", uid: "u1"), signing_user: User.last, users: [ User.last ])
+    event = org.events.create!(name: "OpenEvent", capacity: 5)
+
+    post public_apply_event_path(event.apply_token), params: { attendee: { name: "Sam", email: "sam@example.com" } }
+    assert_response :created
+    assert_equal 1, event.reload.attendees.count
+  end
+
+  test "nested apply endpoint creates attendee" do
+    org = Organisation.create!(user: User.create!(name: "V", email: "v@example.com", provider: "hackclub", uid: "v1"), signing_user: User.last, users: [ User.last ])
+    event = org.events.create!(name: "PrivateEvent", capacity: 5)
+
+    post apply_organisation_event_path(org, event), params: { attendee: { name: "Jill", email: "jill@example.com" } }
+    assert_response :created
+    assert_equal 1, event.reload.attendees.count
+  end
+  test "public qr page renders attendee info" do
+    user = User.create!(name: "A", email: "a@example.com", provider: "hackclub", uid: "u1")
+    org = Organisation.create!(user: user, signing_user: user, users: [ user ])
+    event = org.events.create!(name: "Test", capacity: 10)
+    attendee = event.attendees.create!(name: "Bob", email: "bob@example.com")
+
+    get public_qr_code_path(attendee.code)
+    assert_response :success
+    assert_select "h1", text: /Bob/  # header shows attendee name
+    assert_select "strong", text: /Event:/
+  end
+  test "sending qr codes enqueues mailer jobs" do
+    get root_path, headers: headers
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    user = User.find(session[:user_id])
+
+    org = Organisation.create!(user: user, signing_user: user, users: [ user ])
+    event = org.events.create!(name: "Test", capacity: 10)
+    event.attendees.create!(name: "Alice", email: "alice@example.com")
+
+    # run jobs inline so the mail gets delivered automatically
+    perform_enqueued_jobs do
+      post send_qr_codes_organisation_event_path(org, event), headers: headers
+    end
+
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    mail = ActionMailer::Base.deliveries.last
+    assert_equal [ "alice@example.com" ], mail.to
+    assert_match(/QR code/, mail.subject)
   end
 end

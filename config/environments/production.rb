@@ -60,14 +60,24 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # configure SMTP from environment variables. production may also set
+  # `SMTP_PROTOCOL` to "SSL/TLS" or similar to enable secure connections.
+  config.action_mailer.delivery_method = :smtp
+
+  protocol = ENV["SMTP_PROTOCOL"].to_s.downcase
+  implicit_tls = protocol.include?("ssl") || ENV["SMTP_PORT"] == "465"
+  starttls = !implicit_tls && (protocol.include?("starttls") || ENV["SMTP_PORT"] == "587")
+
+  config.action_mailer.smtp_settings = {
+    address:              ENV["SMTP_ADDRESS"],
+    port:                 ENV["SMTP_PORT"],
+    user_name:            ENV["SMTP_EMAIL"],
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       :login,
+    enable_starttls_auto: starttls,
+    tls:                  implicit_tls,
+    ssl:                  implicit_tls
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

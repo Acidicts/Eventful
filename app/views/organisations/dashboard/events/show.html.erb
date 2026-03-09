@@ -36,5 +36,7 @@
   </p>
 <% end %>
 
+<%= button_to 'Send QR Codes', send_qr_codes_organisation_event_path(@organisation, @event), method: :post %>
+
 <%= link_to 'Edit', edit_organisation_event_path(@organisation, @event) %> |
 <%= link_to 'Back', organisation_events_path(@organisation) %>

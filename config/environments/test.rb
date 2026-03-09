@@ -36,6 +36,27 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  # although delivery method is :test we still populate the smtp_settings so
+  # tests can assert the configuration is read from environment variables.
+  protocol = ENV["SMTP_PROTOCOL"].to_s.downcase
+  implicit_tls = protocol.include?("ssl") || ENV["SMTP_PORT"] == "465"
+  starttls = !implicit_tls && (protocol.include?("starttls") || ENV["SMTP_PORT"] == "587")
+
+  config.action_mailer.smtp_settings = {
+    address: ENV["SMTP_ADDRESS"],
+    port:    ENV["SMTP_PORT"],
+    user_name: ENV["SMTP_EMAIL"],
+    password:  ENV["SMTP_PASSWORD"],
+    authentication: :login
+  }.tap do |opts|
+    if implicit_tls
+      opts[:tls] = true
+      opts[:ssl] = true
+    elsif starttls
+      opts[:enable_starttls_auto] = true
+    end
+  end
+
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 

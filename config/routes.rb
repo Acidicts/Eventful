@@ -23,6 +23,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # public link for attendee QR pages (used by emails)
+  get "/qrcode/:code", to: "qr_codes#show", as: :public_qr_code
+
   # we no longer expose a global /events index; everything is scoped to an
   # organisation. any remaining references to non-nested event routes should
   # be removed or updated accordingly.
@@ -50,6 +53,8 @@ Rails.application.routes.draw do
     resources :events do
       member do
         get "attendees", to: "events#attendees"
+        post "send_qr_codes", to: "organisations/dashboard/events#send_qr_codes"
+
         # show a specific attendee linked from the events list
         # view a specific attendee for this event
         get "attendee/:attendee_id", to: "events#attendee", as: :attendee

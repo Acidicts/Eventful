@@ -14,10 +14,31 @@ module Organisations
         @attendees = @organisation.attendees
       end
 
+      def send_qr_codes
+        # a given event may be looked up by numeric id or by its
+        # `apply_token` (the value returned by `to_param`). mirror the logic
+        # used in the primary `EventsController#set_event` helper so that the
+        # admin dashboard works seamlessly regardless of which form of id is
+        # used in the URL.
+        @event = if params[:id] =~ /\A\d+\z/
+                   @organisation.events.find(params[:id])
+        else
+                   @organisation.events.find_by!(apply_token: params[:id])
+        end
+
+        @event.attendees.each do |attendee|
+          AttendeeMailer.qr_code(attendee).deliver_now
+        end
+        redirect_to organisation_event_path(@organisation, @event), notice: "QR codes are being sent to attendees."
+      end
+
       private
 
       def set_organisation
-        @organisation = Organisation.find(params[:id])
+        # some routes pass the organisation id as `:id` (dashboard index
+        # etc.), others (nested event actions) use `:organisation_id`.
+        org_id = params[:organisation_id] || params[:id]
+        @organisation = Organisation.find(org_id)
       end
     end
   end

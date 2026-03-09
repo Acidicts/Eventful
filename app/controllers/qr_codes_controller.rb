@@ -18,4 +18,15 @@ class QrCodesController < ApplicationController
   def decode
     # nothing to prepare server-side; decoding is handled in the client
   end
+
+  # GET /qrcode/:code
+  def show
+    # look up attendee by their unique code and display minimal info
+    @attendee = Attendee.find_by!(code: params[:code])
+    @event = @attendee.event
+    @organisation = @event.organisation
+
+    # render a simple QR image for the same link (self-referential)
+    @qr_svg = QrCodeGenerator.generate(request.url)
+  end
 end

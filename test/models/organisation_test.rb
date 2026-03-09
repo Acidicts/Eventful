@@ -44,4 +44,13 @@ class OrganisationTest < ActiveSupport::TestCase
     assert_equal "A cool organization", org.description
     assert org.self_found
   end
+
+  test "self_found flag auto-assigns signing user and membership" do
+    org = Organisation.new(user: @user, self_found: true)
+    # we haven't manually added the signing user or membership yet;
+    # validation+callback should take care of both.
+    assert org.valid?, org.errors.full_messages.join(", ")
+    assert_equal @user, org.signing_user
+    assert_includes org.users, @user
+  end
 end

@@ -37,12 +37,17 @@ class OrganisationsTest < ActionDispatch::IntegrationTest
     # creating an organisation no longer requires an associated event,
     # but the form still submits the hidden `user_id` field so include that
     # here to satisfy `params.require(:organisation)`.
-    post organisations_path, params: { organisation: { user_id: user.id, signing_user_id: user.id, name: "Acme", description: "An acme org", img: "http://img.example/1.png", self_found: true } }
+    # with `self_found` checked we should not need to supply a signing user;
+    # the controller/model logic will automatically make the creator the
+    # signing user and add them to the membership list.
+    post organisations_path, params: { organisation: { user_id: user.id, name: "Acme", description: "An acme org", img: "http://img.example/1.png", self_found: true } }
     assert_response :redirect
     assert_equal "Organisation was successfully created.", flash[:notice]
 
     org = Organisation.last
     assert_equal user.id, org.user_id, "the creator should be associated as the owner"
+    assert_equal user.id, org.signing_user_id, "self_found should make the creator the signing user"
+    assert_includes org.users, user, "signing user should automatically be added as a member"
   end
 
   test "superadmin is excluded from signing user dropdown" do

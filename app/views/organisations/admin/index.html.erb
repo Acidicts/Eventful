@@ -1,5 +1,9 @@
 <h1>Organisations (Admin)</h1>
 
-<% @organisations.each do |org| %>
-  <%= render org %>
-<% end %>
+<%= link_to "New Organisation", new_organisation_path, class: "btn btn-primary" %>
+
+<div class="organisations">
+  <% @organisations.each do |org| %>
+    <%= render org %>
+  <% end %>
+</div>

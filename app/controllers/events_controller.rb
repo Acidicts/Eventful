@@ -149,20 +149,22 @@ class EventsController < ApplicationController
   end
 
   def set_event
-    # allow either numeric id or apply_token to identify the record.
-    # when nested under org we scope via @organisation; otherwise fall back
-    # to a global token lookup (used by public apply endpoint).
+    # allow either numeric id or apply_token to identify the record.  the
+    # public apply form sends the token in `params[:apply_token]` rather than
+    # `:id`, so treat both as interchangeable when no org is present.
+    raw_id = params[:id] || params[:apply_token]
+
     if @organisation
-      @event = if params[:id] =~ /\A\d+\z/
-                 @organisation.events.find(params[:id])
+      @event = if raw_id =~ /\A\d+\z/
+                 @organisation.events.find(raw_id)
       else
-                 @organisation.events.find_by!(apply_token: params[:id])
+                 @organisation.events.find_by!(apply_token: raw_id)
       end
     else
-      @event = if params[:id] =~ /\A\d+\z/
-                 Event.find(params[:id])
+      @event = if raw_id =~ /\A\d+\z/
+                 Event.find(raw_id)
       else
-                 Event.find_by!(apply_token: params[:id])
+                 Event.find_by!(apply_token: raw_id)
       end
       # also provide organisation context for helpers/redirects
       @organisation = @event.organisation
