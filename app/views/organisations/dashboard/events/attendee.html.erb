@@ -6,6 +6,7 @@
   <p>Diet: <%= @attendee.diet.humanize %></p>
   <p>Allergies: <%= @attendee.allergies || "None" %></p>
   <p>Code: <%= @attendee.code %></p>
+  <p>Waiver Signed: <%= @attendee.waiver_signed ? "Yes" : "No" %></p>
 <% else %>
   <p>Attendee not found.</p>
 <% end %>

@@ -21,15 +21,33 @@
   </div>
 
   <div class="field">
+    <%= form.label :organiser %>
+    <%= form.select :organiser_id,
+                    @event.organisation.users.map { |u| [u.name, u.id] },
+                    { include_blank: false },
+                    { id: 'organiser-select' } %>
+  </div>
+
+  <div class="field">
     <%= form.label :capacity %>
     <%= form.number_field :capacity %>
   </div>
 
   <div class="field">
-    <%= form.label :applied %>
-    <%= form.number_field :applied %>
+    <%= form.label :location %>
+    <%= form.text_field :location, data: { controller: "location-autocomplete" }, autocomplete: "off", list: "location-results" %>
+    <%= tag.datalist id: "location-results" %>
   </div>
 
+  <div class="field">
+    <%= form.label :start_date %>
+    <%= form.datetime_select :start_date, include_blank: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :end_date %>
+    <%= form.datetime_select :end_date, include_blank: true %>
+  </div>
 
   <div class="actions">
     <%= form.submit %>

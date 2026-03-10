@@ -41,3 +41,27 @@ response = current_user.hackclub_get("/api/v1/me")
 
 Happy hacking!
 
+## Location autocomplete
+
+Events now support address autocompletion with two different providers:
+
+* **Google Maps Places API ("Autocomplete (New)")** – uses the new HTTP POST endpoint (`/v1/places:autocomplete`) so no Maps JavaScript library is required. A valid API key is still necessary; this request is billed under the Places SKU.
+* **OpenStreetMap / Nominatim** – a free, unauthenticated service that returns basic place names and works automatically when no Google API key is configured.
+
+### behaviour
+The `location` field on the event form is wired up to a Stimulus controller (`LocationAutocompleteController`). The controller reads the key from a `<meta name="google-maps-api-key" …>` tag injected by the layout.
+
+* When a key is present it sends debounced POST requests to `https://places.googleapis.com/v1/places:autocomplete` with a JSON body containing `{"input":"…"}`. The response is parsed and the first five suggestions are shown via a `<datalist>`.
+* If the key is blank, Nominatim is used instead; this branch has unchanged behaviour and also fills the datalist.
+
+### enabling Google
+1. Obtain an API key from the Google Cloud Console and enable the **Places API**.
+2. Set `GOOGLE_MAPS_API_KEY` in your environment (e.g. in `.env` for development).
+3. Restart the server. The layout will expose the key in a meta tag and the controller will begin calling the HTTP endpoint.
+
+You can bias results using additional data‑attributes if desired (e.g. `data-location-bias`), or modify the controller to include parameters such as `locationRestriction`, `regionCode`, etc. See Google’s documentation for the full set of request options.
+
+If you never configure a key, the Nominatim fallback ensures the form remains usable at no cost.
+
+Happy hacking!
+

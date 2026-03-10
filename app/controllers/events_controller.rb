@@ -227,6 +227,6 @@ class EventsController < ApplicationController
   def event_params
     # `attendee_id` has been removed from the events table; attendees now
     # belong to events. only keep the remaining scalar columns.
-    params.require(:event).permit(:name, :description, :capacity, :applied)
+    params.require(:event).permit(:name, :description, :capacity, :applied, :location, :start_date, :end_date, :organiser_id)
   end
 end

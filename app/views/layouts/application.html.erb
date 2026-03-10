@@ -21,6 +21,20 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <%# expose the API key for use by JS; blank if unset %>
+    <meta name="google-maps-api-key" content="<%= ENV['GOOGLE_MAPS_API_KEY'] %>" />
+
+    <%# load Google Maps Places API for location autocomplete (set GOOGLE_MAPS_API_KEY in environment) %>
+    <% if ENV['GOOGLE_MAPS_API_KEY'].present? %>
+      <%# the callback fires once the library has loaded so controllers can initialize safely %>
+      <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS_API_KEY']}&libraries=places&callback=initLocationAutocomplete", async: true, defer: true %>
+      <script>
+        function initLocationAutocomplete() {
+          (window.locationAutocompleteCallbacks || []).forEach(fn => fn());
+        }
+      </script>
+    <% end %>
   </head>
 
   <body>
