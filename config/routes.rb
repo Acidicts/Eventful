@@ -45,6 +45,9 @@ Rails.application.routes.draw do
   # (session destruction is idempotent and doesn’t require CSRF protection)
   get "/logout", to: "sessions#destroy"
 
+  # dynamic SVG icons with configurable color (?color=hex-or-name)
+  get "icons/menu-open", to: "icons#menu_open", as: :icon_menu_open
+
   # a simple root for now
   root "home#index"
 

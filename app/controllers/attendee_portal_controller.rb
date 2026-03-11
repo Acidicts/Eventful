@@ -12,6 +12,7 @@ class AttendeePortalController < ApplicationController
   # filter list so unauthenticated requests are redirected to login instead of
   # rendering the "not found" placeholder.
   before_action :authenticate_attendee!, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
+  before_action :set_organisation, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
 
   # GET /attendee_portal/login
   # render a simple code entry form unless already logged in
@@ -117,19 +118,6 @@ class AttendeePortalController < ApplicationController
     end
   end
 
-  def attendee_params
-    params.require(:attendee).permit(
-      :email,
-      :age,
-      :diet,
-      :other_diet,
-      :allergies,
-      :waiver_signature,
-      :under_18,
-      :parent_signature
-    )
-  end
-
   def waiver_params
     params.require(:attendee).permit(:waiver_signature, :signed_waiver, :under_18, :parent_signature)
   end
@@ -169,5 +157,9 @@ class AttendeePortalController < ApplicationController
   # permit the same fields the portal form allows
   def attendee_params
     params.require(:attendee).permit(:email, :age, :diet, :other_diet, :allergies)
+  end
+
+  def set_organisation
+    @organisation = current_attendee&.event&.organisation
   end
 end

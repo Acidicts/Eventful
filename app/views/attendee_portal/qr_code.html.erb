@@ -10,8 +10,11 @@
 
   <% if @attendee && @event %>
     <footer class="details">
-      <div style="position:relative; flex:1;">
-        <p><%= @event.name %> – <%= @event.organisation.name %></p>
+      <div style="position:relative; flex:1; text-align:left">
+        <strong>Event :</strong>
+        <p style="margin-left:16px"><%= @event.name %></p>
+        <strong>Org :</strong>
+        <p style="margin-left:16px"><%= @event.organisation.name %></p>
       </div>
       <div style="text-align:left; position:relative; flex:1;">
         <p><strong>Name - <%= @attendee.name %></strong></p>
