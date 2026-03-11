@@ -1,0 +1,93 @@
+<div class="qr-container lexend">
+  <header>
+    <h2>Your Attendee-ID QR Code</h2>
+    <%# <p class="subtitle">Present this at the event entrance to check in.</p> %>
+  </header>
+
+  <div id="qr-code">
+    <%= raw @qr_svg %>
+  </div>
+
+  <% if @attendee && @event %>
+    <footer class="details">
+      <div style="position:relative; flex:1;">
+        <p><%= @event.name %> – <%= @event.organisation.name %></p>
+      </div>
+      <div style="text-align:left; position:relative; flex:1;">
+        <p><strong>Name - <%= @attendee.name %></strong></p>
+        <p><strong>Age - <%= @attendee.age %></strong></p>
+        <p><strong>Allergies - <%= @attendee.allergies.blank? ? "None" : @attendee.allergies %></strong></p>
+      </div>
+    </footer>
+  <% end %>
+</div>
+
+<style>
+  .qr-container {
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 2rem;
+    padding: 0 0 2rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .qr-container header h2 {
+    text-align: left;
+    margin: 0 0 0.4rem;
+    padding: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+  .qr-container .subtitle {
+    display: block;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  .qr-container header {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #0066e0, #007bff);
+    padding: 1.5rem 2rem 1.25rem;
+    align-items: left;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1.5rem;
+  }
+  .qr-container #qr-code svg {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+  .qr-container .details {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #444;
+  }
+  #qr-code {
+    margin: 1rem 2rem 0;
+    padding: 1rem;
+    border-radius: 5%;
+    border: 2px solid rgba(0,0,0,0.2);
+    transition: all 0.3s ease-in;
+  }
+  #qr-code:hover {
+    border-color: var(--blue-baby);
+  }
+  .details {
+    display: flex;
+    flex-direction: row;
+    padding: 0 2rem;
+    gap:1rem;
+  }
+</style>

@@ -3,10 +3,23 @@ Rails.application.routes.draw do
   # bookmarks continue to work and to make functional tests easier.  these
   # redirects don't need helpers, so we explicitly disable naming to avoid
   # collisions with the real portal route below.
-  get "attendee_portal/*any" => redirect("/attendee-portal/%{any}"), as: nil
-  get "attendee_portal" => redirect("/attendee-portal"), as: nil
+  # legacy underscored path used prior to hyphenated URLs; redirect so old
+  # bookmarks continue to work and to make functional tests easier.  these
+  # redirects don't need helpers, so we explicitly disable naming to avoid
+  # collisions with the real portal route below.  ensure query parameters are
+  # forwarded so that links like /attendee_portal?code=XYZ still reach the
+  # login logic.
+  get "attendee_portal/*any" => redirect { |params, req|
+    query = req.query_string.present? ? "?#{req.query_string}" : ""
+    "/attendee-portal/#{params[:any]}#{query}"
+  }, as: nil
+  get "attendee_portal" => redirect { |params, req|
+    query = req.query_string.present? ? "?#{req.query_string}" : ""
+    "/attendee-portal#{query}"
+  }, as: nil
 
   get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
+  get "attendee-portal/qr-code" => "attendee_portal#qr_code", as: :attendee_portal_qr_code
   get "attendee-portal/waiver" => "attendee_portal#waiver", as: :attendee_portal_waiver
   patch "attendee-portal/waiver" => "attendee_portal#sign_waiver"
   patch "attendee-portal/" => "attendee_portal#update"  # profile edits should POST back here

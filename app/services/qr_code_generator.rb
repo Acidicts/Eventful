@@ -26,12 +26,42 @@ class QrCodeGenerator
     format = options.fetch(:format, :svg).to_sym
     case format
     when :svg
-      qrcode.as_svg(
+      svg = qrcode.as_svg(
         offset: 0,
         color: "000",
         shape_rendering: "crispEdges",
         module_size: options.fetch(:size, 6)
       )
+
+      # remove optional XML declaration that RQRCode prepends; browsers
+      # already treat the string as markup, and leaving it can break inline
+      # rendering when we insert the SVG into a larger document.
+      svg.sub!(/\A<\?xml[^>]*\?>\s*/i, "")
+
+      # ensure the SVG carries a viewBox so that it can scale responsively.
+      unless svg =~ /viewBox=/
+        # try to infer dimensions from explicit width/height attributes first;
+        # if those are wrong (as in the user-provided example) fall back to
+        # calculating bounds by scanning module <rect> elements.
+        if svg =~ /<svg[^>]+width="(\d+)"[^>]+height="(\d+)"/i
+          w, h = $1.to_i, $2.to_i
+        else
+          # scan for the maximum x/y position among modules
+          module_size = options.fetch(:size, 6).to_i
+          xs = svg.scan(/x="(\d+)"/).flatten.map(&:to_i)
+          ys = svg.scan(/y="(\d+)"/).flatten.map(&:to_i)
+          if xs.any? && ys.any?
+            w = xs.max + module_size
+            h = ys.max + module_size
+          end
+        end
+
+        if w && h
+          svg.sub!("<svg", "<svg viewBox=\"0 0 #{w} #{h}\"")
+        end
+      end
+
+      svg
     when :png
       png = qrcode.as_png(size: options.fetch(:size, 200))
       "data:image/png;base64,#{Base64.strict_encode64(png.to_s)}"

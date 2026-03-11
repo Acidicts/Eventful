@@ -2,7 +2,16 @@ class AttendeePortalController < ApplicationController
   # every action in this controller should use the attendee_portal layout
   layout "attendee_portal"
 
-  before_action :authenticate_attendee!, only: [ :index, :waiver, :sign_waiver, :update ]
+  # if a guest visits the portal URL with a valid attendee code we want to
+  # sign them in automatically rather than forcing them to go through the
+  # explicit login page.  this before_action runs _before_ the normal
+  # authenticate_attendee! filter so that the code is processed first.
+  before_action :sign_in_via_code, only: [ :index ]
+
+  # qr_code should only be visible to a logged‑in attendee; add it to the
+  # filter list so unauthenticated requests are redirected to login instead of
+  # rendering the "not found" placeholder.
+  before_action :authenticate_attendee!, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
 
   # GET /attendee_portal/login
   # render a simple code entry form unless already logged in
@@ -38,6 +47,29 @@ class AttendeePortalController < ApplicationController
   def index
     @attendee = current_attendee
     @event = @attendee.event
+  end
+
+  def qr_code
+    @attendee = current_attendee
+
+    unless @attendee
+      # render a minimal error page (could be styled or localized) and skip
+      # application layout so it's easy to embed or print.
+      @error_message = "Attendee not found for code #{params[:code]}"
+      render "show_not_found", layout: false, status: :not_found and return
+    end
+
+    @event = @attendee.event
+    @organisation = @event.organisation
+
+    # render a simple QR image containing the attendee’s unique code
+    # (not the full link) so that scanners yield the raw code string.
+    @qr_svg = QrCodeGenerator.generate(@attendee.code)
+    # RQRCode emits fixed width/height on the <svg> root which prevents
+    # responsive scaling. Strip only those two attributes from the opening
+    # <svg> tag; rect elements must keep their width/height to be visible.
+    @qr_svg = @qr_svg.sub(/<svg([^>]*)\s+width="\d+"([^>]*)\s+height="\d+"/, '<svg\1\2')
+                     .sub(/<svg([^>]*)\s+height="\d+"([^>]*)\s+width="\d+"/, '<svg\1\2')
   end
 
   # GET /attendee-portal/waiver
@@ -118,6 +150,21 @@ class AttendeePortalController < ApplicationController
   end
 
   private
+
+  # if we were given an attendee code as a query parameter, try to look it up
+  # and sign the user in by stashing the ID in the session.  we purposefully
+  # do _not_ redirect here; the normal authenticate_attendee! filter will let
+  # the request continue once the session has been set.
+  def sign_in_via_code
+    return if attendee_logged_in? || params[:code].blank?
+
+    code = params[:code].to_s.strip
+    if (attendee = Attendee.find_by(code: code))
+      session[:attendee_id] = attendee.id
+      # do not redirect – let the normal authenticate_attendee! filter run
+      # and render whatever action was originally requested (usually index).
+    end
+  end
 
   # permit the same fields the portal form allows
   def attendee_params

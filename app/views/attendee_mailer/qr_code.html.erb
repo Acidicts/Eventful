@@ -7,6 +7,6 @@ when you arrive at the event to check in.</p>
   <%= image_tag @qr_png_cid, alt: "QR code for #{@event.name}", width: 300, height: 300, style: "max-width:100%;" %>
 </p>
 
-<p>You can also view the code directly at
+<p>You can also view the event and QR code directly at
   <%= link_to @url, @qr_page %>
 </p>

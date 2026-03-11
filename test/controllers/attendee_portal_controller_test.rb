@@ -23,6 +23,28 @@ class AttendeePortalControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "auto sign in via code query param on index" do
+    # visiting the portal with ?code= should create a session and land on
+    # the portal page without requiring a separate POST to the login action.
+    get attendee_portal_path(code: @attendee.code)
+    # routing may issue a normalization redirect (trailing slash) so follow
+    # any redirect before asserting success.
+    if response.redirect?
+      follow_redirect!
+    end
+
+    assert_response :success
+    assert_equal @attendee.id, session[:attendee_id]
+  end
+
+  # qr_code is now protected by authentication; unauthenticated requests
+  # should be redirected to the login page rather than rendering our
+  # previous "not found" placeholder.
+  test "qr_code requires login" do
+    get attendee_portal_qr_code_path
+    assert_redirected_to attendee_portal_login_path
+  end
+
   test "waiver route requires login" do
     get attendee_portal_waiver_path
     assert_redirected_to attendee_portal_login_path
@@ -32,6 +54,22 @@ class AttendeePortalControllerTest < ActionDispatch::IntegrationTest
     get attendee_portal_waiver_path
     assert_response :success
   end
+
+  test "qr_code action renders svg when logged in" do
+    # unauthenticated users should be redirected to login
+    get attendee_portal_qr_code_path
+    assert_redirected_to attendee_portal_login_path
+
+    post attendee_portal_login_path, params: { code: @attendee.code }
+    follow_redirect!
+    get attendee_portal_qr_code_path
+    assert_response :success
+    svg = @response.body
+    assert_includes svg, "<svg" # basic sanity
+    assert_no_match /<\?xml/, svg
+    assert_match(/viewBox="0 0 \d+ \d+"/, svg)
+  end
+
 
   test "signing waiver updates attendee" do
     post attendee_portal_login_path, params: { code: @attendee.code }

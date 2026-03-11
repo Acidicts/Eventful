@@ -6,6 +6,17 @@ class QrCodeGeneratorTest < ActiveSupport::TestCase
     assert_match(/<svg/, svg)
     # generated QR codes use <rect> elements for modules, not <path>
     assert_match(/<rect/, svg)
+
+    # ensure output is ready for inline use
+    assert_no_match(/<\?xml/, svg, "xml declaration should be stripped")
+    assert_match(/viewBox="0 0 \d+ \d+"/, svg, "svg must include viewBox for scaling")
+
+    # viewBox dimensions should be larger than a trivial 0‑0 box; this guards
+    # against miscomputed values like the erroneous 50×50 seen previously.
+    viewbox = svg[/viewBox="([^"]+)"/, 1]
+    w, h = viewbox.split.map(&:to_i)[2, 2]
+    assert_operator w, :>, 50
+    assert_operator h, :>, 50
   end
 
   test "supports png format" do
