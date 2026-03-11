@@ -49,6 +49,14 @@
     <%= form.datetime_select :end_date, include_blank: true %>
   </div>
 
+  <div class="field">
+    <%= form.label :waiver, "Waiver (PDF or TXT)" %>
+    <%= form.file_field :waiver, accept: ".pdf,text/plain" %>
+    <% if event.waiver.attached? %>
+      <p>Current file: <%= link_to event.waiver.filename, rails_blob_path(event.waiver, disposition: "attachment") %></p>
+    <% end %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

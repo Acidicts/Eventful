@@ -53,6 +53,10 @@ gem "image_processing", "~> 1.2"
 # we'll generate SVGs server-side and render them in forms
 gem "rqrcode"
 
+# PDF manipulation for waiver signing
+gem "combine_pdf"
+gem "prawn"
+
 # the zxing gem depends on a java executable; we only load it lazily when
 # decoding is requested so tests and development don't fail if java isn't
 # installed.  require:false prevents bundler from automatically requiring it

@@ -2,6 +2,10 @@ class Attendee < ApplicationRecord
   # an attendee belongs to exactly one event (after migration). this
   # enforces presence by default unless nulls are allowed on the column.
   belongs_to :event, optional: true
+
+  # store the copy submitted by the attendee when they sign the waiver
+  has_one_attached :signed_waiver
+
   validate :capacity_not_exceeded, on: :create
   validate :ip_address_valid?, on: :create
   validate :ensure_unique_identifier, on: [ :create, :update ]
@@ -33,6 +37,36 @@ class Attendee < ApplicationRecord
     I18n.t("attendee.diets.#{diet}")
   end
 
+
+  # simple validation on file mime type/size for uploaded signed waivers
+  validate :signed_waiver_format
+
+  def signed_waiver_format
+    return unless signed_waiver.attached?
+    unless signed_waiver.content_type.in?([ "application/pdf", "text/plain" ])
+      errors.add(:signed_waiver, "must be a PDF or TXT file")
+    end
+    if signed_waiver.blob.byte_size > 5.megabytes
+      errors.add(:signed_waiver, "cannot be larger than 5 MB")
+    end
+  end
+  # require either a typed signature or an uploaded copy when the record is
+  # being marked as signed; the controller sets `waiver_signed` before
+  # updating, so this ensures the request included some evidence.
+  validate :signature_or_upload_present, if: :waiver_signed?
+  validate :parent_signature_present_if_underage, if: :under_18?
+
+  def signature_or_upload_present
+    if waiver_signature.blank? && !signed_waiver.attached?
+      errors.add(:base, "Please provide your name or upload the signed waiver")
+    end
+  end
+
+  def parent_signature_present_if_underage
+    if under_18? && parent_signature.blank?
+      errors.add(:parent_signature, "must be provided for under‑18 attendees")
+    end
+  end
   def capacity_not_exceeded
     return unless event
 

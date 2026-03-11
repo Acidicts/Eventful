@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendee Portal</title>
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+</style>
+
+<body>
+    <div class="container">
+      <% if current_attendee %>
+        <h1>Welcome, <%= current_attendee.name.presence || "Attendee" %></h1>
+        <p>Your code: <%= current_attendee.code %></p>
+        <%= button_to "Logout", attendee_portal_logout_path, method: :delete %>
+      <% else %>
+        <p>You are not signed in. Please <a href="<%= attendee_portal_login_path %>">log in</a>.</p>
+      <% end %>
+    </div>
+</body>
+</html>

@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :current_attendee, :attendee_logged_in?
 
   private
 
@@ -20,6 +20,20 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!
     redirect_to root_path, alert: "You must sign in first" unless user_signed_in?
+  end
+
+  # attendee portal helpers --------------------------------------------------
+
+  def current_attendee
+    @current_attendee ||= Attendee.find_by(id: session[:attendee_id]) if session[:attendee_id]
+  end
+
+  def attendee_logged_in?
+    current_attendee.present?
+  end
+
+  def authenticate_attendee!
+    redirect_to attendee_portal_login_path, alert: "Please sign in to access the attendee portal" unless attendee_logged_in?
   end
 
   def require_login

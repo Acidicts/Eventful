@@ -1,0 +1,202 @@
+<style>
+  /* global resets & typography */
+  body, .container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: #f4f7fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+  }
+
+  .event {
+    text-align: center;
+    flex: 1;
+    min-width: 40%;
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 6px;
+  }
+
+  .event h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+
+  .event p {
+    margin: 0 0 1rem;
+    color: #4a4a4a;
+  }
+
+  .event iframe {
+    width: 100%;
+    height: 450px;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .attendee-info {
+    flex: 1;
+    min-width: 40%;
+    padding: 20px;
+    background: #eef6ff;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .attendee-info h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+
+  .attendee-info p {
+    margin: 0.5rem 0;
+  }
+
+  /* form fields */
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #555;
+  }
+
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="number"],
+  .field select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background: #fff;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 3px rgba(102,175,233,0.6);
+  }
+
+  .actions {
+    margin-top: 1.5rem;
+    text-align: right;
+  }
+
+  .actions input[type="submit"],
+  .actions button {
+    background-color: #28a745;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .actions input[type="submit"]:hover,
+  .actions button:hover {
+    background-color: #218838;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      max-width: 95%;
+    }
+
+    .event, .attendee-info {
+      min-width: 100%;
+    }
+
+    .event iframe {
+      height: 300px;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="event">
+    <h1><%= @event.name %></h1>
+    <p><%= @event.description %></p>
+    <% if @event.waiver.attached? %>
+      <p><%= link_to "Download event waiver", rails_blob_path(@event.waiver, disposition: "attachment") %></p>
+    <% end %>
+    <iframe
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed/v1/place?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>
+            &q=<%= CGI.escape(@event.location.to_s) %>">
+    </iframe>
+  </div>
+
+  <div class="attendee-info">
+    <h2>Your Information</h2>
+    <p><strong>Name:</strong> <%= current_attendee.name.presence || "Unknown" %></p>
+    <p><strong>Code:</strong> <%= current_attendee.code %></p>
+
+    <%= form_with model: @attendee, id: "form",
+      url: attendee_portal_path,
+      method: :patch, local: true do |form| %>
+
+      <div class="field">
+        <%= form.label :email %>
+        <%= form.email_field :email %>
+      </div>
+
+      <div class="field">
+        <%= form.label :age %>
+        <%= form.number_field :age %>
+      </div>
+
+      <div class="field">
+        <%= form.label :diet %>
+        <%= form.select :diet,
+                        Attendee.diets.keys.map { |d| [d.humanize, d] },
+                        { include_blank: false },
+                        { id: 'diet-select' } %>
+      </div>
+
+      <!-- additional textbox triggered when diet is other -->
+      <div id="other-allergies" class="field field-hint hidden" style="width: 95%; padding-left:2.5%">
+        <%= form.label :other_diet,  "Please specify other diet", style:"color: #666; font-size: 0.875rem;" %>
+        <%= form.text_field :other_diet, id: 'other-allergies-input' %>
+      </div>
+
+      <!-- always-visible allergies field -->
+      <div id="default-allergies" class="field">
+        <%= form.label :allergies, "Allergies" %>
+        <%= form.text_field :allergies %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Update" %>
+      </div>
+    <% end %>
+  </div>
+</div>

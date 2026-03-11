@@ -1,0 +1,72 @@
+<%# dedicated waiver display/acceptance page %>
+<% if @event.waiver.attached? %>
+  <% if @attendee && @attendee.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@attendee.errors.count, "error") %> prevented the waiver from being signed:</h2>
+      <ul>
+        <% @attendee.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%# show inline preview when possible %>
+  <% if @event.waiver.content_type == "application/pdf" %>
+    <iframe
+      src="<%= url_for(@event.waiver) %>"
+      style="width:100%; height:600px; border:1px solid #ccc;"
+      frameborder="0">
+    </iframe>
+  <% else %>
+    <pre style="white-space: pre-wrap; border:1px solid #ccc; padding:10px;">
+      <%= @event.waiver.download %>
+    </pre>
+  <% end %>
+  <p><%= link_to "Download waiver", rails_blob_path(@event.waiver, disposition: "attachment") %></p>
+
+  <%# signing form or acknowledgement %>
+  <% if @attendee.waiver_signed? %>
+    <p>Waiver already signed on <%= @attendee.waiver_signed_at %></p>
+    <% if @attendee.waiver_signature.present? %>
+      <p>Signed as: <%= @attendee.waiver_signature %></p>
+    <% end %>
+    <% if @attendee.signed_waiver.attached? %>
+      <p>Submitted copy: <%= link_to @attendee.signed_waiver.filename, rails_blob_path(@attendee.signed_waiver, disposition: "attachment") %></p>
+    <% end %>
+  <% else %>
+    <%= form_with model: @attendee, url: attendee_portal_waiver_path, method: :patch, local: true, multipart: true, data: { controller: "under-age" } do |f| %>
+      <div class="field">
+        <%= f.check_box :under_18, data: { action: "under-age#toggle" } %>
+        <%= f.label :under_18, "I am under 18" %>
+      </div>
+
+      <div class="field" data-under-age-target="participant">
+        <%= f.label :waiver_signature, "Type participant name to sign the waiver" %>
+        <%= f.text_field :waiver_signature %>
+      </div>
+
+      <div class="field" data-under-age-target="parent" style="display:none;">
+        <%= f.label :parent_signature, "Parent/guardian signature" %>
+        <%= f.text_field :parent_signature %>
+      </div>
+
+      <div class="field">
+        <%= f.label :signed_waiver, "Upload signed waiver (PDF or TXT)" %>
+        <%= f.file_field :signed_waiver, accept: ".pdf,text/plain" %>
+      </div>
+
+      <div class="actions">
+        <%= f.submit "Sign Waiver" %>
+      </div>
+    <% end %>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const controller = document.querySelector('[data-controller="under-age"]');
+        if (!controller) return;
+      });
+    </script>
+  <% end %>
+<% else %>
+  <p>No waiver has been uploaded for this event.</p>
+<% end %>

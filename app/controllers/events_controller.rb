@@ -2,7 +2,7 @@ class EventsController < ApplicationController
   # only look up an organisation when the request is scoped to one
   before_action :set_organisation, if: -> { params[:organisation_id].present? }
   # make sure we load @event for the member actions too (nested only)
-  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan], if: -> { params[:organisation_id].present? }
+  before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
 
   def index
     # events are only accessible via an organisation context. if somehow we
@@ -191,6 +191,31 @@ class EventsController < ApplicationController
     render "organisations/dashboard/events/attendee"
   end
 
+  # GET /org/:org_id/events/:id/attendee/:attendee_id/waiver
+  def attendee_waiver
+    @attendee = @event.attendees.find(params[:attendee_id])
+    render "organisations/dashboard/events/attendee_waiver"
+  end
+
+  # DELETE /org/:org_id/events/:id/attendee/:attendee_id/waiver
+  def destroy_attendee_waiver
+    @attendee = @event.attendees.find(params[:attendee_id])
+    if @attendee.presence
+      @attendee.waiver_signature = nil
+      @attendee.waiver_signed = false
+      @attendee.waiver_signed_at = nil
+      if @attendee.signed_waiver.attached?
+        @attendee.signed_waiver.purge
+        @attendee.update(waiver_signed: false, waiver_signed_at: nil, waiver_signature: nil)
+        flash[:notice] = "Signed waiver removed."
+      else
+        flash[:alert] = "No waiver to delete."
+      end
+      @attendee.save
+    end
+    redirect_to attendee_waiver_organisation_event_path(@organisation, @event, attendee_id: @attendee.id)
+  end
+
   private
 
   def attendee_params
@@ -226,7 +251,18 @@ class EventsController < ApplicationController
 
   def event_params
     # `attendee_id` has been removed from the events table; attendees now
-    # belong to events. only keep the remaining scalar columns.
-    params.require(:event).permit(:name, :description, :capacity, :applied, :location, :start_date, :end_date, :organiser_id)
+    # belong to events. only keep the remaining scalar columns. additionally
+    # permit a waiver file upload via Active Storage.
+    params.require(:event).permit(
+      :name,
+      :description,
+      :capacity,
+      :applied,
+      :location,
+      :start_date,
+      :end_date,
+      :organiser_id,
+      :waiver
+    )
   end
 end

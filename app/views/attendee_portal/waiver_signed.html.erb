@@ -1,0 +1,9 @@
+<% if @attendee.signed_waiver.content_type == "application/pdf" %>
+        <iframe src="<%= url_for(@attendee.signed_waiver) %>"
+                style="width:100%; height:500px; border:1px solid #ccc;"
+                frameborder="0"></iframe>
+      <% else %>
+        <pre style="white-space: pre-wrap; border:1px solid #ccc; padding:10px;">
+          <%= @attendee.signed_waiver.download %>
+        </pre>
+      <% end %>

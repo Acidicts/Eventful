@@ -56,6 +56,15 @@
 </p>
 
 <p>
+  <strong>Waiver:</strong>
+  <% if @event.waiver.attached? %>
+    <%= link_to "Download waiver", rails_blob_path(@event.waiver, disposition: "attachment") %>
+  <% else %>
+    none
+  <% end %>
+</p>
+
+<p>
   <strong>Attendee count:</strong>
   <%= link_to "View Attendees", attendees_organisation_event_path(@organisation, @event) %>
 </p>

@@ -1,0 +1,35 @@
+<h1>Attendee waiver</h1>
+
+<% if @attendee %>
+  <p><strong>Name:</strong> <%= @attendee.name %></p>
+  <p><strong>Signed:</strong> <%= @attendee.waiver_signed ? "Yes" : "No" %></p>
+  <% if @attendee.waiver_signed? %>
+    <% if @attendee.waiver_signature.present? %>
+      <p><strong>Signature:</strong> <%= @attendee.waiver_signature %></p>
+    <% end %>
+
+    <% if @attendee.signed_waiver.attached? %>
+      <%# preview uploaded file inline %>
+      <% if @attendee.signed_waiver.content_type == "application/pdf" %>
+        <iframe src="<%= url_for(@attendee.signed_waiver) %>"
+                style="width:100%; height:500px; border:1px solid #ccc;"
+                frameborder="0"></iframe>
+      <% else %>
+        <pre style="white-space: pre-wrap; border:1px solid #ccc; padding:10px;">
+          <%= @attendee.signed_waiver.download %>
+        </pre>
+      <% end %>
+      <p><%= link_to "Download attendee's copy", rails_blob_path(@attendee.signed_waiver, disposition: "attachment") %></p>
+    <% else %>
+      <p>No copy uploaded.</p>
+    <% end %>
+  <% else %>
+    <p>The attendee has not signed the waiver yet.</p>
+  <% end %>
+  <p><%= button_to "Delete attendee's waiver", destroy_attendee_waiver_organisation_event_path(@organisation, @event, attendee_id: @attendee.id), method: :delete, data: { confirm: "Are you sure?" } %></p>
+<% else %>
+  <p>Attendee not found.</p>
+<% end %>
+
+<%= link_to "Back to attendee", attendee_organisation_event_path(@organisation, @event, attendee_id: @attendee.id) %> | 
+<%= link_to "Back to list", attendees_organisation_event_path(@organisation, @event) %>

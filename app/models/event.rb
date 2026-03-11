@@ -1,4 +1,9 @@
 class Event < ApplicationRecord
+  # allow a waiver document (txt or pdf) to be attached to the event
+  # for attendees to review or download. this uses Active Storage, so the
+  # corresponding tables are created via a new migration.
+  has_one_attached :waiver
+
   # each event can have many attendees; the foreign key lives on the
   # attendees table. existing data is migrated during a migration.
   has_many :attendees, dependent: :nullify
@@ -14,6 +19,26 @@ class Event < ApplicationRecord
 
   attribute :start_date, :datetime
   attribute :end_date, :datetime
+
+  # ensure the attached waiver is either a PDF or plaintext file and
+  # isn't ridiculously large. avoid relying on the built–in
+  # ContentTypeValidator since it isn't loaded in the test harness
+  # unless activestorage migrations have run, which leads to
+  # `Unknown validator: 'ContentTypeValidator'` errors. a custom
+  # validation is simpler and explicit.
+  validate :waiver_format
+
+  def waiver_format
+    return unless waiver.attached?
+
+    unless waiver.content_type.in?([ "application/pdf", "text/plain" ])
+      errors.add(:waiver, "must be a PDF or TXT file")
+    end
+
+    if waiver.blob.byte_size > 5.megabytes
+      errors.add(:waiver, "cannot be larger than 5 MB")
+    end
+  end
 
   validate :end_date_after_start_date
 

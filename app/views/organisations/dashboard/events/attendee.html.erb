@@ -7,6 +7,10 @@
   <p>Allergies: <%= @attendee.allergies || "None" %></p>
   <p>Code: <%= @attendee.code %></p>
   <p>Waiver Signed: <%= @attendee.waiver_signed ? "Yes" : "No" %></p>
+  <p><%= link_to "View waiver details", attendee_waiver_organisation_event_path(@organisation, @event, attendee_id: @attendee.id) %></p>
+  <% if @attendee.signed_waiver.attached? %>
+    <p><%= link_to "Download signed copy", rails_blob_path(@attendee.signed_waiver, disposition: "attachment") %></p>
+  <% end %>
 <% else %>
   <p>Attendee not found.</p>
 <% end %>

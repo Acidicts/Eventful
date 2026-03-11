@@ -1,4 +1,20 @@
 Rails.application.routes.draw do
+  # legacy underscored path used prior to hyphenated URLs; redirect so old
+  # bookmarks continue to work and to make functional tests easier.  these
+  # redirects don't need helpers, so we explicitly disable naming to avoid
+  # collisions with the real portal route below.
+  get "attendee_portal/*any" => redirect("/attendee-portal/%{any}"), as: nil
+  get "attendee_portal" => redirect("/attendee-portal"), as: nil
+
+  get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
+  get "attendee-portal/waiver" => "attendee_portal#waiver", as: :attendee_portal_waiver
+  patch "attendee-portal/waiver" => "attendee_portal#sign_waiver"
+  patch "attendee-portal/" => "attendee_portal#update"  # profile edits should POST back here
+
+  # simple portal login using attendee code (no user account required)
+  get  "attendee-portal/login"  => "attendee_portal#login",  as: :attendee_portal_login
+  post "attendee-portal/login"  => "attendee_portal#authenticate"
+  delete "attendee-portal/logout" => "attendee_portal#logout", as: :attendee_portal_logout
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -64,6 +80,10 @@ Rails.application.routes.draw do
         # editing existing attendee
         get "attendee/:attendee_id/edit", to: "events#edit_attendee", as: :edit_attendee
         patch "attendee/:attendee_id", to: "events#update_attendee"
+
+        # view specific attendee waiver
+        get "attendee/:attendee_id/waiver", to: "events#attendee_waiver", as: :attendee_waiver
+        delete "attendee/:attendee_id/waiver", to: "events#destroy_attendee_waiver", as: :destroy_attendee_waiver
 
         # sign‑up form and submission
         get "apply", to: "events#apply"
