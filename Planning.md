@@ -22,26 +22,28 @@
         - [x] Age
         - [x] Allergies
         - [x] Dietary Requirements
-        - [ ] Contact Information
+        - [x] Contact Information
           - [x] Email
           - [ ] Phone Number (optional)
-      - [ ] QR Code ID
+      - [x] QR Code ID
         - [x] Quick Info Finder
-        - [ ] Attendence Tracking
+        - [x] Attendence Tracking
           - [x] Current
-          - [ ] Past
+          - [ ] Past Attendence (Check in and out times)
         - [x] Event Check-in
       - [x] QR Code Emails
         - [x] QR Code
-    - [ ] Event Details
+    - [x] Waiver Signing
+    - [x] Portal Messaging
+    - [x] Event Details
         - [x] Name
-        - [ ] Date
-        - [ ] Location
+        - [x] Date
+        - [x] Location
         - [x] Description
-        - [ ] Organizer Information
+        - [x] Organizer Information
             - [x] Name
-            - [ ] Contact Information
-                - [ ] Email
+            - [x] Contact Information
+                - [x] Email
                 - [ ] Phone Number (optional)
     - [ ] Notifications
         - [ ] Event Updates
@@ -63,6 +65,7 @@
         - [x] Event Management
             - [x] Create/Edit/Delete Events
             - [x] View Attendee List
+            - [x] View Individual Attendee Profiles
         - [ ] Notification Management
             - [ ] Send Announcements
             - [ ] Schedule Reminders
