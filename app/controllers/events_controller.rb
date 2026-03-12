@@ -1,6 +1,7 @@
 class EventsController < ApplicationController
   # only look up an organisation when the request is scoped to one
   before_action :set_organisation, if: -> { params[:organisation_id].present? }
+  before_action :require_login
   # make sure we load @event for the member actions too (nested only)
   before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
 

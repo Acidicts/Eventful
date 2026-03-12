@@ -277,17 +277,20 @@
 
   <body>
     <header style="width: 100%; display:inline-flex; position: relative;">
-      <% if attendee_logged_in? %>
-      <div class="header-left">
-        <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
-        <strong class="branding"><%= @organisation&.eventful_branding ? "Eventful" : @organisation&.name %></strong>
+      <% if current_user %>
+        <div class="header-left">
+          <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
+          
+          <% if current_user.organisations.any? && !current_user.organisations.where(eventful_branding: false).any? %>
+            <strong class="branding"><%= current_user.organisations.first.eventful_branding ? "Eventful" : @organisation&.name %></strong>
+          <% end %>
 
-        <div id="nav-dropdown">
-            <%= button_to "Home", root_path, method: :get, data: { turbo: false }, id: "home-button" %>
-            <%= button_to "Organisations", organisations_path, method: :get, data: { turbo: false }, id: "organisations-button" %>
-            <%= button_to "Events", events_path, method: :get, data: { turbo: false }, id: "qr-code-button" %>
+          <div id="nav-dropdown">
+              <%= button_to "Home", root_path, method: :get, data: { turbo: false }, id: "home-button" %>
+              <%= button_to "Organisations", organisations_path, method: :get, data: { turbo: false }, id: "organisations-button" %>
+              <%= button_to "Events", events_path, method: :get, data: { turbo: false }, id: "qr-code-button" %>
+          </div>
         </div>
-      </div>
         <%= button_to 'Sign out', attendee_portal_logout_path, method: :delete, data: { turbo: false }, id: "sign-out-button" %>
       <% end %>
     </header>
@@ -322,8 +325,51 @@
       });
     }
 
-    // Run on initial load and after Turbo navigations
+    // Initialize header/menu logic once (guards against Turbo re-initialization)
+    function initHeaderMenu() {
+      if (window.headerMenuInitialized) return;
+      window.headerMenuInitialized = true;
+
+      // Preload menu icons to prevent flicker
+      const menuOpenIcon = new Image();
+      menuOpenIcon.src = "<%= icon_menu_open_path(color: 'white') %>";
+      const menuClosedIcon = new Image();
+      menuClosedIcon.src = "https://icons.hackclub.com/api/icons/white/menu";
+
+      function closeMenu(menuBtn, navDropdown) {
+        navDropdown.classList.remove("open");
+        menuBtn.classList.remove("open");
+        menuBtn.src = menuClosedIcon.src;
+      }
+
+      // use event delegation so listeners only added once
+      document.addEventListener("click", (e) => {
+        const menuBtn = document.getElementById("menu");
+        const navDropdown = document.getElementById("nav-dropdown");
+        if (!menuBtn || !navDropdown) return;
+
+        if (e.target.closest("#menu")) {
+          const isOpen = navDropdown.classList.toggle("open");
+          menuBtn.classList.toggle("open", isOpen);
+          menuBtn.src = isOpen ? menuOpenIcon.src : menuClosedIcon.src;
+          return;
+        }
+
+        if (e.target.closest("#nav-dropdown button")) {
+          closeMenu(menuBtn, navDropdown);
+          return;
+        }
+
+        if (!e.target.closest("#nav-dropdown") && !e.target.closest("#menu")) {
+          // clicked outside both controls
+          closeMenu(menuBtn, navDropdown);
+        }
+      });
+    }
+
+    // Run initializers on load events
     initImageFadeIn();
+    initHeaderMenu();
 
     // Page transition animations with Turbo
     document.addEventListener("turbo:visit", () => {
@@ -337,6 +383,7 @@
     document.addEventListener("turbo:load", () => {
       document.body.classList.remove("turbo-loading");
       initImageFadeIn();
+      // header menu already wired globally; no need to re-init
     });
 
     // Auto-dismiss flash messages after 5 seconds
@@ -346,45 +393,5 @@
         setTimeout(() => el.remove(), 300);
       });
     }, 3000);
-
-    const menuBtn = document.getElementById("menu");
-    const navDropdown = document.getElementById("nav-dropdown");
-
-    // Preload menu icons to prevent flicker
-    const menuOpenIcon = new Image();
-    menuOpenIcon.src = "<%= icon_menu_open_path(color: 'white') %>";
-    const menuClosedIcon = new Image();
-    menuClosedIcon.src = "https://icons.hackclub.com/api/icons/white/menu";
-
-      function closeMenu() {
-        if (!menuBtn || !navDropdown) return;
-
-        navDropdown.classList.remove("open");
-        menuBtn.classList.remove("open");
-        menuBtn.src = menuClosedIcon.src;
-      }
-
-    menuBtn?.addEventListener("click", () => {
-      const isOpen = navDropdown.classList.toggle("open");
-      menuBtn.classList.toggle("open", isOpen);
-      menuBtn.src = isOpen ? menuOpenIcon.src : menuClosedIcon.src;
-    });
-
-      navDropdown?.addEventListener("click", (e) => {
-        if (e.target.closest("button")) {
-          closeMenu();
-        }
-      });
-
-      navDropdown?.addEventListener("submit", () => {
-        closeMenu();
-      });
-
-    // close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (menuBtn && navDropdown && !menuBtn.contains(e.target) && !navDropdown.contains(e.target)) {
-          closeMenu();
-      }
-    });
   </script>
 </html>
