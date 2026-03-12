@@ -1,6 +1,15 @@
 <%# ensure we know who "user" refers to even if the caller forgets to pass it %>
 <% user ||= current_attendee %>
-<div class="message" id="message-<%= message.id %>">
+<div class="message" 
+     id="message-<%= message.id %>"
+     data-message-id="<%= message.id %>"
+     data-message-text="<%= message.message.gsub('"', '&quot;') %>"
+     data-message-from="<%= message.sender == user ? 'You' : "#{message.sender.name} (ID : #{message.sender.id})" %>"
+     data-message-timestamp="<%= message.created_at.strftime("%B %d, %Y at %I:%M %p") %>"
+     data-message-answer="<%= message.answer.to_s.gsub('"', '&quot;') %>"
+     data-answerer-name="<%= message.answerer ? message.answerer.name : '' %>"
+     data-answerer-role="<%= message.answerer ? message.answerer.role : '' %>"
+     data-is-answered="<%= !message.answer.blank? %>">
     <div class="badge-container">
         <% if !message.answer.blank? %>
             <span class="badge badge-green">Answered</span>

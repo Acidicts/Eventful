@@ -1,6 +1,10 @@
 <%# ensure we know who "user" refers to even if the caller forgets to pass it %>
 <% user ||= current_attendee %>
-<div class="message">
+<div class="message" 
+     id="extended-message-<%= message.id %>"
+     data-message-id="<%= message.id %>"
+     data-message-text="<%= message.message.gsub('"', '&quot;') %>"
+     data-message-answer="<%= message.answer.to_s.gsub('"', '&quot;') %>">
     <div class="badge-container">
         <% if !message.answer.blank? %>
             <span class="badge badge-green">Answered</span>
@@ -14,7 +18,7 @@
         <% else %>
             <p><strong>From:</strong> <%= message.sender.name %> (ID : <%= message.sender.id %>)</p>
         <% end %>
-        <p class="message-text"><%= message.message %></p>
+        <p class="message-text typewriter" id="typewriter-message-<%= message.id %>"></p>
         <%= render "answer", message: message, user: user if !message.answer.blank? %>
     </div>
     <style>
@@ -27,3 +31,26 @@
     </style>
     <p class="message-timestamp"><small><%= message.created_at.strftime("%B %d, %Y at %I:%M %p") %></small></p>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const messageId = '<%= message.id %>';
+        const messageText = '<%= message.message.gsub("'", "\\'").gsub('"', '&quot;') %>';
+        const messageElement = document.getElementById(`typewriter-message-${messageId}`);
+
+        if (messageElement) {
+            typeWriterExtended(messageText, messageElement, 0);
+        }
+
+        function typeWriterExtended(text, element, i) {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                setTimeout(function() {
+                    typeWriterExtended(text, element, i + 1);
+                }, 30);
+            } else {
+                element.classList.add('done');
+            }
+        }
+    });
+</script>

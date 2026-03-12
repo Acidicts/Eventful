@@ -15,6 +15,15 @@
         width: 80%;
         margin-left: 20px;
         margin-top: 20px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .message:hover {
+        background-color: #e9ecef;
+    }
+    .message.focused {
+        background-color: #d4edda;
+        border-color: #28a745;
     }
     .message-text {
         margin-left: 10px;
@@ -56,11 +65,136 @@
         width:50%;
         padding-left: 20px;
         border: 1px solid #969696;
-        border-radius: 6px; 
+        border-radius: 6px;
         background-color: #f4f7fa;
         margin: 20px;
     }
+    .typewriter {
+        overflow: hidden;
+        border-right: 2px solid #333;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        animation: blink-caret 0.75s step-end infinite;
+    }
+    .typewriter.done {
+        border-right: none;
+        animation: none;
+    }
+    @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: #333; }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const messages = document.querySelectorAll('#queries .message');
+        const focusedMessageDiv = document.getElementById('focused-message');
+        
+        messages.forEach(function(messageEl) {
+            messageEl.addEventListener('click', function() {
+                // Remove focused class from all messages
+                messages.forEach(function(m) {
+                    m.classList.remove('focused');
+                });
+                
+                // Add focused class to clicked message
+                this.classList.add('focused');
+                
+                // Get message data
+                const messageId = this.dataset.messageId;
+                const messageText = this.dataset.messageText;
+                const messageFrom = this.dataset.messageFrom;
+                const messageTimestamp = this.dataset.messageTimestamp;
+                const messageAnswer = this.dataset.messageAnswer;
+                const answererName = this.dataset.answererName;
+                const answererRole = this.dataset.answererRole;
+                const isAnswered = this.dataset.isAnswered === 'true';
+
+                // Build the extended message HTML with typewriter effect
+                let extendedHtml = `
+                    <div class="message" id="extended-message-${messageId}">
+                        <div class="badge-container">
+                            ${isAnswered ? '<span class="badge badge-green">Answered</span>' : '<span class="badge badge-red">Not Answered</span>'}
+                        </div>
+                        <div class="message-content">
+                            <p><strong>From:</strong> ${messageFrom}</p>
+                            <p class="message-text typewriter" id="typewriter-message-${messageId}"></p>
+                `;
+
+                if (isAnswered && messageAnswer) {
+                    let answererBadge = '';
+                    if (answererName) {
+                        let badgeColour = answererRole === 'superadmin' ? 'blue' : (answererRole === 'admin' ? 'red' : 'gray');
+                        let textColour = 'white';
+                        let displayRole = answererRole ? answererRole.charAt(0).toUpperCase() + answererRole.slice(1).replace('_', ' ') : 'User';
+                        answererBadge = `
+                            <span class="answerer-badge" id="answerer-badge-${messageId}" style="opacity: 0;">
+                                <span class="username-wrapper">
+                                    <strong>${answererName} <span id="role" style="display: inline-block; padding: 0.25em 0.5em; background-color: ${badgeColour}; color: ${textColour}; border-radius: 25px; border: 1px solid ${textColour}; transform: scale(0.75); transform-origin: left center; white-space: nowrap;">${displayRole}</span></strong>
+                                </span>
+                            </span>
+                        `;
+                    }
+                    extendedHtml += `
+                            <div class="answer">
+                                ${answererBadge}
+                                <p class="answer-text typewriter" id="typewriter-answer-${messageId}"></p>
+                            </div>
+                    `;
+                }
+                
+                extendedHtml += `
+                        </div>
+                        <style>
+                            .message-timestamp {
+                                text-align: right;
+                                position: relative;
+                                right:5px;
+                                bottom:5px;
+                            }
+                        </style>
+                        <p class="message-timestamp"><small>${messageTimestamp}</small></p>
+                    </div>
+                `;
+                
+                focusedMessageDiv.innerHTML = extendedHtml;
+                
+                // Trigger typewriter animation for message text
+                const messageElement = document.getElementById(`typewriter-message-${messageId}`);
+                if (messageElement) {
+                    typeWriter(messageText, messageElement, 0, function() {
+                        // After message is done, type the answer if it exists
+                        const answerElement = document.getElementById(`typewriter-answer-${messageId}`);
+                        if (answerElement && messageAnswer) {
+                            typeWriter(messageAnswer, answerElement, 0, function() {
+                                answerElement.classList.add('done');
+                                // Fade in the answerer badge
+                                const badgeElement = document.getElementById(`answerer-badge-${messageId}`);
+                                if (badgeElement) {
+                                    badgeElement.style.transition = 'opacity 0.5s ease';
+                                    badgeElement.style.opacity = '1';
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        
+        function typeWriter(text, element, i, callback) {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                element.classList.remove('done');
+                setTimeout(function() {
+                    typeWriter(text, element, i + 1, callback);
+                }, 30);
+            } else if (callback) {
+                callback();
+            }
+        }
+    });
+</script>
 
 <div style="width:100%; display:flex; flex-direction:row; align-items:center;">
     <div id="queries">

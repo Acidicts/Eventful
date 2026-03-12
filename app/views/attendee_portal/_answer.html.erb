@@ -1,8 +1,50 @@
 <div class="answer">
     <%# render the shared username badge from application views; message.answerer may be nil %>
-    <% if message.answerer %>
-      <%= render "application/username", current_user: message.answerer, scale: 0.75 %>
-    <% end %>
+    <span class="answerer-badge" id="answerer-badge-<%= message.id %>">
+        <% if message.answerer %>
+          <%= render "username", current_user: message.answerer, scale: 0.75 %>
+        <% end %>
+    </span>
 
-    <p class="answer-text"><%= message.answer %></p>
+    <p class="answer-text typewriter" id="typewriter-answer-<%= message.id %>"></p>
 </div>
+
+<style>
+    .answerer-badge {
+        opacity: 0;
+    }
+    
+    @keyframes fade-in-badge {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const answerId = '<%= message.id %>';
+        const answerText = '<%= message.answer.to_s.gsub("'", "\\'").gsub('"', '&quot;') %>';
+        const answerElement = document.getElementById(`typewriter-answer-${answerId}`);
+        const badgeElement = document.getElementById(`answerer-badge-${answerId}`);
+
+        if (answerElement && answerText) {
+            typeWriterAnswer(answerText, answerElement, 0, function() {
+                answerElement.classList.add('done');
+                if (badgeElement) {
+                    badgeElement.style.animation = 'fade-in-badge 0.5s ease forwards';
+                }
+            });
+        }
+
+        function typeWriterAnswer(text, element, i, callback) {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                setTimeout(function() {
+                    typeWriterAnswer(text, element, i + 1, callback);
+                }, 30);
+            } else if (callback) {
+                callback();
+            }
+        }
+    });
+</script>
