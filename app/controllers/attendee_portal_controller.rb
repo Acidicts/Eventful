@@ -128,8 +128,10 @@ class AttendeePortalController < ApplicationController
     @attendee = current_attendee
 
     if @attendee.update(attendee_params)
-      flash[:notice] = "Profile updated successfully."
-      redirect_to attendee_portal_path
+      unless params[:source]&.include?("rsvp-edit")
+        flash[:notice] = "Profile updated successfully."
+        redirect_to attendee_portal_path
+      end
     else
       # re‑load event for view template
       @event = @attendee.event
@@ -156,7 +158,7 @@ class AttendeePortalController < ApplicationController
 
   # permit the same fields the portal form allows
   def attendee_params
-    params.require(:attendee).permit(:email, :age, :diet, :other_diet, :allergies)
+    params.require(:attendee).permit(:email, :age, :diet, :other_diet, :allergies, :attending)
   end
 
   def set_organisation

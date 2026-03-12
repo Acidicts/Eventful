@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_11_230946) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_184745) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -43,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_230946) do
     t.integer "age"
     t.string "allergies"
     t.integer "attendance", default: 0
+    t.boolean "attending", default: false, null: false
     t.string "code"
     t.datetime "created_at", null: false
     t.integer "diet", default: 0, null: false
@@ -77,6 +78,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_230946) do
     t.index ["apply_token"], name: "index_events_on_apply_token", unique: true
     t.index ["organisation_id"], name: "index_events_on_organisation_id"
     t.index ["organiser_id"], name: "index_events_on_organiser_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string "answer"
+    t.datetime "created_at", null: false
+    t.string "message"
+    t.boolean "read", default: false
+    t.integer "reciever_id", null: false
+    t.integer "sender_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reciever_id"], name: "index_messages_on_reciever_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -119,6 +132,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_11_230946) do
   add_foreign_key "attendees", "events"
   add_foreign_key "events", "organisations"
   add_foreign_key "events", "users", column: "organiser_id"
+  add_foreign_key "messages", "recievers"
+  add_foreign_key "messages", "senders"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
   add_foreign_key "users", "organisations"

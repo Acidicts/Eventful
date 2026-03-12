@@ -112,14 +112,72 @@
       border: 1px solid #bee5eb;
     }
 
+    /* Prevent header layout shift */
+    header {
+      min-height: 64px; /* reserve space */
+    }
+
+    .header-left {
+      display: inline-flex;
+      align-items: center;
+      min-width: 200px; /* prevent reflow */
+    }
+
     #menu {
       cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, opacity 0.3s ease;
       transform: rotate(0deg);
+      width: 48px;
+      height: 48px;
+      opacity: 0;
+    }
+
+    #menu.loaded {
+      opacity: 1;
     }
 
     #menu.open {
       transform: rotate(90deg);
+    }
+
+    .branding {
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+      opacity: 0;
+      animation: fadeIn 0.3s ease-out 0.1s forwards;
+    }
+
+    /* Fade in for dynamically loaded images */
+    img:not(.no-fade) {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    img.loaded:not(.no-fade) {
+      opacity: 1;
+    }
+
+    /* General fade-in utility */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    /* Sign out button fade in */
+    #sign-out-button {
+      opacity: 0;
+      animation: fadeIn 0.3s ease-out 0.15s forwards;
+    }
+
+    /* Footer fade in */
+    footer {
+      opacity: 0;
+      animation: fadeIn 0.4s ease-out 0.2s forwards;
     }
 
     #nav-dropdown {
@@ -162,14 +220,67 @@
     #nav-dropdown.open button:nth-child(1) { transition-delay: 0.05s; transform: translateX(0); opacity: 1; }
     #nav-dropdown.open button:nth-child(2) { transition-delay: 0.10s; transform: translateX(0); opacity: 1; }
     #nav-dropdown.open button:nth-child(3) { transition-delay: 0.15s; transform: translateX(0); opacity: 1; }
+
+    /* Page transition animations */
+    .turbo-progress-bar {
+      background: linear-gradient(90deg, #007bff, #00d4ff);
+      height: 3px;
+    }
+
+    main, .page-content {
+      animation: pageEnter 0.3s ease-out;
+    }
+
+    @keyframes pageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    body.turbo-loading main,
+    body.turbo-loading .page-content {
+      animation: pageExit 0.15s ease-in forwards;
+    }
+
+    @keyframes pageExit {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Smooth fade for flash messages */
+    .flash {
+      animation: flashEnter 0.4s ease-out;
+    }
+
+    @keyframes flashEnter {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 
   <body>
     <header style="width: 100%; display:inline-flex; position: relative;">
       <% if attendee_logged_in? %>
-      <div style="display:inline-flex; align-items: center;">
-        <img id="menu" height="48px" src="https://icons.hackclub.com/api/icons/white/menu">
-        <strong style="color:white; font-size:1.5rem; margin-bottom:4px;"><%= @organisation&.eventful_branding ? "Eventful" : @organisation&.name %></strong>
+      <div class="header-left">
+        <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
+        <strong class="branding"><%= @organisation&.eventful_branding ? "Eventful" : @organisation&.name %></strong>
 
         <div id="nav-dropdown">
             <%= button_to "Go Home", attendee_portal_path, method: :get, data: { turbo: false }, id: "home-button" %>
@@ -188,31 +299,90 @@
       </div>
     <% end %>
 
-    <%= yield %>
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer>
+      <p style="text-align: center; color: #888; font-size: 0.875rem; margin: 2rem 0;">
+        &copy; <%= Time.current.year %> Eventful. All rights reserved. ~ JK
+      </p>
+    </footer>
   </body>
   <script>
+    // Handle image fade-in on load
+    function initImageFadeIn() {
+      document.querySelectorAll('img:not(.loaded):not(.no-fade)').forEach(img => {
+        if (img.complete) {
+          img.classList.add('loaded');
+        } else {
+          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+        }
+      });
+    }
+
+    // Run on initial load and after Turbo navigations
+    initImageFadeIn();
+
+    // Page transition animations with Turbo
+    document.addEventListener("turbo:visit", () => {
+      document.body.classList.add("turbo-loading");
+    });
+
+    document.addEventListener("turbo:before-render", () => {
+      document.body.classList.remove("turbo-loading");
+    });
+
+    document.addEventListener("turbo:load", () => {
+      document.body.classList.remove("turbo-loading");
+      initImageFadeIn();
+    });
+
     // Auto-dismiss flash messages after 5 seconds
     setTimeout(() => {
-      document.querySelectorAll('.flash').forEach(el => el.remove());
+      document.querySelectorAll('.flash').forEach(el => {
+        el.style.animation = 'pageExit 0.3s ease-in forwards';
+        setTimeout(() => el.remove(), 300);
+      });
     }, 3000);
 
     const menuBtn = document.getElementById("menu");
     const navDropdown = document.getElementById("nav-dropdown");
 
+    // Preload menu icons to prevent flicker
+    const menuOpenIcon = new Image();
+    menuOpenIcon.src = "<%= icon_menu_open_path(color: 'white') %>";
+    const menuClosedIcon = new Image();
+    menuClosedIcon.src = "https://icons.hackclub.com/api/icons/white/menu";
+
+      function closeMenu() {
+        if (!menuBtn || !navDropdown) return;
+
+        navDropdown.classList.remove("open");
+        menuBtn.classList.remove("open");
+        menuBtn.src = menuClosedIcon.src;
+      }
+
     menuBtn?.addEventListener("click", () => {
       const isOpen = navDropdown.classList.toggle("open");
       menuBtn.classList.toggle("open", isOpen);
-      menuBtn.src = isOpen
-        ? "<%= icon_menu_open_path(color: 'white') %>"
-        : "https://icons.hackclub.com/api/icons/white/menu";
+      menuBtn.src = isOpen ? menuOpenIcon.src : menuClosedIcon.src;
     });
+
+      navDropdown?.addEventListener("click", (e) => {
+        if (e.target.closest("button")) {
+          closeMenu();
+        }
+      });
+
+      navDropdown?.addEventListener("submit", () => {
+        closeMenu();
+      });
 
     // close dropdown when clicking outside
     document.addEventListener("click", (e) => {
       if (menuBtn && navDropdown && !menuBtn.contains(e.target) && !navDropdown.contains(e.target)) {
-        navDropdown.classList.remove("open");
-        menuBtn.classList.remove("open");
-        menuBtn.src = "https://icons.hackclub.com/api/icons/white/menu";
+          closeMenu();
       }
     });
   </script>

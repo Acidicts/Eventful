@@ -142,9 +142,6 @@
   <div class="event">
     <h1><%= @event.name %></h1>
     <p><%= @event.description %></p>
-    <% if @event.waiver.attached? %>
-      <p><%= link_to "Download event waiver", rails_blob_path(@event.waiver, disposition: "attachment") %></p>
-    <% end %>
     <iframe
         style="border:0"
         loading="lazy"
@@ -153,12 +150,51 @@
         src="https://www.google.com/maps/embed/v1/place?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>
             &q=<%= CGI.escape(@event.location.to_s) %>">
     </iframe>
+    <% if @event.waiver.attached? %>
+      <p><%= link_to "Download event waiver", rails_blob_path(@event.waiver, disposition: "attachment") %></p>
+    <% end %>
   </div>
 
   <div class="attendee-info">
     <h2>Your Information</h2>
-    <p><strong>Name:</strong> <%= current_attendee.name.presence || "Unknown" %></p>
-    <p><strong>Code:</strong> <%= current_attendee.code %></p>
+    <div style="display:inline-flex; gap: 2rem; flex-wrap: wrap; width:100%;">
+      <div id="p_info">
+        <p><strong>Name:</strong> <%= current_attendee.name.presence || "Unknown" %></p>
+        <p><strong>Code:</strong> <%= current_attendee.code %></p>
+      </div>
+      <div id="attending-status" style="width:45%;">
+        <%= form_with model: @attendee, id: "rsvp-form",
+          url: attendee_portal_path(source: "rsvp-edit"),
+          method: :patch, local: true do |form| %>
+          <style>
+            .rsvp-field {
+              position: relative;
+              width: 100%;
+              padding: 0.5rem;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              font-size: 1rem;
+              box-sizing: border-box;
+              background: #fff;
+              right:2px;
+            }
+            .rsvp-field select {
+              width: 100%;
+              padding: 0.5rem;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              font-size: 1rem;
+              box-sizing: border-box;
+              background: #fff;
+            }
+          </style>
+          <div class="rsvp-field">
+            <%= form.label :attending, "Will you be attending?" %>
+            <%= form.select :attending, [["Yes", true], ["No", false]], {}, { id: 'attending-select', onchange: 'this.form.submit()' } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
 
     <%= form_with model: @attendee, id: "form",
       url: attendee_portal_path,
@@ -175,7 +211,7 @@
       </div>
 
       <div class="field">
-        <%= form.label :diet %>
+        <%= form.label "Dietary Requirements" %>
         <%= form.select :diet,
                         Attendee.diets.keys.map { |d| [d.humanize, d] },
                         { include_blank: false },
@@ -183,7 +219,7 @@
       </div>
 
       <!-- additional textbox triggered when diet is other -->
-      <div id="other-allergies" class="field field-hint hidden" style="width: 95%; padding-left:2.5%">
+      <div id="other-allergies" class="field field-hint hidden" style="width: 95%; padding-left:2.5%; display:none;">
         <%= form.label :other_diet,  "Please specify other diet", style:"color: #666; font-size: 0.875rem;" %>
         <%= form.text_field :other_diet, id: 'other-allergies-input' %>
       </div>
@@ -199,4 +235,21 @@
       </div>
     <% end %>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const dietSelect = document.getElementById('diet-select');
+      const otherAllergiesField = document.getElementById('other-allergies');
+
+      function toggleOtherDiet() {
+        if (dietSelect.value === 'other') {
+          otherAllergiesField.style.display = 'block';
+        } else {
+          otherAllergiesField.style.display = 'none';
+        }
+      }
+
+      dietSelect.addEventListener('change', toggleOtherDiet);
+      toggleOtherDiet(); // initial check on page load
+    });
+  </script>
 </div>
