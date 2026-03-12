@@ -75,6 +75,7 @@ class AttendeePortalController < ApplicationController
   end
 
   def contact
+    @organisation = @attendee.event.organisation
     # @attendee provided by before_action
     @messages = Message.where(sender: @attendee)
                        .or(Message.where(reciever: @attendee))

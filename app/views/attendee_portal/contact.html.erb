@@ -1,7 +1,20 @@
 <style>
+    /* container for list and message box */
+    .contact-container {
+        width:100%;
+        display:flex;
+        flex-direction:row;
+        align-items:flex-start;
+        flex-wrap: wrap; /* allow stacking on narrow screens */
+        gap: 20px;
+    }
+
     #queries {
         margin-bottom: 20px;
         width: 50%;
+        max-height: 70vh; /* allow vertical scrolling when there are many messages */
+        overflow-y: auto;
+        padding-right: 10px; /* space for scrollbar */
     }
     .message {
         display: flex;
@@ -68,6 +81,61 @@
         border-radius: 6px;
         background-color: #f4f7fa;
         margin: 20px;
+    }
+
+    /* small screen overrides */
+    @media (max-width: 768px) {
+        #queries,
+        #message-box-stuff {
+            width: 100% !important;
+            margin: 0;
+            padding: 10px;
+        }
+
+        #queries {
+            max-height: none;
+        }
+
+        .message {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #new-message {
+            margin: 10px 0;
+        }
+    }
+    #new-message {
+        width: 100%;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 1px solid #ddd;
+        background-color: #fff;
+        border-radius: 4px;
+    }
+    #new-message .field {
+        margin-bottom: 10px;
+    }
+    #new-message textarea {
+        width: 100%;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 1rem;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    #new-message input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #new-message input[type="submit"]:hover {
+        background-color: #0056b3;
     }
     .typewriter {
         overflow: hidden;
@@ -196,17 +264,18 @@
     });
 </script>
 
-<div style="width:100%; display:flex; flex-direction:row; align-items:center;">
+<h1 style="margin-left:2rem">Contact The Organiser</h1>
+<div class="contact-container">
     <div id="queries">
         <% for msg in @messages %>
             <%= render "message", message: msg, user: @attendee %>
         <% end %>
     </div>
     <div id="message-box-stuff">
-        <div id="new-message" style="width:100%; padding: 20px; margin: 20px; border-left: 1px solid #ddd;">
+        <div id="new-message">
+            <strong style="font-size:1.4rem; margin-bottom:0.4rem;">New Message:</strong>
             <%= form_with url: attendee_portal_contact_path, method: :post, local: true do |form| %>
                 <div class="field">
-                    <%= form.label :message, "Your Message" %>
                     <%= form.text_area :message, rows: 4 %>
                 </div>
                 <%= form.submit "Send Message" %>
