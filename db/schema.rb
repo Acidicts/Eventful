@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_184745) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_201939) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -82,13 +82,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_184745) do
 
   create_table "messages", force: :cascade do |t|
     t.string "answer"
+    t.integer "answerer_id"
     t.datetime "created_at", null: false
     t.string "message"
     t.boolean "read", default: false
     t.integer "reciever_id", null: false
+    t.string "reciever_type"
     t.integer "sender_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["answerer_id"], name: "index_messages_on_answerer_id"
     t.index ["reciever_id"], name: "index_messages_on_reciever_id"
+    t.index ["reciever_type", "reciever_id"], name: "index_messages_on_reciever_type_and_reciever_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
@@ -132,8 +136,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_184745) do
   add_foreign_key "attendees", "events"
   add_foreign_key "events", "organisations"
   add_foreign_key "events", "users", column: "organiser_id"
-  add_foreign_key "messages", "recievers"
-  add_foreign_key "messages", "senders"
+  add_foreign_key "messages", "users", column: "answerer_id"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
   add_foreign_key "users", "organisations"

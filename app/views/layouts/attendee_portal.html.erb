@@ -286,6 +286,7 @@
             <%= button_to "Go Home", attendee_portal_path, method: :get, data: { turbo: false }, id: "home-button" %>
             <%= button_to "Waiver", attendee_portal_waiver_path, method: :get, data: { turbo: false }, id: "waiver-button" %>
             <%= button_to "QR Code", attendee_portal_qr_code_path, method: :get, data: { turbo: false }, id: "qr-code-button" %>
+            <%= button_to "Contact", attendee_portal_contact_path, method: :get, data: { turbo: false }, id: "contact-button" %>
         </div>
       </div>
         <%= button_to 'Sign out', attendee_portal_logout_path, method: :delete, data: { turbo: false }, id: "sign-out-button" %>

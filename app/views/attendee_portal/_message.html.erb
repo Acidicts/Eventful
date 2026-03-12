@@ -1,0 +1,28 @@
+<%# ensure we know who "user" refers to even if the caller forgets to pass it %>
+<% user ||= current_attendee %>
+<div class="message" id="message-<%= message.id %>">
+    <div class="badge-container">
+        <% if !message.answer.blank? %>
+            <span class="badge badge-green">Answered</span>
+        <% else %>
+            <span class="badge badge-red">Not Answered</span>
+        <% end %>
+    </div>
+    <div class="message-content">
+        <% if message.sender == user %>
+            <p><strong>From:</strong> You </p>
+        <% else %>
+            <p><strong>From:</strong> <%= message.sender.name %> (ID : <%= message.sender.id %>)</p>
+        <% end %>
+        <p class="message-text"><%= message.message %></p>
+    </div>
+    <style>
+        .message-timestamp {
+            text-align: right;
+            position: relative;
+            right:5px;
+            bottom:5px;
+        }
+    </style>
+    <p class="message-timestamp"><small><%= message.created_at.strftime("%B %d, %Y at %I:%M %p") %></small></p>
+</div>

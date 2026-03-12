@@ -90,4 +90,33 @@ class AttendeePortalControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Foo Bar", @attendee.waiver_signature
     assert @attendee.signed_waiver.attached?
   end
+
+  test "contact action returns attendee messages" do
+    # log in first
+    post attendee_portal_login_path, params: { code: @attendee.code }
+    follow_redirect!
+
+    # create a message record using raw ids to avoid missing Reciever model
+    Message.create!(sender_id: @attendee.id, reciever_id: @attendee.id, reciever_type: "Attendee", message: "hello")
+
+    # sanity check the record exists and the query will match
+    matching = Message.where(sender: @attendee)
+                      .or(Message.where(reciever: @attendee))
+    assert_equal 1, matching.count, "expected one message in query, got \\#{matching.count} (sql: \\#{matching.to_sql})"
+
+    get attendee_portal_contact_path
+    assert_response :success
+    assert_select "#queries .message p", text: /hello/  # contains message text
+  end
+  test "submitting contact form creates message and redirects" do
+    post attendee_portal_login_path, params: { code: @attendee.code }
+    follow_redirect!
+
+    assert_difference "Message.count", 1 do
+      post attendee_portal_contact_path, params: { message: "new note" }
+    end
+    assert_redirected_to attendee_portal_contact_path
+    follow_redirect!
+    assert_select "#queries .message p", text: /new note/
+  end
 end

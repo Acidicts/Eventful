@@ -19,6 +19,13 @@ Rails.application.routes.draw do
   }, as: nil
 
   get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
+  get "attendee-portal/contact" => "attendee_portal#contact", as: :attendee_portal_contact
+  # use POST for sending messages; the UI submits a form rather than
+  # navigating, so we don’t need a GET action here.
+  post "attendee-portal/contact" => "attendee_portal#create_new_message"
+  # legacy helper kept for compatibility; remains GET in case anyone links
+  # directly, but the form no longer uses this.
+  get "attendee-portal/contact-new" => "attendee_portal#create_new_message", as: :attendee_portal_contact_new
   get "attendee-portal/qr-code" => "attendee_portal#qr_code", as: :attendee_portal_qr_code
   get "attendee-portal/waiver" => "attendee_portal#waiver", as: :attendee_portal_waiver
   patch "attendee-portal/waiver" => "attendee_portal#sign_waiver"

@@ -1,0 +1,8 @@
+<div class="answer">
+    <%# render the shared username badge from application views; message.answerer may be nil %>
+    <% if message.answerer %>
+      <%= render "application/username", current_user: message.answerer, scale: 0.75 %>
+    <% end %>
+
+    <p class="answer-text"><%= message.answer %></p>
+</div>

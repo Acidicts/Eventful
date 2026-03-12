@@ -12,7 +12,13 @@ class AttendeePortalController < ApplicationController
   # filter list so unauthenticated requests are redirected to login instead of
   # rendering the "not found" placeholder.
   before_action :authenticate_attendee!, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
-  before_action :set_organisation, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
+  before_action :set_organisation, only: [ :index, :contact, :qr_code, :waiver ]
+  # `current_attendee` and `current_event` were defined below and called
+  # recursively, leading to a stack overflow.  Instead we use explicit
+  # setters that assign the instance variables we expect.  These run before
+  # any actions that need them.
+  before_action :set_attendee, only: [ :index, :contact, :qr_code, :waiver, :sign_waiver, :update, :create_new_message ]
+  before_action :set_event, only: [ :index, :contact, :qr_code, :waiver, :sign_waiver ]
 
   # GET /attendee_portal/login
   # render a simple code entry form unless already logged in
@@ -46,12 +52,37 @@ class AttendeePortalController < ApplicationController
   end
 
   def index
-    @attendee = current_attendee
-    @event = @attendee.event
+    # variables are prepared by the before_actions
+  end
+
+  def create_new_message
+    # @attendee is set by the before_action
+    recipient = @attendee.event.organiser || @attendee
+
+    @message = Message.new(
+      sender: @attendee,
+      reciever: recipient,
+      message: params[:message]
+    )
+
+    if @message.save
+      flash[:notice] = "Message sent successfully."
+      redirect_to attendee_portal_contact_path
+    else
+      flash.now[:alert] = "Failed to send message."
+      render :contact, status: :unprocessable_entity
+    end
+  end
+
+  def contact
+    # @attendee provided by before_action
+    @messages = Message.where(sender: @attendee)
+                       .or(Message.where(reciever: @attendee))
+                       .order(created_at: :desc)
   end
 
   def qr_code
-    @attendee = current_attendee
+    # @attendee and @event are already set; set_organisation ran earlier too
 
     unless @attendee
       # render a minimal error page (could be styled or localized) and skip
@@ -60,7 +91,6 @@ class AttendeePortalController < ApplicationController
       render "show_not_found", layout: false, status: :not_found and return
     end
 
-    @event = @attendee.event
     @organisation = @event.organisation
 
     # render a simple QR image containing the attendee’s unique code
@@ -75,10 +105,9 @@ class AttendeePortalController < ApplicationController
 
   # GET /attendee-portal/waiver
   def waiver
-    @attendee = current_attendee
+    # set_attendee and set_event run before this action
 
     @attendee.reload if @attendee
-    @event = @attendee.event
 
     if @attendee.waiver_signed?
       render "attendee_portal/waiver_signed"
@@ -89,8 +118,7 @@ class AttendeePortalController < ApplicationController
 
   # PATCH /attendee-portal/waiver
   def sign_waiver
-    @attendee = current_attendee
-    @event = @attendee.event
+    # @attendee and @event available from before_actions
 
     update_attrs = waiver_params.merge(
       waiver_signed: true,
@@ -125,8 +153,7 @@ class AttendeePortalController < ApplicationController
   # PATCH /attendee-portal or /attendee_portal via redirect rules
   # update the currently logged-in attendee's profile and remain on the portal
   def update
-    @attendee = current_attendee
-
+    # @attendee loaded by before_action
     if @attendee.update(attendee_params)
       unless params[:source]&.include?("rsvp-edit")
         flash[:notice] = "Profile updated successfully."
@@ -162,6 +189,17 @@ class AttendeePortalController < ApplicationController
   end
 
   def set_organisation
-    @organisation = current_attendee&.event&.organisation
+    @organisation = @attendee&.event&.organisation
+  end
+
+  # simple setters for the before_action filters that used to call
+  # `current_attendee`/`current_event` recursively.  They simply assign the
+  # expected instance variables so views and other methods can rely on them.
+  def set_attendee
+    @attendee = current_attendee
+  end
+
+  def set_event
+    @event = @attendee&.event
   end
 end
