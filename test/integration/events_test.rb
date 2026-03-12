@@ -35,14 +35,29 @@ class EventsTest < ActionDispatch::IntegrationTest
     }
   end
 
-  # The top-level /events route has been removed in favor of org-scoped
-  # URLs. hitting the former path should raise a routing error, which the
-  # integration test framework simulates by raising ActionController::RoutingError.
-  test "top-level events helpers are gone" do
-    assert_raises(NameError) { events_path }
-    # hitting the literal URL should return 404 since the route is gone
-    get "/events", headers: headers
-    assert_response :not_found
+  # To support administrators, there is still a top-level /events route
+  # showing events the current user can manage. This test checks that it
+  # renders successfully once we're signed in and that it uses the shared
+  # partial which includes a link to the nested show path.
+  test "top-level events index works for signed-in user" do
+    # create a user whose provider/uid matches the OmniAuth mock so the
+    # sign-in sequence will return the same record rather than creating a new
+    # one.
+    user = User.create!(name: "Foo", email: "foo@example.com", provider: "hackclub", uid: "int123")
+    org  = Organisation.create!(user: user, signing_user: user, users: [ user ])
+    event = org.events.create!(name: "Sample", capacity: 3)
+
+    # sign in
+    get root_path, headers: headers
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+
+    get events_path, headers: headers
+    assert_response :success
+    assert_select "h1", /Events/
+    # the partial should render a button pointing to the nested show
+    assert_select "form[action='#{organisation_event_path(org, event)}']"
   end
 
   test "nested events index still works" do

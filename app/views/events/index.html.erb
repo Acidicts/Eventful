@@ -1,0 +1,9 @@
+<div style="margin-left:1rem;">
+    <h1>Events</h1>
+
+    <div>
+        <% for event in @events%>
+            <%= render "events/event", event: event %>
+        <% end %>
+    </div>
+</div>

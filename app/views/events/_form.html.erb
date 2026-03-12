@@ -57,6 +57,17 @@
     <% end %>
   </div>
 
+  <div class="field">
+    <%= form.label :icon, "Event icon (PNG/JPEG/GIF)" %>
+    <%= form.file_field :icon, accept: "image/png,image/jpeg,image/gif" %>
+    <% if event.icon.attached? %>
+      <div>
+        <p>Current icon:</p>
+        <%= image_tag event.icon.variant(resize_to_limit: [100, 100]) if event.icon.variable? %>
+      </div>
+    <% end %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

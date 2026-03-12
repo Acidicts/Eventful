@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   # for attendees to review or download. this uses Active Storage, so the
   # corresponding tables are created via a new migration.
   has_one_attached :waiver
+  has_one_attached :icon
 
   # each event can have many attendees; the foreign key lives on the
   # attendees table. existing data is migrated during a migration.
@@ -27,6 +28,7 @@ class Event < ApplicationRecord
   # `Unknown validator: 'ContentTypeValidator'` errors. a custom
   # validation is simpler and explicit.
   validate :waiver_format
+  validate :icon_format
 
   def waiver_format
     return unless waiver.attached?
@@ -37,6 +39,18 @@ class Event < ApplicationRecord
 
     if waiver.blob.byte_size > 5.megabytes
       errors.add(:waiver, "cannot be larger than 5 MB")
+    end
+  end
+
+  def icon_format
+    return unless icon.attached?
+
+    unless icon.content_type.in?("image/png image/jpeg image/gif".split)
+      errors.add(:icon, "must be a PNG, JPEG or GIF image")
+    end
+
+    if icon.blob.byte_size > 2.megabytes
+      errors.add(:icon, "cannot be larger than 2 MB")
     end
   end
 

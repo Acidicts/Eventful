@@ -5,16 +5,18 @@ class EventsController < ApplicationController
   before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
 
   def index
-    # events are only accessible via an organisation context. if somehow we
-    # end up here without one, redirect back to root to avoid exposing a
-    # standalone list.
-    unless @organisation
-      redirect_to root_path, alert: "Organisation required to view events" and return
-    end
+    if request.path == "/events"
+      @events = Event.where(organiser_id: current_user.id).or(Event.where(organisation_id: current_user.organisations.select(:id)))
+      render "events/index"
+    else
+      unless @organisation
+        redirect_to root_path, alert: "Organisation required to view events" and return
+      end
 
-    @events = @organisation.events
-    # reuse existing dashboard view
-    render "organisations/dashboard/events/index"
+      @events = @organisation.events
+      # reuse existing dashboard view
+      render "organisations/dashboard/events/index"
+    end
   end
 
   def show
@@ -262,7 +264,8 @@ class EventsController < ApplicationController
       :start_date,
       :end_date,
       :organiser_id,
-      :waiver
+      :waiver,
+      :icon
     )
   end
 end

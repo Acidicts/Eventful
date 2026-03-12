@@ -65,3 +65,34 @@ If you never configure a key, the Nominatim fallback ensures the form remains us
 
 Happy hacking!
 
+## Image processing dependency
+
+Active Storage generates image variants for display (e.g. event icons).  By
+default the `image_processing` gem prefers the `ruby-vips` backend which
+requires the `libvips` library to be installed on the system.  In development
+and the CI container we don’t rely on that library, so the application is
+configured to use `MiniMagick` instead.
+
+You still need to have [ImageMagick](https://imagemagick.org) installed:
+
+```sh
+# Ubuntu / WSL
+sudo apt-get install imagemagick
+# macOS (Homebrew)
+brew install imagemagick
+```
+
+Without ImageMagick the app will raise a 500 error when generating a variant:
+```
+MiniMagick::Error (executable not found: "convert")
+```
+The initializer included with the project will log a warning and automatically
+switch to `:vips` if the `libvips` library is already present (and the
+`ruby-vips` gem loaded successfully).  In that case you can either install
+ImageMagick or simply leave the fallback in place.
+
+If you *do* install `libvips` you can remove the initializer or change the
+processor back to `:vips` altogether.
+
+Happy hacking!
+

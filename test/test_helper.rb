@@ -9,7 +9,7 @@ module ActiveSupport
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     # (disabled globally because some fixtures no longer match the schema)
-    #fixtures :all
+    # fixtures :all
 
     # Add more helper methods to be used by all tests here...
   end

@@ -31,6 +31,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", /Attendee waiver/
   end
 
+
   test "can delete attendee waiver via dashboard" do
     attendee = Attendee.create!(name: "Joe", age: 20, event: @event)
     attendee.signed_waiver.attach(

@@ -14,9 +14,11 @@
 
 <div id="actions">
   <%= link_to "Goto", dashboard_organisation_path(@organisation) %>
-  <%= link_to "Find Info", actions_get_info_organisation_event_path(@organisation, @event) %>
-  <%= link_to "Sign In", actions_sign_in_organisation_event_path(@organisation, @event) %>
-  <%= link_to "Sign Out", actions_sign_out_organisation_event_path(@organisation, @event) %>
+  <% if @event %>
+    <%= link_to "Find Info", actions_get_info_organisation_event_path(@organisation, @event) %>
+    <%= link_to "Sign In", actions_sign_in_organisation_event_path(@organisation, @event) %>
+    <%= link_to "Sign Out", actions_sign_out_organisation_event_path(@organisation, @event) %>
+  <% end %>
 </div>
 
 <table>
