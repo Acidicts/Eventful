@@ -8,6 +8,29 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :logged_in?, :current_attendee, :attendee_logged_in?
 
+  before_action :load_placeholder_user
+
+  def load_placeholder_user
+    @nil_user ||= User.find_or_create_by!(provider: "placeholder", uid: "nil") do |user|
+      user.name               = "Nil User"
+      user.email              = "nil@example.com"
+      user.role               = "member"
+      user.organisation_role  = "member"
+    end
+
+    @nil_organisation ||= Organisation.find_or_create_by!(user: @nil_user, name: "Nil Organisation") do |org|
+      org.signing_user = @nil_user
+      org.self_found   = true
+      org.description  = "Placeholder organisation used when no user is signed in."
+    end
+
+    if !@nil_organisation.users.include?(@nil_user)
+      @nil_user.organisation << @nil_organisation
+    end
+    # Ensure the placeholder user is linked to the placeholder organisation.
+    @nil_user.update!(organisation: @nil_organisation) if @nil_user.organisation != @nil_organisation
+  end
+
   private
 
   def current_user
