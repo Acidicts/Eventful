@@ -9,7 +9,7 @@ if Rails.env.development?
   # Hack Club OAuth application.  We default to localhost but can be overridden
   # via ENV so you can use a DNS name such as "dev.bing-bong.uk" or a
   # different port.
-  OmniAuth.config.full_host = ENV.fetch("OMNIAUTH_FULL_HOST", "http://localhost:3000")
+  OmniAuth.config.full_host = ENV.fetch("APP_URL", "http://localhost:3000")
 end
 
 # OmniAuth 2.0+ enables POST-only requests for the initial "auth" phase to
@@ -33,7 +33,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   provider :hackclub,
            ENV["HACKCLUB_CLIENT_ID"],
            ENV["HACKCLUB_CLIENT_SECRET"],
-           callback_url: "#{OmniAuth.config.full_host}/auth/hackclub/callback",
+           callback_url: "#{ENV.fetch('APP_URL', 'http://localhost:3000')}/auth/hackclub/callback",
            # ask for the scopes we use in the app; offline_access gives us a
            # refresh token so we can keep the user logged in for six months.
            # The list is mostly static but can be overridden in development if
