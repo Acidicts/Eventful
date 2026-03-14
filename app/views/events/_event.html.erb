@@ -1,33 +1,17 @@
-<style>
-    .event_container {
-        border: 1px solid black;
-        padding: 10px;
-        margin: 10px;
-        width: 15%;
-        display: inline-flex;
-    }
-    .event_container h2 {
-        font-size: 1em;
-        margin: 0;
-    }
-</style>
-
-<div class="event_container">
-    <% if event.icon.attached? %>
-    <div class="event-icon" style="margin-bottom:10px;">
-        <div class="event-icon" style="margin-bottom:10px;">
-            <%= image_tag event.icon.variant(resize_to_limit: [64, 64]) if event.icon.variable? %>
-        </div>
-        <%= button_to "Goto", organisation_event_path(event.organisation, event), method: :get, class: "btn btn-primary" %>
+<div class="event-card">
+  <% if event.icon.attached? %>
+    <div class="event-card__icon-wrap">
+      <%= image_tag event.icon.variant(resize_to_limit: [64, 64]), class: "event-card__icon" if event.icon.variable? %>
     </div>
+  <% end %>
+  <div class="event-card__body">
+    <% if event.name %>
+      <h2 class="event-card__title"><%= event.name %></h2>
     <% end %>
-    <div style="margin-left:5px">        
-        <% if event.name %>
-            <h2><%= event.name %></h2>
-        <% end %>
-        <% if event.description %>
-            <p><%= event.description %></p>
-        <% end %>
-    </div>
-    
+    <% if event.description %>
+      <p class="event-card__description"><%= event.description %></p>
+    <% end %>
+  </div>
+
+  <%= button_to "Goto", organisation_event_path(event.organisation, event), method: :get, class: "btn btn-primary event-card__action" %>
 </div>

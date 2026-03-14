@@ -1,9 +1,19 @@
-<h1>Organisations (Admin)</h1>
+<section class="organisations-page organisations-page--admin">
+  <header class="organisations-page__header">
+    <div>
+      <h1 class="organisations-page__title">Organisations (Admin)</h1>
+      <p class="organisations-page__subtitle">Manage existing organisations or create a new one.</p>
+    </div>
+    <%= link_to "New Organisation", new_organisation_path, class: "organisations-page__cta" %>
+  </header>
 
-<%= link_to "New Organisation", new_organisation_path, class: "btn btn-primary" %>
-
-<div class="organisations">
-  <% @organisations.each do |org| %>
-    <%= render org %>
+  <% if @organisations.any? %>
+    <div class="organisations-grid">
+      <% @organisations.each do |org| %>
+        <%= render org %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="organisations-page__empty">No organisations yet. Create the first one to get started.</p>
   <% end %>
-</div>
+</section>

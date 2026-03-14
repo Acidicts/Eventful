@@ -1,25 +1,12 @@
-<style>
-    .org_container {
-        border: 1px solid black;
-        padding: 10px;
-        margin: 10px;
-        width: 15%;
-    }
-    .org_container h2 {
-        font-size: 1em;
-        margin: 0;
-    }
-</style>
-
-<div class="org_container">
+<div class="org-card">
     <% if organisation.img%>
-        <img src="<%= organisation.img %>" alt="<%= organisation.name %>">
+        <img src="<%= organisation.img %>" alt="<%= organisation.name %>" class="org-card__image">
     <% end %>
     <% if organisation.name %>
-        <h2><%= organisation.name %></h2>
+        <h2 class="org-card__title"><%= organisation.name %></h2>
     <% end %>
     <% if organisation.description %>
-        <p><%= organisation.description %></p>
+        <p class="org-card__description"><%= organisation.description %></p>
     <% end %>
-    <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary" %>
+    <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary org-card__action" %>
 </div>

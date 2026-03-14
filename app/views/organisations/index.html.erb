@@ -1,5 +1,18 @@
-<h1>Organisations</h1>
+<section class="organisations-page">
+  <header class="organisations-page__header">
+    <div>
+      <h1 class="organisations-page__title">Organisations</h1>
+      <p class="organisations-page__subtitle">Choose an organisation to open its dashboard.</p>
+    </div>
+  </header>
 
-<% @organisations.each do |org| %>
-  <%= render org %>
-<% end %>
+  <% if @organisations.any? %>
+    <div class="organisations-grid">
+      <% @organisations.each do |org| %>
+        <%= render org %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="organisations-page__empty">No organisations are available yet.</p>
+  <% end %>
+</section>

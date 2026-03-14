@@ -1,9 +1,18 @@
-<div style="margin-left:1rem;">
-    <h1>Events</h1>
+<section class="events-page">
+    <header class="events-page__header">
+        <div>
+            <h1 class="events-page__title">Events</h1>
+            <p class="events-page__subtitle">Browse events and open the one you want to manage.</p>
+        </div>
+    </header>
 
-    <div>
-        <% for event in @events%>
-            <%= render "events/event", event: event %>
-        <% end %>
-    </div>
-</div>
+    <% if @events.any? %>
+        <div class="events-grid">
+            <% @events.each do |event| %>
+                <%= render "events/event", event: event %>
+            <% end %>
+        </div>
+    <% else %>
+        <p class="events-page__empty">No events are available right now.</p>
+    <% end %>
+</section>
