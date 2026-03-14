@@ -3,6 +3,67 @@
     text-align: center;
     padding: 50px;
   }
+
+  .home-get-started {
+    margin: 2rem auto 0;
+    max-width: 700px;
+  }
+
+  .home-get-started h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .home-get-started p {
+    margin-bottom: 1.25rem;
+  }
+
+  .home-get-started-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .home-get-started-link {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .home-get-started-link:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+  }
+
+  .home-get-started-link--organisations {
+    background-color: #ec3750;
+  }
+
+  .home-get-started-link--events {
+    background-color: #338eda;
+  }
+
+  #sign-in-button-menu-index {
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out 0.15s forwards;
+    background-color: #ec3750;
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 2rem;
+    -webkit-font-smoothing: antialiased;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 1);
+    transition: all 0.3s ease;
+  }
+
+  #sign-in-button-menu-index:hover {
+    transform: scale(1.05);
+  }
 </style>
 
 <div class="home-container">
@@ -11,24 +72,18 @@
   <% if current_user %>
     <p>You are logged in as <%= current_user.name || current_user.email %>.</p>
   <% else %>
-      <style>
-        #sign-in-button-menu-index {
-          opacity: 0;
-          animation: fadeIn 0.3s ease-out 0.15s forwards;
-          background-color: #ec3750;
-          padding: 1rem 2rem;
-          font-size: 1.25rem;
-          border: none;
-          border-radius: 2rem;
-          -webkit-font-smoothing: antialiased;
-          color: white;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 1);
-          transition: all 0.3s ease;
-        }
-        #sign-in-button-menu-index:hover {
-          transform: scale(1.05);
-        }
-      </style>
     <%= button_to 'Sign in with Hack Club', '/auth/hackclub', data: { turbo: false }, id: "sign-in-button-menu-index", class: "sign-in-button lexend" %>
   <% end %>
+
+  <br>
+  <hr>
+
+  <section class="home-get-started">
+    <h2>Get Started</h2>
+    <p>Jump into managing organisations or browsing events.</p>
+    <div class="home-get-started-actions">
+      <%= link_to "Organisations", organisations_path, class: "home-get-started-link home-get-started-link--organisations" %>
+      <%= link_to "Events", events_path, class: "home-get-started-link home-get-started-link--events" %>
+    </div>
+  </section>
 </div>
