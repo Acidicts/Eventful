@@ -6,13 +6,25 @@ class Organisation < ApplicationRecord
 
   # the application also keeps a list of members via the reverse
   # relationship on `User` (see `User#organisations`).
-  has_many :users
-  has_many :events
+  #
+  # When an organisation is deleted we don't want to delete user accounts, so
+  # simply nullify their association.
+  has_many :users, dependent: :nullify
+
+  # deleting an organisation should remove its events and any related data
+  # (galleries/announcements are also tied directly to the org).
+  has_many :events, dependent: :destroy
+  has_many :galleries, dependent: :destroy
+  has_many :announcements, dependent: :destroy
+
   # convenience association to access all attendees across an organisation's events
   has_many :attendees, through: :events
 
   # optional reference to the user who "signs" for the organisation
   belongs_to :signing_user, class_name: "User"
+
+  # stored in the DB as `nil_org`; this boolean flags a placeholder "nil" org
+  alias_attribute :nil_organisation, :nil_org
 
   # ---------------------------------------------------------------
   # scopes
@@ -38,9 +50,26 @@ class Organisation < ApplicationRecord
   # remember to wire it up).
   before_validation :apply_self_found_logic
 
+  attribute :join_requirements, :string, default: "nil"
+
   # validations -----------------------------------------------------------
   validates :signing_user, presence: true
   validate  :signing_user_must_be_member
+  validate :auto_add_users
+
+  def auto_add_users
+    return if join_requirements == "nil" || join_requirements.blank?
+
+    if join_requirements.include?("omniauth")
+      _, provider = join_requirements.split(" ", 2)
+      return if provider.blank?
+      counter = 0
+      User.where(provider: provider, organisation_id: nil).find_each do |user|
+        users << user unless users.include?(user)
+      end
+      counter
+    end
+  end
 
   private
 

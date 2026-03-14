@@ -1,4 +1,107 @@
-<%= form_with(model: [organisation, event], local: true) do |form| %>
+<style>
+  .event-form {
+    display: grid;
+    gap: 0.95rem;
+  }
+
+  .event-form .field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .event-form .field label {
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #244a6b;
+  }
+
+  .event-form input[type="text"],
+  .event-form input[type="number"],
+  .event-form input[type="datetime-local"],
+  .event-form input[type="file"],
+  .event-form select,
+  .event-form textarea {
+    width: 100%;
+    border: 1px solid #c5d6e8;
+    border-radius: 10px;
+    padding: 0.6rem 0.72rem;
+    font-size: 0.95rem;
+    color: #17344f;
+    background: #fff;
+  }
+
+  .event-form input:focus,
+  .event-form select:focus,
+  .event-form textarea:focus {
+    outline: none;
+    border-color: #479ae9;
+    box-shadow: 0 0 0 3px rgba(71, 154, 233, 0.15);
+  }
+
+  .event-form .field-hint {
+    margin: 0;
+    color: #5f748a;
+    font-size: 0.82rem;
+  }
+
+  .event-form .date-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .event-form #error_explanation {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 10px;
+    padding: 0.8rem 0.9rem;
+    color: #8a1c2d;
+  }
+
+  .event-form #error_explanation h2 {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .event-form #error_explanation ul {
+    margin: 0.45rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  .event-form p {
+    margin: 0.2rem 0 0;
+    color: #5f748a;
+    font-size: 0.9rem;
+  }
+
+  .event-form .actions input[type="submit"] {
+    border: 0;
+    border-radius: 10px;
+    background: #0066cc;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 0.64rem 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0, 102, 204, 0.24);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+
+  .event-form .actions input[type="submit"]:hover {
+    background: #004f9f;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 760px) {
+    .event-form .date-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<%= form_with(model: [organisation, event], local: true, html: { class: "event-form" }) do |form| %>
   <% if event.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:</h2>
@@ -39,14 +142,22 @@
     <%= tag.datalist id: "location-results" %>
   </div>
 
-  <div class="field">
-    <%= form.label :start_date %>
-    <%= form.datetime_select :start_date, include_blank: true %>
-  </div>
+  <div class="date-grid">
+    <div class="field">
+      <%= form.label :start_date %>
+      <%= form.datetime_field :start_date,
+                              value: event.start_date&.in_time_zone&.strftime("%Y-%m-%dT%H:%M"),
+                              step: 300 %>
+      <p class="field-hint">Use calendar + time picker. You can scroll to adjust the time quickly.</p>
+    </div>
 
-  <div class="field">
-    <%= form.label :end_date %>
-    <%= form.datetime_select :end_date, include_blank: true %>
+    <div class="field">
+      <%= form.label :end_date %>
+      <%= form.datetime_field :end_date,
+                              value: event.end_date&.in_time_zone&.strftime("%Y-%m-%dT%H:%M"),
+                              step: 300 %>
+      <p class="field-hint">Optional. Leave blank if the end time is to be announced.</p>
+    </div>
   </div>
 
   <div class="field">

@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
       org.signing_user = @nil_user
       org.self_found   = true
       org.description  = "Placeholder organisation used when no user is signed in."
+      org.nil_org      = true
     end
 
     if !@nil_organisation.users.include?(@nil_user)

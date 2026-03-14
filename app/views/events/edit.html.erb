@@ -1,5 +1,88 @@
-<h1>Edit Event</h1>
+<style>
+	.event-page {
+		--ink: #10283f;
+		--muted: #5f748a;
+		--line: #d8e4f0;
+		max-width: 900px;
+		margin: 2rem auto;
+		padding: 1.5rem;
+		color: var(--ink);
+	}
 
-<%= render 'form', organisation: @organisation, event: @event %>
+	.event-page__hero {
+		background: linear-gradient(125deg, #114f89 0%, #0a71cd 58%, #04a3a8 100%);
+		border-radius: 18px;
+		color: #fff;
+		padding: 1.35rem 1.45rem;
+		box-shadow: 0 12px 24px rgba(11, 41, 71, 0.2);
+	}
 
-<%= link_to 'Back', organisation_event_path(@organisation, @event) %>
+	.event-page__title {
+		margin: 0;
+		font-size: clamp(1.55rem, 2.4vw, 2rem);
+		line-height: 1.18;
+	}
+
+	.event-page__subtitle {
+		margin-top: 0.35rem;
+		color: rgba(255, 255, 255, 0.9);
+		font-size: 0.93rem;
+	}
+
+	.event-page__card {
+		margin-top: 1rem;
+		background: #fff;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		padding: 1rem;
+	}
+
+	.event-page__footer {
+		margin-top: 0.9rem;
+	}
+
+	.event-page__back {
+		display: inline-flex;
+		text-decoration: none;
+		border-radius: 9px;
+		border: 1px solid #c3d6ea;
+		background: #eff7ff;
+		color: #0b4f87;
+		font-weight: 650;
+		font-size: 0.88rem;
+		padding: 0.45rem 0.72rem;
+		transition: transform 0.14s ease, background-color 0.16s ease;
+	}
+
+	.event-page__back:hover {
+		background: #e1f0ff;
+		transform: translateY(-1px);
+	}
+
+	@media (max-width: 680px) {
+		.event-page {
+			margin: 1.2rem auto;
+			padding: 1rem;
+		}
+
+		.event-page__hero {
+			border-radius: 14px;
+			padding: 1.1rem;
+		}
+	}
+</style>
+
+<section class="event-page" aria-label="Edit event">
+	<header class="event-page__hero">
+		<h1 class="event-page__title">Edit Event</h1>
+		<div class="event-page__subtitle">Update details, schedule, and attendee-facing assets.</div>
+	</header>
+
+	<div class="event-page__card">
+		<%= render 'form', organisation: @organisation, event: @event %>
+	</div>
+
+	<div class="event-page__footer">
+		<%= link_to 'Back', organisation_event_path(@organisation, @event), class: 'event-page__back' %>
+	</div>
+</section>

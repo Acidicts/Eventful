@@ -4,7 +4,7 @@ class OrganisationsController < ApplicationController
 
   def index
     if current_user.admin? || current_user.superadmin?
-      @organisations = Organisation.all
+      @organisations = Organisation.where(nil_org: false).all
       render "organisations/admin/index"
     else
       # include organisations where the user is a member *or* the signing user

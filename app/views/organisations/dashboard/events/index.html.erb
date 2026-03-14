@@ -1,38 +1,234 @@
 <style>
-    .table-data {
-        text-align: center;
+  .events-index {
+    --bg: #f2f6fb;
+    --panel: #ffffff;
+    --line: #d8e3ef;
+    --ink: #10263b;
+    --muted: #64798e;
+    --brand: #0066cc;
+    --brand-dark: #0051a3;
+    --accent: #008c99;
+    max-width: 1040px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    color: var(--ink);
+  }
+
+  .events-index__hero {
+    background: linear-gradient(130deg, #0f4e89 0%, #006fd4 60%, #00a1ac 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 12px 24px rgba(12, 42, 73, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .events-index__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+
+  .events-index__subtitle {
+    margin-top: 0.35rem;
+    font-size: 0.93rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .events-index__create form {
+    margin: 0;
+  }
+
+  .events-index__create button {
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    color: #0a4e87;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 0.6rem 0.9rem;
+    box-shadow: 0 8px 18px rgba(8, 52, 94, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .events-index__create button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(8, 52, 94, 0.24);
+  }
+
+  .events-index__panel {
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .events-index__table-wrap {
+    overflow-x: auto;
+  }
+
+  .events-index__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+
+  .events-index__table th {
+    background: #eef4fb;
+    color: #30516f;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-size: 0.75rem;
+    padding: 0.85rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .events-index__table td {
+    text-align: center;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #edf3f9;
+    color: #1e3448;
+  }
+
+  .events-index__table tbody tr {
+    transition: background-color 0.15s ease;
+  }
+
+  .events-index__table tbody tr:hover {
+    background: #f9fcff;
+  }
+
+  .events-index__event-link {
+    font-weight: 650;
+    color: #0f4f88;
+    text-decoration: none;
+  }
+
+  .events-index__event-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .events-index__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .events-index__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    padding: 0.36rem 0.62rem;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 650;
+    transition: transform 0.14s ease, background-color 0.16s ease;
+  }
+
+  .events-index__btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .events-index__btn--show {
+    background: #e9f4ff;
+    color: #0b4f86;
+    border-color: #bfdcf7;
+  }
+
+  .events-index__btn--show:hover {
+    background: #dbedff;
+  }
+
+  .events-index__btn--edit {
+    background: var(--brand);
+    color: #fff;
+  }
+
+  .events-index__btn--edit:hover {
+    background: var(--brand-dark);
+  }
+
+  .events-index__empty {
+    padding: 1.4rem 1rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+    background: #fbfdff;
+  }
+
+  @media (max-width: 700px) {
+    .events-index {
+      margin: 1.2rem auto;
+      padding: 1rem;
     }
-    .table-head {
-        text-align: center;
-        padding: 10px;
+
+    .events-index__hero {
+      border-radius: 14px;
+      padding: 1.1rem;
     }
+  }
 </style>
 
+<section class="events-index" aria-label="Organisation events">
+  <header class="events-index__hero">
+    <div>
+      <h1 class="events-index__title"><%= @organisation.name %> Events</h1>
+      <div class="events-index__subtitle">Manage event details, capacity, and attendee flow in one place.</div>
+    </div>
 
-<h1><%= @organisation.name %> Events</h1>
+    <div class="events-index__create">
+      <%= button_to "Create Event", new_organisation_event_path(@organisation), method: :get %>
+    </div>
+  </header>
 
-<%= button_to "Create Event", new_organisation_event_path(@organisation), method: :get, class: "btn btn-primary" %>
-
-<table>
-  <thead>
-    <tr>
-      <th class="table-head">Name</th>
-      <th class="table-head">Capacity</th>
-      <th class="table-head">Applied</th>
-      <th class="table-head">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @events.each do |event| %>
-      <tr>
-        <td class="table-data"><%= link_to event.name, organisation_event_path(@organisation, event) %></td>
-        <td class="table-data"><%= event.capacity %></td>
-        <td class="table-data"><%= event.attendees.count %></td>
-        <td>
-          <%= link_to 'Edit', edit_organisation_event_path(@organisation, event) %>
-          <%= link_to 'Show', organisation_event_path(@organisation, event) %>
-        </td>
-      </tr>
+  <div class="events-index__panel">
+    <% if @events.any? %>
+      <div class="events-index__table-wrap">
+        <table class="events-index__table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Capacity</th>
+              <th>Applied</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @events.each do |event| %>
+              <tr>
+                <td>
+                  <%= link_to event.name, organisation_event_path(@organisation, event), class: "events-index__event-link" %>
+                </td>
+                <td><%= event.capacity %></td>
+                <td><%= event.attendees.count %></td>
+                <td>
+                  <div class="events-index__actions">
+                    <%= link_to "Show", organisation_event_path(@organisation, event), class: "events-index__btn events-index__btn--show" %>
+                    <%= link_to "Edit", edit_organisation_event_path(@organisation, event), class: "events-index__btn events-index__btn--edit" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="events-index__empty">
+        No events yet. Create your first event to get started.
+      </div>
     <% end %>
-  </tbody>
-</table>
+  </div>
+</section>

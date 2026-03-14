@@ -1,83 +1,267 @@
-<p>
-  <strong>ID:</strong>
-  <%= @event.id %>
-</p>
+<style>
+  .event-show {
+    --bg: #f2f6fb;
+    --panel: #ffffff;
+    --ink: #13253a;
+    --muted: #5f7387;
+    --line: #dce6f0;
+    --brand: #0066cc;
+    --brand-dark: #004f9e;
+    --accent: #00a3a3;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    color: var(--ink);
+  }
 
-<p>
-  <strong>Name:</strong>
-  <%= @event.name %>
-</p>
+  .event-show__hero {
+    background: linear-gradient(125deg, #0d4f8b 0%, #0074d9 52%, #00a3a3 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 12px 24px rgba(12, 42, 73, 0.2);
+  }
 
-<p>
-  <strong>Description:</strong>
-  <%= @event.description %>
-</p>
+  .event-show__title {
+    margin: 0;
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
 
-<p>
-  <strong>Organiser:</strong>
-  <%= @event.organiser&.name || "TBA" %>
-</p>
+  .event-show__meta {
+    margin-top: 0.55rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.96rem;
+  }
 
-<p>
-  <strong>Capacity:</strong>
-  <%= @event.capacity %>
-</p>
+  .event-show__grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.8rem;
+  }
 
-<p>
-  <strong>Applied:</strong>
-  <%= @event.attendees.count %>
-</p>
+  .event-show__item {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+  }
 
-<p>
-  <strong>Location:</strong>
-  <%= @event.location %>
-</p>
+  .event-show__label {
+    display: block;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+  }
 
-<p>
-  <strong>Start date:</strong>
-  <% if @event.start_date %>
-    <%= @event.start_date %>
-  <% else %>
-    TBA
+  .event-show__value {
+    font-size: 1rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .event-show__description {
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .event-show__status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.28rem 0.7rem;
+  }
+
+  .event-show__status--yes {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .event-show__status--no {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .event-show__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .event-show__btn,
+  .event-show__actions form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    padding: 0.58rem 0.9rem;
+    font-weight: 650;
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: transform 0.14s ease, background-color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  }
+
+  .event-show__btn:hover,
+  .event-show__actions form button:hover {
+    transform: translateY(-1px);
+  }
+
+  .event-show__btn--primary,
+  .event-show__actions form button {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0, 102, 204, 0.25);
+  }
+
+  .event-show__btn--primary:hover,
+  .event-show__actions form button:hover {
+    background: var(--brand-dark);
+  }
+
+  .event-show__btn--secondary {
+    border-color: #b7c6d6;
+    color: #16436c;
+    background: #fff;
+  }
+
+  .event-show__btn--secondary:hover {
+    background: #f4f9ff;
+  }
+
+  .event-show__btn--ghost {
+    border-color: #cfe0f2;
+    background: #eef7ff;
+    color: #0c4f86;
+  }
+
+  .event-show__share {
+    margin-top: 0.95rem;
+    border: 1px dashed #9ec5ea;
+    background: #f0f8ff;
+    border-radius: 10px;
+    padding: 0.8rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .event-show__share a {
+    color: #004f9e;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    .event-show {
+      padding: 1rem;
+      margin: 1.2rem auto;
+    }
+
+    .event-show__hero {
+      border-radius: 14px;
+      padding: 1.15rem;
+    }
+  }
+
+  #back-button {
+    position: relative;
+    top: 1rem;
+    left: 1rem;
+    border-color: var(--blue);
+  }
+</style>
+
+<%= button_to "Back", organisation_events_path(@organisation), class: "event-show__btn event-show__btn--ghost", id: "back-button", method: :get %>
+
+<section class="event-show" aria-label="Event details">
+  <div class="event-show__hero">
+    <h1 class="event-show__title"><%= @event.name %></h1>
+    <div class="event-show__meta">
+      Event #<%= @event.id %> • Organiser: <%= @event.organiser&.name || "TBA" %>
+    </div>
+  </div>
+
+  <div class="event-show__description">
+    <span class="event-show__label">Description</span>
+    <div class="event-show__value"><%= @event.description.presence || "No description provided." %></div>
+  </div>
+
+  <div class="event-show__grid">
+    <div class="event-show__item">
+      <span class="event-show__label">Capacity</span>
+      <div class="event-show__value"><%= @event.capacity %></div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Applied</span>
+      <div class="event-show__value"><%= @event.attendees.count %></div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Location</span>
+      <div class="event-show__value"><%= @event.location.presence || "TBA" %></div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Start Date</span>
+      <div class="event-show__value"><%= @event.start_date || "TBA" %></div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">End Date</span>
+      <div class="event-show__value"><%= @event.end_date || "TBA" %></div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Finished</span>
+      <div class="event-show__value">
+        <span class="event-show__status <%= @event.finished? ? "event-show__status--yes" : "event-show__status--no" %>">
+          <%= @event.finished? ? "Yes" : "No" %>
+        </span>
+      </div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Waiver</span>
+      <div class="event-show__value">
+        <% if @event.waiver.attached? %>
+          <%= link_to "Download waiver", rails_blob_path(@event.waiver, disposition: "attachment") %>
+        <% else %>
+          none
+        <% end %>
+      </div>
+    </div>
+
+    <div class="event-show__item">
+      <span class="event-show__label">Attendees</span>
+      <div class="event-show__value">
+        <%= link_to "View Attendees", attendees_organisation_event_path(@organisation, @event) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="event-show__actions">
+    <%= link_to "Apply", apply_organisation_event_path(@organisation, @event), class: "event-show__btn event-show__btn--primary" %>
+    <%= button_to "Send QR Codes", send_qr_codes_organisation_event_path(@organisation, @event), method: :post %>
+    <%= link_to "Edit", edit_organisation_event_path(@organisation, @event), class: "event-show__btn event-show__btn--secondary" %>
+    <%= link_to "Back", organisation_events_path(@organisation), class: "event-show__btn event-show__btn--ghost" %>
+  </div>
+
+  <% if @event.apply_token.present? %>
+    <div class="event-show__share">
+      Shareable apply link (no organisation required):
+      <%= link_to public_apply_event_url(@event.apply_token), public_apply_event_url(@event.apply_token) %>
+    </div>
   <% end %>
-</p>
-</p>
-  <strong>End date:</strong>
-  <% if @event.end_date %>
-    <%= @event.end_date %>
-  <% else %>
-    TBA
-  <% end %>
-</p>
-
-<p>
-  <strong>Finished:</strong>
-  <%= @event.finished? ? "Yes" : "No" %>
-</p>
-
-<p>
-  <strong>Waiver:</strong>
-  <% if @event.waiver.attached? %>
-    <%= link_to "Download waiver", rails_blob_path(@event.waiver, disposition: "attachment") %>
-  <% else %>
-    none
-  <% end %>
-</p>
-
-<p>
-  <strong>Attendee count:</strong>
-  <%= link_to "View Attendees", attendees_organisation_event_path(@organisation, @event) %>
-</p>
-
-<%= link_to 'Apply', apply_organisation_event_path(@organisation, @event) %>
-
-<% if @event.apply_token.present? %>
-  <p>Shareable apply link (no organisation required):
-    <%= link_to public_apply_event_url(@event.apply_token), public_apply_event_url(@event.apply_token) %>
-  </p>
-<% end %>
-
-<%= button_to 'Send QR Codes', send_qr_codes_organisation_event_path(@organisation, @event), method: :post %>
-
-<%= link_to 'Edit', edit_organisation_event_path(@organisation, @event) %> |
-<%= link_to 'Back', organisation_events_path(@organisation) %>
+</section>

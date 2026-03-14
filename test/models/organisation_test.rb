@@ -53,4 +53,22 @@ class OrganisationTest < ActiveSupport::TestCase
     assert_equal @user, org.signing_user
     assert_includes org.users, @user
   end
+
+  test "destroying an organisation cleans up dependent records" do
+    org = Organisation.create!(user: @user, signing_user: @user, users: [ @user ])
+    event = org.events.create!(name: "Example", location: "Nowhere", start_date: Time.current, end_date: 1.hour.from_now)
+    gallery = org.galleries.create!(public: true)
+    Announcement.create!(creator: @user, organisation: org, event: event, content: "Hi")
+
+    assert_difference -> { Organisation.count }, -1 do
+      org.destroy
+    end
+
+    assert_not Event.exists?(event.id)
+    assert_not Gallery.exists?(gallery.id)
+    assert_not Announcement.exists?(organisation_id: org.id)
+
+    @user.reload
+    assert_nil @user.organisation_id
+  end
 end
