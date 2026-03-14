@@ -1,148 +1,499 @@
 <style>
-  .dashboard {
-    max-width: 1040px;
+  .org-dashboard {
+    max-width: 1120px;
     margin: 1.5rem auto;
     padding: 0 1rem 2rem;
-    color: #10263b;
+    color: #0f2740;
   }
 
-  .dashboard__header {
+  .org-dashboard__hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+    color: #fff;
+    padding: 1.5rem;
+    box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .org-dashboard__hero::after {
+    content: "";
+    position: absolute;
+    right: -90px;
+    top: -90px;
+    width: 240px;
+    height: 240px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+  }
+
+  .org-dashboard__hero-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1.75rem;
+    position: relative;
+    z-index: 1;
   }
 
-  .dashboard__title {
+  .org-dashboard__title {
     margin: 0;
-    font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+    font-size: clamp(1.7rem, 2.8vw, 2.35rem);
+    line-height: 1.1;
     letter-spacing: 0.01em;
   }
 
-  .dashboard__subtitle {
-    margin: 0.5rem 0 0;
-    color: #56657a;
-    max-width: 44rem;
-    line-height: 1.5;
+  .org-dashboard__subtitle {
+    margin: 0.45rem 0 0;
+    max-width: 56ch;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  .dashboard__actions {
+  .org-dashboard__meta {
     display: inline-flex;
-    gap: 0.7rem;
-    flex-wrap: wrap;
     align-items: center;
-  }
-
-  .dashboard__button {
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
-    border: 1px solid transparent;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 999px;
-    color: #fff;
-    padding: 0.55rem 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    box-shadow: 0 8px 18px rgba(2, 62, 138, 0.25);
-    transition: filter 0.15s ease, transform 0.15s ease;
+    padding: 0.32rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
-  .dashboard__button:hover {
-    filter: brightness(1.05);
+  .org-dashboard__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .org-dashboard__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    text-decoration: none;
+    padding: 0.58rem 0.95rem;
+    font-weight: 700;
+    transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+  }
+
+  .org-dashboard__button:hover {
     transform: translateY(-1px);
   }
 
-  .dashboard__cards {
+  .org-dashboard__button--solid {
+    background: #fff;
+    color: #0b4f86;
+    box-shadow: 0 10px 20px rgba(7, 40, 74, 0.22);
+  }
+
+  .org-dashboard__button--ghost {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+  }
+
+  .org-dashboard__kpis {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .org-dashboard__kpi {
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.27);
+    border-radius: 14px;
+    padding: 0.8rem;
+  }
+
+  .org-dashboard__kpi-label {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .org-dashboard__kpi-value {
+    margin: 0.2rem 0 0;
+    font-size: clamp(1.2rem, 1.5vw, 1.55rem);
+    font-weight: 800;
+  }
+
+  .org-dashboard__main {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
     gap: 1rem;
   }
 
-  .dashboard__card {
+  .org-dashboard__panel {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 14px;
-    padding: 1.2rem;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
   }
 
-  .dashboard__card-title {
+  .org-dashboard__panel-title {
     margin: 0;
+    color: #0e3558;
     font-size: 1.1rem;
-    color: var(--blue-very-dark);
   }
 
-  .dashboard__card-stat {
+  .org-dashboard__panel-subtitle {
+    margin: 0.35rem 0 0;
+    color: #5c6f83;
+    font-size: 0.92rem;
+  }
+
+  .org-dashboard__stack {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 0.95rem;
+  }
+
+  .org-dashboard__event {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 0.85rem;
+    background: #fbfdff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .org-dashboard__event-title {
     margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--blue-dark);
-  }
-
-  .dashboard__card-description {
-    margin: 0;
-    color: #4b5563;
-    line-height: 1.4;
-  }
-
-  .dashboard__card-action {
-    margin-top: auto;
-  }
-
-  .dashboard__link {
-    color: var(--blue);
+    color: #0a4e87;
+    font-size: 0.98rem;
     font-weight: 700;
     text-decoration: none;
   }
 
-  .dashboard__link:hover {
+  .org-dashboard__event-title:hover {
     text-decoration: underline;
+  }
+
+  .org-dashboard__event-meta {
+    margin: 0.35rem 0 0;
+    color: #5f7286;
+    font-size: 0.88rem;
+  }
+
+  .org-dashboard__badge {
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  .org-dashboard__badge--live {
+    background: rgba(16, 185, 129, 0.16);
+    color: #047857;
+  }
+
+  .org-dashboard__badge--upcoming {
+    background: rgba(14, 165, 233, 0.16);
+    color: #0369a1;
+  }
+
+  .org-dashboard__badge--finished {
+    background: rgba(148, 163, 184, 0.24);
+    color: #334155;
+  }
+
+  .org-dashboard__progress {
+    margin-top: 0.6rem;
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #dbe8f4;
+  }
+
+  .org-dashboard__progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0077b6, #00b4d8);
+  }
+
+  .org-dashboard__small-metrics {
+    margin-top: 0.95rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .org-dashboard__small-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f2f8fd;
+    border: 1px solid #d6e7f5;
+    border-radius: 10px;
+    padding: 0.58rem 0.72rem;
+    color: #18415f;
+    font-size: 0.9rem;
+  }
+
+  .org-dashboard__small-metric strong {
+    color: #0a4e87;
+  }
+
+  .org-dashboard__attendee {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.65rem;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    padding: 0.68rem 0;
+  }
+
+  .org-dashboard__attendee:last-child {
+    border-bottom: 0;
+  }
+
+  .org-dashboard__attendee-name {
+    margin: 0;
+    font-weight: 700;
+    color: #143b5f;
+  }
+
+  .org-dashboard__attendee-meta {
+    margin: 0.28rem 0 0;
+    color: #63798e;
+    font-size: 0.84rem;
+  }
+
+  .org-dashboard__empty {
+    margin: 0.85rem 0 0;
+    border: 1px dashed rgba(2, 62, 138, 0.3);
+    border-radius: 12px;
+    background: #f8fbff;
+    color: #5c6e82;
+    padding: 0.85rem;
+  }
+
+  .org-dashboard__footer-link {
+    margin-top: 0.85rem;
+  }
+
+  .org-dashboard__footer-link a {
+    color: #0a4e87;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .org-dashboard__footer-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 900px) {
+    .org-dashboard__main {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .org-dashboard {
+      margin: 1rem auto;
+      padding: 0 0.8rem 1.4rem;
+    }
+
+    .org-dashboard__hero {
+      padding: 1.05rem;
+      border-radius: 16px;
+    }
+
+    .org-dashboard__event {
+      padding: 0.72rem;
+    }
   }
 </style>
 
-<section class="dashboard" aria-label="Organisation dashboard">
-  <header class="dashboard__header">
-    <div>
-      <h1 class="dashboard__title"><%= @organisation.name %> dashboard</h1>
-      <p class="dashboard__subtitle">Manage your events, attendees, and organisation settings in one place.</p>
+<% capacity_fill_percent = @total_capacity.positive? ? ((@attendee_count.to_f / @total_capacity) * 100).round : 0 %>
+
+<section class="org-dashboard" aria-label="Organisation dashboard">
+  <header class="org-dashboard__hero">
+    <div class="org-dashboard__hero-head">
+      <div>
+        <span class="org-dashboard__meta">Organisation dashboard</span>
+        <h1 class="org-dashboard__title"><%= @organisation.name %></h1>
+        <p class="org-dashboard__subtitle">
+          Track event momentum, attendee movement, and organisation health in one place.
+        </p>
+      </div>
+
+      <div class="org-dashboard__actions">
+        <%= link_to "Create event", new_organisation_event_path(@organisation), class: "org-dashboard__button org-dashboard__button--solid" %>
+        <%= link_to "Manage events", dashboard_events_organisation_path(@organisation), class: "org-dashboard__button org-dashboard__button--ghost" %>
+        <%= link_to "Attendees", dashboard_attendees_organisation_path(@organisation), class: "org-dashboard__button org-dashboard__button--ghost" %>
+        <%= link_to "Settings", edit_organisation_path(@organisation), class: "org-dashboard__button org-dashboard__button--ghost" %>
+      </div>
     </div>
 
-    <div class="dashboard__actions">
-      <%= link_to "Events", dashboard_events_organisation_path(@organisation), class: "dashboard__button" %>
-      <%= link_to "Attendees", dashboard_events_attendees_organisation_path(@organisation), class: "dashboard__button" %>
-      <%= link_to "Organisation settings", edit_organisation_path(@organisation), class: "dashboard__button" %>
+    <div class="org-dashboard__kpis">
+      <article class="org-dashboard__kpi">
+        <p class="org-dashboard__kpi-label">Total events</p>
+        <p class="org-dashboard__kpi-value"><%= @event_count %></p>
+      </article>
+      <article class="org-dashboard__kpi">
+        <p class="org-dashboard__kpi-label">Active now</p>
+        <p class="org-dashboard__kpi-value"><%= @active_events_count %></p>
+      </article>
+      <article class="org-dashboard__kpi">
+        <p class="org-dashboard__kpi-label">Upcoming</p>
+        <p class="org-dashboard__kpi-value"><%= @upcoming_events_count %></p>
+      </article>
+      <article class="org-dashboard__kpi">
+        <p class="org-dashboard__kpi-label">Attendees</p>
+        <p class="org-dashboard__kpi-value"><%= @attendee_count %></p>
+      </article>
+      <article class="org-dashboard__kpi">
+        <p class="org-dashboard__kpi-label">Signed waivers</p>
+        <p class="org-dashboard__kpi-value"><%= @waiver_signed_count %></p>
+      </article>
     </div>
   </header>
 
-  <div class="dashboard__cards">
-    <div class="dashboard__card">
-      <h2 class="dashboard__card-title">Events</h2>
-      <p class="dashboard__card-stat"><%= @organisation.events.count %></p>
-      <p class="dashboard__card-description">Total events created for this organisation.</p>
-      <div class="dashboard__card-action">
-        <%= link_to "Manage events", dashboard_events_organisation_path(@organisation), class: "dashboard__link" %>
-      </div>
-    </div>
+  <div class="org-dashboard__main">
+    <section class="org-dashboard__panel" aria-labelledby="upcoming-events-title">
+      <h2 id="upcoming-events-title" class="org-dashboard__panel-title">Upcoming events</h2>
+      <p class="org-dashboard__panel-subtitle">
+        Next five scheduled events for your organisation.
+      </p>
 
-    <div class="dashboard__card">
-      <h2 class="dashboard__card-title">Attendees</h2>
-      <p class="dashboard__card-stat"><%= @organisation.attendees.count %></p>
-      <p class="dashboard__card-description">All attendees tracked across your events.</p>
-      <div class="dashboard__card-action">
-        <%= link_to "View attendees", dashboard_attendees_organisation_path(@organisation), class: "dashboard__link" %>
-      </div>
-    </div>
+      <% if @upcoming_events.any? %>
+        <div class="org-dashboard__stack">
+          <% @upcoming_events.each do |event| %>
+            <% capacity = event.capacity.to_i %>
+            <% attendee_count = event.attendees.count %>
+            <% event_fill_percent = capacity.positive? ? ((attendee_count.to_f / capacity) * 100).round : 0 %>
+            <% badge_class = if event.finished?
+                               "org-dashboard__badge org-dashboard__badge--finished"
+                             elsif event.start_date.present? && event.start_date <= Time.current
+                               "org-dashboard__badge org-dashboard__badge--live"
+                             else
+                               "org-dashboard__badge org-dashboard__badge--upcoming"
+                             end %>
+            <% badge_label = if event.finished?
+                               "Finished"
+                             elsif event.start_date.present? && event.start_date <= Time.current
+                               "Live"
+                             else
+                               "Upcoming"
+                             end %>
 
-    <div class="dashboard__card">
-      <h2 class="dashboard__card-title">Organisation</h2>
-      <p class="dashboard__card-description">Update your organisation details and manage who can access this dashboard.</p>
-      <div class="dashboard__card-action">
-        <%= link_to "Edit organisation", edit_organisation_path(@organisation), class: "dashboard__link" %>
+            <article class="org-dashboard__event">
+              <div>
+                <%= link_to event.name.presence || "Untitled event", organisation_event_path(@organisation, event), class: "org-dashboard__event-title" %>
+                <p class="org-dashboard__event-meta">
+                  <% if event.start_date.present? %>
+                    Starts <%= event.start_date.strftime("%b %-d, %Y %l:%M %p") %>
+                  <% else %>
+                    Start date not set
+                  <% end %>
+                  <% if event.location.present? %>
+                    · <%= event.location %>
+                  <% end %>
+                </p>
+                <div class="org-dashboard__progress" role="img" aria-label="Event capacity usage">
+                  <div class="org-dashboard__progress-fill" style="width: <%= [event_fill_percent, 100].min %>%;"></div>
+                </div>
+                <p class="org-dashboard__event-meta">
+                  <strong><%= attendee_count %></strong> attendee<%= attendee_count == 1 ? "" : "s" %>
+                  <% if capacity.positive? %>
+                    of <strong><%= capacity %></strong> capacity
+                  <% else %>
+                    with no capacity limit
+                  <% end %>
+                </p>
+              </div>
+              <span class="<%= badge_class %>"><%= badge_label %></span>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="org-dashboard__empty">No scheduled events yet. Create an event to start collecting signups.</p>
+      <% end %>
+
+      <p class="org-dashboard__footer-link">
+        <%= link_to "Go to full events list", dashboard_events_organisation_path(@organisation) %>
+      </p>
+    </section>
+
+    <aside class="org-dashboard__panel" aria-labelledby="attendance-health-title">
+      <h2 id="attendance-health-title" class="org-dashboard__panel-title">Attendance health</h2>
+      <p class="org-dashboard__panel-subtitle">
+        Current intake and check-in status across all events.
+      </p>
+
+      <div class="org-dashboard__small-metrics">
+        <div class="org-dashboard__small-metric">
+          <span>New events this month</span>
+          <strong><%= @recent_events_count %></strong>
+        </div>
+        <div class="org-dashboard__small-metric">
+          <span>Total capacity</span>
+          <strong><%= @total_capacity %></strong>
+        </div>
+        <div class="org-dashboard__small-metric">
+          <span>Remaining spots</span>
+          <strong><%= @available_spots %></strong>
+        </div>
+        <div class="org-dashboard__small-metric">
+          <span>Capacity fill</span>
+          <strong><%= capacity_fill_percent %>%</strong>
+        </div>
+        <div class="org-dashboard__small-metric">
+          <span>Checked in</span>
+          <strong><%= @signed_in_count %></strong>
+        </div>
+        <div class="org-dashboard__small-metric">
+          <span>Checked out</span>
+          <strong><%= @signed_out_count %></strong>
+        </div>
       </div>
-    </div>
+
+      <h3 class="org-dashboard__panel-title" style="margin-top: 1.1rem; font-size: 1rem;">Recent attendees</h3>
+
+      <% if @recent_attendees.any? %>
+        <% @recent_attendees.each do |attendee| %>
+          <article class="org-dashboard__attendee">
+            <div>
+              <p class="org-dashboard__attendee-name"><%= attendee.name.presence || "Unnamed attendee" %></p>
+              <p class="org-dashboard__attendee-meta">
+                <%= attendee.event&.name.presence || "No event" %> · Joined <%= time_ago_in_words(attendee.created_at) %> ago
+              </p>
+            </div>
+            <span class="org-dashboard__badge <%= attendee.waiver_signed? ? "org-dashboard__badge--live" : "org-dashboard__badge--finished" %>">
+              <%= attendee.waiver_signed? ? "Waiver signed" : "Waiver pending" %>
+            </span>
+          </article>
+        <% end %>
+      <% else %>
+        <p class="org-dashboard__empty">Attendee activity will appear here once people begin applying to your events.</p>
+      <% end %>
+
+      <p class="org-dashboard__footer-link">
+        <%= link_to "View all attendees", dashboard_attendees_organisation_path(@organisation) %>
+      </p>
+    </aside>
   </div>
 </section>
