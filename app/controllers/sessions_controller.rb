@@ -6,6 +6,10 @@ class SessionsController < ApplicationController
     auth = request.env["omniauth.auth"]
     user = User.from_omniauth(auth)
     session[:user_id] = user.id
+    orgs = Organisation.not.where(join_requirements: nil)
+    for org in orgs
+      org.auto_add_users()
+    end
     redirect_to root_path, notice: "Signed in successfully"
   end
 
