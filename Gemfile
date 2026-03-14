@@ -25,6 +25,9 @@ gem "jbuilder"
 
 gem "redcarpet"
 
+# Sanitize user-generated HTML (used by lib/lib/custom_markdown_renderer.rb)
+gem "sanitize"
+
 gem "omniauth-oauth2"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
