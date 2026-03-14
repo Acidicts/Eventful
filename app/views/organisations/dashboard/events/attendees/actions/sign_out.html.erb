@@ -1,7 +1,7 @@
 <h1>Sign Out</h1>
 <p>Event: <%= @event.id %> (organisation <%= @organisation.id %>)</p>
 
-<%= link_to "Sign In", actions_sign_in_organisation_event_path(@organisation, @event) %>
+<%= link_to "Sign In", attendee_sign_in_organisation_event_path(@organisation, @event) %>
 
 <div data-controller="qr-decoder"
      data-qr-decoder-url-value="<%= scan_organisation_event_path(@organisation, @event) %>"

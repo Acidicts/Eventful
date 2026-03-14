@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_071419) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_074000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -37,6 +37,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_071419) do
     t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "content"
+    t.datetime "created_at", null: false
+    t.integer "creator_id", null: false
+    t.integer "event_id"
+    t.integer "organisation_id", null: false
+    t.boolean "public"
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_announcements_on_creator_id"
+    t.index ["event_id"], name: "index_announcements_on_event_id"
+    t.index ["organisation_id"], name: "index_announcements_on_organisation_id"
   end
 
   create_table "attendees", force: :cascade do |t|
@@ -79,6 +92,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_071419) do
     t.index ["apply_token"], name: "index_events_on_apply_token", unique: true
     t.index ["organisation_id"], name: "index_events_on_organisation_id"
     t.index ["organiser_id"], name: "index_events_on_organiser_id"
+  end
+
+  create_table "galleries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "organisation_id", null: false
+    t.boolean "public"
+    t.datetime "updated_at", null: false
+    t.index ["organisation_id"], name: "index_galleries_on_organisation_id"
+  end
+
+  create_table "gallery_images", force: :cascade do |t|
+    t.integer "attendee_id", null: false
+    t.string "caption"
+    t.datetime "created_at", null: false
+    t.datetime "day_from"
+    t.integer "gallery_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attendee_id"], name: "index_gallery_images_on_attendee_id"
+    t.index ["gallery_id"], name: "index_gallery_images_on_gallery_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -134,9 +166,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_071419) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "announcements", "events"
+  add_foreign_key "announcements", "organisations"
+  add_foreign_key "announcements", "users", column: "creator_id"
   add_foreign_key "attendees", "events"
   add_foreign_key "events", "organisations"
   add_foreign_key "events", "users", column: "organiser_id"
+  add_foreign_key "galleries", "organisations"
+  add_foreign_key "gallery_images", "attendees"
+  add_foreign_key "gallery_images", "galleries"
   add_foreign_key "messages", "users", column: "answerer_id"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"

@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
   # only look up an organisation when the request is scoped to one
   before_action :set_organisation, if: -> { params[:organisation_id].present? }
-  before_action :require_login, except: %i[show]
+  before_action :require_login, except: %i[show announcements]
   # make sure we load @event for the member actions too (nested only)
   before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
 
@@ -26,6 +26,11 @@ class EventsController < ApplicationController
     else
       render "events/pub/show"
     end
+  end
+
+  def announcements
+    @announcements = @event.announcements.where(public: true).order(created_at: :desc)
+    render "events/announcements/show"
   end
 
   def new
@@ -60,17 +65,17 @@ class EventsController < ApplicationController
   # custom member actions from generator intent
   def sign_in
     # TODO: implement sign-in logic
-    render "organisations/dashboard/events/sign_in"
+    render "organisations/dashboard/events/attendees/actions/sign_in"
   end
 
   def sign_out
     # TODO: implement sign-out logic
-    render "organisations/dashboard/events/sign_out"
+    render "organisations/dashboard/events/attendees/actions/sign_out"
   end
 
   def get_info
     # TODO: implement info retrieval logic
-    render "organisations/dashboard/events/get_info"
+    render "organisations/dashboard/events/attendees/actions/get_info"
   end
 
   # receive payload from QR scanner frontend and perform whatever checks
@@ -128,7 +133,7 @@ class EventsController < ApplicationController
     # return all attendee records associated with the event; once the
     # migration has run this will be a normal has_many query.
     @attendees = @event.attendees
-    render "organisations/dashboard/events/attendees"
+    render "organisations/dashboard/events/attendees/attendees"
   end
 
   # GET /org/:org_id/events/:id/apply

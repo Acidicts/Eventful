@@ -1,0 +1,13 @@
+<% if announcement.content.present? %>
+  <section class="announcement-card" aria-label="Announcement details">
+    <div class="announcement-card__meta">
+      <span class="announcement-card__tag">
+        <%= announcement.public? ? "Public" : "Event-only" %>
+      </span>
+    </div>
+
+    <div class="announcement-card__content">
+      <%= simple_format(announcement.content) %>
+    </div>
+  </section>
+<% end %>

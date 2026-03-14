@@ -1,0 +1,51 @@
+<% announcements = @event.announcements.order(created_at: :desc) %>
+
+<section class="feed-shell" aria-label="Event announcements">
+  <header class="feed-shell__header">
+    <h4 class="feed-shell__title">Announcements</h4>
+    <% if announcements.any? %>
+        <span class="feed-shell__count"><%= pluralize(announcements.where(public: true).size, "post") %></span>
+    <% else %>
+        <span class="feed-shell__count">No posts</span>
+    <% end %>
+  </header>
+
+  <% if announcements.any? %>
+    <div class="feed">
+      <% announcements.each do |announcement| %>
+        <% if announcement.public? %>
+            <% author_name = announcement.creator.name.presence || "Someone on the Team" %>
+            <article class="feed-item">
+                <header class="feed-item__header">
+                    <div class="feed-item__identity">
+                    <span class="feed-item__avatar"><%= author_name.first.upcase %></span>
+                    <span class="feed-item__author"><%= author_name %></span>
+                    </div>
+                    <span class="feed-item__time" title="<%= l(announcement.created_at, format: :long) %>">
+                    <% if announcement.updated_at > 24.hour.ago %>
+                        <% if announcement.updated_at != announcement.created_at %>
+                            <span class="feed-item__time" title="<%= l(announcement.updated_at, format: :long) %>">
+                            Updated <%= time_ago_in_words(announcement.updated_at) %> ago
+                            </span>
+                        <% else %>
+                            <span class="feed-item__time" title="<%= l(announcement.created_at, format: :long) %>">
+                            Created <%= time_ago_in_words(announcement.created_at) %> ago
+                            </span>
+                        <% end %>
+                    <% else %>
+                        <%= l(announcement.created_at, format: :short) %>
+                    <% end %>
+                    </span>
+                </header>
+
+                <div class="feed-item__body">
+                    <%= render partial: "events/announcements/announcement", locals: { announcement: announcement } %>
+                </div>
+            </article>
+        <% end %>
+    <% end %>
+    </div>
+  <% else %>
+    <p class="feed-shell__empty">No announcements yet. Updates will appear here.</p>
+  <% end %>
+</section>

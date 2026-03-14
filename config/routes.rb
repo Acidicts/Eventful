@@ -21,6 +21,8 @@ Rails.application.routes.draw do
   get "landing/" => "home#unregistered", as: :landing
   get "landing/events" => "home#events", as: :landing_events
 
+  get "events/:id/announcements" => "events#announcements", as: :event_announcements
+
   get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
   get "attendee-portal/contact" => "attendee_portal#contact", as: :attendee_portal_contact
   # use POST for sending messages; the UI submits a form rather than
@@ -99,26 +101,26 @@ Rails.application.routes.draw do
 
     resources :events do
       member do
-        get "attendees", to: "events#attendees"
+        get "attendees", to: "events#attendees", as: :attendees
         post "send_qr_codes", to: "organisations/dashboard/events#send_qr_codes"
 
         # show a specific attendee linked from the events list
         # view a specific attendee for this event
-        get "attendee/:attendee_id", to: "events#attendee", as: :attendee
+        get "attendee/:attendee_id", to: "events/attendees#attendee", as: :attendee
         # editing existing attendee
-        get "attendee/:attendee_id/edit", to: "events#edit_attendee", as: :edit_attendee
-        patch "attendee/:attendee_id", to: "events#update_attendee"
+        get "attendee/:attendee_id/edit", to: "events/attendees#edit_attendee", as: :edit_attendee
+        patch "attendee/:attendee_id", to: "events/attendees#update_attendee"
 
         # view specific attendee waiver
-        get "attendee/:attendee_id/waiver", to: "events#attendee_waiver", as: :attendee_waiver
-        delete "attendee/:attendee_id/waiver", to: "events#destroy_attendee_waiver", as: :destroy_attendee_waiver
+        get "attendee/:attendee_id/waiver", to: "events/attendees#attendee_waiver", as: :attendee_waiver
+        delete "attendee/:attendee_id/waiver", to: "events/attendees#destroy_attendee_waiver", as: :destroy_attendee_waiver
 
         # sign‑up form and submission
-        get "apply", to: "events#apply"
-        post "apply", to: "events#apply_create"
-        get "actions/sign-in",  to: "events#sign_in"
-        get "actions/sign-out", to: "events#sign_out"
-        get "actions/get-info", to: "events#get_info"
+        get "apply", to: "events#apply", as: :apply
+        post "apply", to: "events#apply_create", as: :apply_create
+        get "actions/sign-in",  to: "events#sign_in", as: :attendee_sign_in
+        get "actions/sign-out", to: "events#sign_out", as: :attendee_sign_out
+        get "actions/get-info", to: "events#get_info", as: :attendee_get_info
         post "actions/scan", to: "events#scan", as: :scan
       end
     end

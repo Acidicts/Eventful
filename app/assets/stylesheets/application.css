@@ -67,3 +67,191 @@ unset {
   color: #0c5460;
   border: 1px solid #bee5eb;
 }
+
+/* Feed / timeline */
+.feed-shell {
+  margin-top: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 119, 182, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 1.25rem 1.5rem;
+}
+
+.feed-shell__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 0.75rem;
+}
+
+.feed-shell__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.feed-shell__count {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #075985;
+  font-weight: 700;
+}
+
+.feed-shell__empty {
+  margin: 0;
+  padding: 1.5rem 0;
+  text-align: center;
+  color: #fff;
+  font-size: 0.94rem;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-item {
+  position: relative;
+  padding: 0 0 1.75rem 2rem;
+}
+
+.feed-item:last-child {
+  padding-bottom: 0;
+}
+
+.feed-item::before {
+  content: "";
+  position: absolute;
+  left: 0.35rem;
+  top: 0.5rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--blue-light);
+  box-shadow: 0 0 0 4px rgba(0, 150, 199, 0.15);
+}
+
+.feed-item::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  top: 1.25rem;
+  bottom: 0;
+  width: 2px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.feed-item:last-child::after {
+  display: none;
+}
+
+.feed-item__header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.feed-item__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.feed-item__avatar {
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--blue-dark);
+  color: var(--blue-lighter);
+}
+
+.feed-item__author {
+  font-weight: 600;
+  color: #fff;
+}
+
+.feed-item__time {
+  font-size: 0.8rem;
+  color: rgb(229, 229, 229);
+}
+
+.announcement-card {
+  padding: 0;
+}
+
+.announcement-card__meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.announcement-card__tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.announcement-card__tag::before {
+  content: "•";
+  margin-right: 0.35rem;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.announcement-card__content {
+  line-height: 1.6;
+  font-size: 0.98rem;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.announcement-card__content p {
+  margin: 0;
+}
+
+.announcement-card__content p + p {
+  margin-top: 0.7rem;
+}
+
+@media (max-width: 640px) {
+  .feed-shell {
+    padding: 1.15rem 1rem;
+  }
+
+  .feed-item {
+    padding: 0 0 1.5rem 1.6rem;
+  }
+
+  .feed-item__header {
+    align-items: center;
+  }
+
+  .feed-item::before {
+    left: 0.15rem;
+  }
+
+  .feed-item::after {
+    left: 0.4rem;
+  }
+}

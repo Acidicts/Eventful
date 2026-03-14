@@ -146,4 +146,10 @@
     <article class="event-pub-body">
         <p>Everything you need for this event will appear here, including updates, logistics, and attendee information.</p>
     </article>
+    <% if @event.announcements.any? %>
+        <section class="event-pub-announcements">
+            <h3>Announcements</h3>
+            <%= render "events/announcements/show" %>
+        </section>
+    <% end %>
 </section>

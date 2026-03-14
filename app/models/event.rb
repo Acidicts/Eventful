@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   # each event can have many attendees; the foreign key lives on the
   # attendees table. existing data is migrated during a migration.
   has_many :attendees, dependent: :nullify
+  has_many :announcements, dependent: :nullify
 
   # an event may be organised by a user; the foreign key lives on this model
   belongs_to :organiser, class_name: "User", foreign_key: "organiser_id", optional: true
