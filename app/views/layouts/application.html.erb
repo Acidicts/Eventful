@@ -144,6 +144,9 @@
       color: white;
       font-size: 1.5rem;
       margin-bottom: 4px;
+    }
+
+    .branding.animate-in {
       opacity: 0;
       animation: fadeIn 0.3s ease-out 0.1s forwards;
     }
@@ -298,22 +301,21 @@
   </style>
 
   <body>
-    <header style="width: 100%; display:inline-flex; position: relative;">
+    <header id="site-header" data-turbo-permanent style="width: 100%; display:inline-flex; position: relative;">
       <% effective_user = current_user || @nil_user %>
+      <% custom_branding_org = effective_user&.organisations&.where(eventful_branding: false)&.first %>
+      <% branding_label = custom_branding_org&.name || "Eventful" %>
+      <% branding_href = custom_branding_org ? organisations_path(effective_user.organisations) : root_path %>
       <div class="header-left">
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
         <% user_organisations = effective_user&.organisations %>
-        <% if user_organisations&.any? && user_organisations.where(eventful_branding: false).any? %>
-          <strong class="branding"><%= link_to user_organisations.where(eventful_branding: false).first.name, organisations_path(user_organisations), method: :get, data: { turbo: false }, class: "branding-link" %></strong>
-        <% else %>
-          <strong class="branding"><%= link_to "Eventful", root_path, method: :get, data: { turbo: false }, class: "branding-link" %></strong>
-        <% end %>
+        <strong id="site-branding" data-turbo-permanent class="branding"><%= link_to branding_label, branding_href, method: :get, class: "branding-link" %></strong>
         <div id="nav-dropdown">        
           <% if effective_user != @nil_user %>
-            <%= button_to "Home", root_path, method: :get, data: { turbo: false }, id: "home-button" %>
-            <%= button_to "Organisations", organisations_path, method: :get, data: { turbo: false }, id: "organisations-button" %>
-            <%= button_to "Events", events_path, method: :get, data: { turbo: false }, id: "qr-code-button" %>
+            <%= button_to "Home", root_path, method: :get, id: "home-button" %>
+            <%= button_to "Organisations", organisations_path, method: :get, id: "organisations-button" %>
+            <%= button_to "Events", events_path, method: :get, id: "qr-code-button" %>
           <% else %>
             <%= button_to "Sign in", '/auth/hackclub', data: { turbo: false }, class: "sign-in-button" %>
             <p style="color:white; word-wrap: break-word; max-width: 200px;">Please sign in to access more features.</p>
@@ -367,6 +369,7 @@
       menuOpenIcon.src = "<%= icon_menu_open_path(color: 'white') %>";
       const menuClosedIcon = new Image();
       menuClosedIcon.src = "https://icons.hackclub.com/api/icons/white/menu";
+      const MENU_CLOSE_NAV_DELAY_MS = 220;
 
       function closeMenu(menuBtn, navDropdown, instant = false) {
         if (instant) {
@@ -405,9 +408,23 @@
           return;
         }
 
-        if (e.target.closest("#nav-dropdown button")) {
-          // Avoid interrupted rotation when Turbo navigates immediately after click.
-          closeMenu(menuBtn, navDropdown, true);
+        const navButton = e.target.closest("#nav-dropdown button");
+        if (navButton) {
+          // Let the close animation finish before navigating away.
+          e.preventDefault();
+          closeMenu(menuBtn, navDropdown);
+
+          const form = navButton.closest("form");
+          if (!form) return;
+
+          navButton.disabled = true;
+          window.setTimeout(() => {
+            if (typeof form.requestSubmit === "function") {
+              form.requestSubmit(navButton);
+            } else {
+              form.submit();
+            }
+          }, MENU_CLOSE_NAV_DELAY_MS);
           return;
         }
 
@@ -426,6 +443,18 @@
     initImageFadeIn();
     initHeaderMenu();
 
+    // Animate branding only once (initial full load), not on Turbo visits.
+    function animateBrandingOnce() {
+      if (window.brandingAnimatedOnce) return;
+      const branding = document.getElementById("site-branding");
+      if (!branding) return;
+      branding.classList.add("animate-in");
+      window.setTimeout(() => branding.classList.remove("animate-in"), 400);
+      window.brandingAnimatedOnce = true;
+    }
+
+    animateBrandingOnce();
+
     // Page transition animations with Turbo
     document.addEventListener("turbo:visit", () => {
       document.body.classList.add("turbo-loading");
@@ -433,6 +462,23 @@
 
     document.addEventListener("turbo:before-render", () => {
       document.body.classList.remove("turbo-loading");
+    });
+
+    // Keep persistent branding stable unless the actual branding string changes.
+    document.addEventListener("turbo:before-render", (event) => {
+      const currentLink = document.querySelector("#site-branding .branding-link");
+      const incomingLink = event.detail.newBody.querySelector("#site-branding .branding-link");
+      if (!currentLink || !incomingLink) return;
+
+      const currentLabel = (currentLink.textContent || "").trim();
+      const incomingLabel = (incomingLink.textContent || "").trim();
+      const currentHref = currentLink.getAttribute("href") || "";
+      const incomingHref = incomingLink.getAttribute("href") || "";
+
+      if (currentLabel === incomingLabel && currentHref === incomingHref) return;
+
+      currentLink.textContent = incomingLabel;
+      currentLink.setAttribute("href", incomingHref);
     });
 
     document.addEventListener("turbo:load", () => {
