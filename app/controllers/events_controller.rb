@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
   # only look up an organisation when the request is scoped to one
   before_action :set_organisation, if: -> { params[:organisation_id].present? }
-  before_action :require_login
+  before_action :require_login, except: %i[show]
   # make sure we load @event for the member actions too (nested only)
   before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
 
@@ -21,8 +21,11 @@ class EventsController < ApplicationController
   end
 
   def show
-    # show view now lives under the organisation dashboard namespace
-    render "organisations/dashboard/events/show"
+    if current_user && @event.organisation.users.include?(current_user)
+      render "organisations/dashboard/events/show"
+    else
+      render "events/pub/show"
+    end
   end
 
   def new

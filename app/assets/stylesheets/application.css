@@ -21,6 +21,10 @@
   --blue-white: #c0eff8;
 }
 
+unset {
+  all: unset;
+}
+
 @font-face {
   font-family: "Lexend";
   font-weight: 100 900;

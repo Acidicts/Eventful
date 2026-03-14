@@ -21,6 +21,10 @@ class Event < ApplicationRecord
   attribute :start_date, :datetime
   attribute :end_date, :datetime
 
+  attribute :finished, :boolean, default: false
+
+
+
   # ensure the attached waiver is either a PDF or plaintext file and
   # isn't ridiculously large. avoid relying on the built–in
   # ContentTypeValidator since it isn't loaded in the test harness
@@ -65,7 +69,7 @@ class Event < ApplicationRecord
   end
 
   def finished?
-    end_date.present? && end_date < Time.current
+    finished || (end_date.present? && end_date < Time.current)
   end
 
   def to_param

@@ -1,0 +1,149 @@
+<style>
+    :root {
+        --eventful-primary: #007bff;
+        --eventful-accent: #00d4ff;
+        --eventful-surface: #ffffff;
+        --eventful-bg: #f4f7fa;
+        --eventful-text: #243447;
+        --eventful-muted: #5b6b7b;
+    }
+
+    .event-pub-page {
+        max-width: 980px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .event-pub-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        background: linear-gradient(120deg, var(--eventful-primary), #1d9eff 55%, var(--eventful-accent));
+        color: #fff;
+        padding: 2rem;
+        box-shadow: 0 14px 36px rgba(0, 67, 145, 0.25);
+        animation: eventPubEnter 0.35s ease-out;
+    }
+
+    .event-pub-hero::before {
+        content: "";
+        position: absolute;
+        right: -70px;
+        top: -70px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .event-pub-hero::after {
+        content: "";
+        position: absolute;
+        left: -55px;
+        bottom: -55px;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    #event-header {
+        position: relative;
+        z-index: 1;
+    }
+
+    #event-header h2 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+    }
+
+    .event-pub-description {
+        margin: 1rem 0 0;
+        font-size: clamp(1rem, 2.1vw, 1.22rem);
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 70ch;
+        text-wrap: pretty;
+    }
+
+    .event-pub-details {
+        margin-top: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        border-radius: 999px;
+        padding: 0.45rem 0.85rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    .event-pub-body {
+        margin-top: 1.2rem;
+        background: var(--eventful-surface);
+        border: 1px solid rgba(0, 123, 255, 0.14);
+        border-radius: 14px;
+        padding: 1.15rem 1.2rem;
+        color: var(--eventful-text);
+        box-shadow: 0 8px 22px rgba(15, 40, 74, 0.08);
+    }
+
+    .event-pub-body p {
+        margin: 0;
+        color: var(--eventful-muted);
+        line-height: 1.6;
+    }
+
+    @keyframes eventPubEnter {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .event-pub-page {
+            margin-top: 1.25rem;
+            padding: 0 0.8rem;
+        }
+
+        .event-pub-hero {
+            padding: 1.3rem 1.1rem;
+            border-radius: 12px;
+        }
+
+        .event-pub-body {
+            border-radius: 12px;
+            padding: 0.95rem;
+        }
+    }
+</style>
+
+<section class="event-pub-page">
+    <div class="event-pub-hero">
+        <div id="event-header">
+            <h2><%= @event.name %></h2>
+
+            <% if @event.description.present? %>
+                <p class="event-pub-description"><%= @event.description %></p>
+            <% else %>
+                <p class="event-pub-description">A new Eventful experience is coming together. Check back soon for the full event details.</p>
+            <% end %>
+
+            <span class="event-pub-details">Public Event Page</span>
+        </div>
+    </div>
+
+    <article class="event-pub-body">
+        <p>Everything you need for this event will appear here, including updates, logistics, and attendee information.</p>
+    </article>
+</section>

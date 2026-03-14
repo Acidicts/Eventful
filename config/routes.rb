@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     "/attendee-portal#{query}"
   }, as: nil
 
+  get "landing/" => "home#unregistered", as: :landing
+  get "landing/events" => "home#events", as: :landing_events
+
   get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
   get "attendee-portal/contact" => "attendee_portal#contact", as: :attendee_portal_contact
   # use POST for sending messages; the UI submits a form rather than

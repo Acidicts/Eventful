@@ -273,6 +273,28 @@
         transform: translateY(0);
       }
     }
+    .branding-link {
+        color: inherit;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .branding-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 2px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+
+    .branding-link:hover::after {
+      transform: scaleX(1);
+    }
   </style>
 
   <body>
@@ -282,8 +304,10 @@
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
         <% user_organisations = effective_user&.organisations %>
-        <% if user_organisations&.any? && !user_organisations.where(eventful_branding: false).any? %>
-          <strong class="branding"><%= user_organisations.first.eventful_branding ? "Eventful" : @organisation&.name %></strong>
+        <% if user_organisations&.any? && user_organisations.where(eventful_branding: false).any? %>
+          <strong class="branding"><%= link_to user_organisations.where(eventful_branding: false).first.name, organisations_path(user_organisations), method: :get, data: { turbo: false }, class: "branding-link" %></strong>
+        <% else %>
+          <strong class="branding"><%= link_to "Eventful", root_path, method: :get, data: { turbo: false }, class: "branding-link" %></strong>
         <% end %>
         <div id="nav-dropdown">        
           <% if effective_user != @nil_user %>
@@ -291,14 +315,15 @@
             <%= button_to "Organisations", organisations_path, method: :get, data: { turbo: false }, id: "organisations-button" %>
             <%= button_to "Events", events_path, method: :get, data: { turbo: false }, id: "qr-code-button" %>
           <% else %>
-            <p style="color:white">Please sign in to access more features.</p>
+            <%= button_to "Sign in", '/auth/hackclub', data: { turbo: false }, class: "sign-in-button" %>
+            <p style="color:white; word-wrap: break-word; max-width: 200px;">Please sign in to access more features.</p>
           <% end %>
         </div>
       </div>
       <% if effective_user == @nil_user %>
-        <%= button_to 'Sign in', '/auth/hackclub', data: { turbo: false }, id: "sign-in-button" %>
+        <%= button_to 'Sign in', '/auth/hackclub', data: { turbo: false }, id: "sign-in-button-menu", class: "sign-in-button" %>
       <% else %>
-        <%= button_to 'Sign out', logout_path, method: :delete, data: { turbo: false }, id: "sign-out-button" %>
+        <%= button_to 'Sign out', logout_path, method: :delete, data: { turbo: false }, class: "sign-out-button" %>
       <% end %>
     </header>
     <span style="width:100%; margin-top: 10px; margin-bottom: 10px;"> </span>
