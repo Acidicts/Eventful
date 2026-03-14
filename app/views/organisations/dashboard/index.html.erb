@@ -1,3 +1,148 @@
-<h1><%= @organisation.name %> - Dashboard</h1>
+<style>
+  .dashboard {
+    max-width: 1040px;
+    margin: 1.5rem auto;
+    padding: 0 1rem 2rem;
+    color: #10263b;
+  }
 
-<p><%= link_to "Events", dashboard_events_organisation_path(@organisation) %></p>
+  .dashboard__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+
+  .dashboard__title {
+    margin: 0;
+    font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+    letter-spacing: 0.01em;
+  }
+
+  .dashboard__subtitle {
+    margin: 0.5rem 0 0;
+    color: #56657a;
+    max-width: 44rem;
+    line-height: 1.5;
+  }
+
+  .dashboard__actions {
+    display: inline-flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .dashboard__button {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: #fff;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 8px 18px rgba(2, 62, 138, 0.25);
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+
+  .dashboard__button:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+  }
+
+  .dashboard__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .dashboard__card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 1.2rem;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .dashboard__card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--blue-very-dark);
+  }
+
+  .dashboard__card-stat {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--blue-dark);
+  }
+
+  .dashboard__card-description {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.4;
+  }
+
+  .dashboard__card-action {
+    margin-top: auto;
+  }
+
+  .dashboard__link {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .dashboard__link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<section class="dashboard" aria-label="Organisation dashboard">
+  <header class="dashboard__header">
+    <div>
+      <h1 class="dashboard__title"><%= @organisation.name %> dashboard</h1>
+      <p class="dashboard__subtitle">Manage your events, attendees, and organisation settings in one place.</p>
+    </div>
+
+    <div class="dashboard__actions">
+      <%= link_to "Events", dashboard_events_organisation_path(@organisation), class: "dashboard__button" %>
+      <%= link_to "Attendees", dashboard_events_attendees_organisation_path(@organisation), class: "dashboard__button" %>
+      <%= link_to "Organisation settings", edit_organisation_path(@organisation), class: "dashboard__button" %>
+    </div>
+  </header>
+
+  <div class="dashboard__cards">
+    <div class="dashboard__card">
+      <h2 class="dashboard__card-title">Events</h2>
+      <p class="dashboard__card-stat"><%= @organisation.events.count %></p>
+      <p class="dashboard__card-description">Total events created for this organisation.</p>
+      <div class="dashboard__card-action">
+        <%= link_to "Manage events", dashboard_events_organisation_path(@organisation), class: "dashboard__link" %>
+      </div>
+    </div>
+
+    <div class="dashboard__card">
+      <h2 class="dashboard__card-title">Attendees</h2>
+      <p class="dashboard__card-stat"><%= @organisation.attendees.count %></p>
+      <p class="dashboard__card-description">All attendees tracked across your events.</p>
+      <div class="dashboard__card-action">
+        <%= link_to "View attendees", dashboard_attendees_organisation_path(@organisation), class: "dashboard__link" %>
+      </div>
+    </div>
+
+    <div class="dashboard__card">
+      <h2 class="dashboard__card-title">Organisation</h2>
+      <p class="dashboard__card-description">Update your organisation details and manage who can access this dashboard.</p>
+      <div class="dashboard__card-action">
+        <%= link_to "Edit organisation", edit_organisation_path(@organisation), class: "dashboard__link" %>
+      </div>
+    </div>
+  </div>
+</section>

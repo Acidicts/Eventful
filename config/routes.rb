@@ -95,6 +95,7 @@ Rails.application.routes.draw do
     member do
       get :dashboard, to: "organisations/dashboard#index"
       # route for organisation dashboard events list
+      get "dashboard/attendees", to: "organisations/dashboard/attendees#index", as: :dashboard_attendees
       get "dashboard/events", to: "organisations/dashboard/events#index", as: :dashboard_events
       get "dashboard/events/attendees", to: "organisations/dashboard/events#attendees", as: :dashboard_events_attendees
     end

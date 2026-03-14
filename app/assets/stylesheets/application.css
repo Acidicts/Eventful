@@ -453,3 +453,146 @@ unset {
     margin-left: 0;
   }
 }
+/* Attendee details */
+.attendee-details {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 0 1rem 1.5rem;
+}
+
+.attendee-details__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.attendee-details__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--blue-very-dark);
+}
+
+.attendee-details__subtitle {
+  margin: 0.35rem 0 0;
+  color: rgba(0, 0, 0, 0.65);
+  max-width: 42rem;
+}
+
+.attendee-details__actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.attendee-details__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.attendee-details__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.attendee-details__btn--primary {
+  background: var(--blue);
+  color: #fff;
+}
+
+.attendee-details__btn--ghost {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--blue-dark);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.attendee-details__card {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+  padding: 1.35rem 1.5rem;
+}
+
+.attendee-details__list {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) 1fr;
+  gap: 0.9rem 1.2rem;
+  align-items: start;
+}
+
+.attendee-details__term {
+  margin: 0;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.attendee-details__definition {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.8);
+  line-height: 1.4;
+}
+
+.attendee-details__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.attendee-details__badge--success {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+}
+
+.attendee-details__badge--muted {
+  background: rgba(148, 163, 184, 0.22);
+  color: #334155;
+}
+
+.attendee-details__waiver-actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-left: 0.6rem;
+}
+
+.attendee-details__waiver-link,
+.attendee-details__waiver-download {
+  font-weight: 600;
+  color: var(--blue-dark);
+  text-decoration: none;
+}
+
+.attendee-details__waiver-link:hover,
+.attendee-details__waiver-download:hover {
+  text-decoration: underline;
+}
+
+.attendee-details__empty {
+  padding: 2rem 1.1rem;
+  border: 1px dashed rgba(0, 0, 0, 0.18);
+  border-radius: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .attendee-details__list {
+    grid-template-columns: 1fr;
+  }
+}

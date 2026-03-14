@@ -1,0 +1,20 @@
+<div class="org-card">
+  <h2 class="org-card__title"><%= attendee.name.presence || "Untitled attendee" %></h2>
+  <p class="org-card__description">
+    <strong>Code:</strong> <%= attendee.code %><br>
+    <strong>Age:</strong> <%= attendee.age || "—" %><br>
+    <strong>Event:</strong> <%= attendee.event&.name.presence || "—" %>
+  </p>
+
+  <div class="org-card__action">
+    <% if attendee.event %>
+      <%= link_to "View", attendee_organisation_event_path(
+                @organisation,
+                attendee.event,
+                attendee_id: attendee.id
+              ), class: "btn btn-primary" %>
+    <% else %>
+      <span class="text-muted">No event associated</span>
+    <% end %>
+  </div>
+</div>

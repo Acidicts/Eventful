@@ -13,6 +13,10 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def attendees
+    @attendees = Attendee.joins(:event).where(events: { organisation_id: @organisation.id })
+  end
+
   def show
   end
 

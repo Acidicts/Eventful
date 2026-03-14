@@ -1,25 +1,63 @@
-<h1>Attendee details</h1>
+<section class="attendee-details">
+  <header class="attendee-details__header">
+    <div>
+      <h1 class="attendee-details__title">Attendee details</h1>
+      <p class="attendee-details__subtitle">Review registration details, waiver status, and attendee info.</p>
+    </div>
 
-<% if @attendee %>
-  <p>Name: <%= @attendee.name %></p>
-  <p>Age: <%= @attendee.age %></p>
-  <p>Diet: <%= @attendee.diet.humanize %></p>
-  <p>Allergies: <%= @attendee.allergies || "None" %></p>
-  <p>Code: <%= @attendee.code %></p>
-  <p>Waiver Signed: <%= @attendee.waiver_signed ? "Yes" : "No" %></p>
-  <p><%= link_to "View waiver details", attendee_waiver_organisation_event_path(@organisation, @event, attendee_id: @attendee.id) %></p>
-  <% if @attendee.signed_waiver.attached? %>
-    <p><%= link_to "Download signed copy", rails_blob_path(@attendee.signed_waiver, disposition: "attachment") %></p>
+    <div class="attendee-details__actions">
+      <%= link_to "Back", attendees_organisation_event_path(@organisation, @event), class: "attendee-details__btn attendee-details__btn--ghost" %>
+      <% if @attendee %>
+        <%= link_to "Edit", edit_attendee_organisation_event_path(@organisation, @event, attendee_id: @attendee.id), class: "attendee-details__btn attendee-details__btn--primary" %>
+      <% end %>
+    </div>
+  </header>
+
+  <% if @attendee %>
+    <div class="attendee-details__card">
+      <dl class="attendee-details__list">
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Name</dt>
+          <dd class="attendee-details__definition"><%= @attendee.name %></dd>
+        </div>
+
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Age</dt>
+          <dd class="attendee-details__definition"><%= @attendee.age %></dd>
+        </div>
+
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Diet</dt>
+          <dd class="attendee-details__definition"><%= @attendee.diet.humanize %></dd>
+        </div>
+
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Allergies</dt>
+          <dd class="attendee-details__definition"><%= @attendee.allergies.presence || "None" %></dd>
+        </div>
+
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Code</dt>
+          <dd class="attendee-details__definition"><%= @attendee.code %></dd>
+        </div>
+
+        <div class="attendee-details__row">
+          <dt class="attendee-details__term">Waiver</dt>
+          <dd class="attendee-details__definition">
+            <span class="attendee-details__badge <%= @attendee.waiver_signed ? 'attendee-details__badge--success' : 'attendee-details__badge--muted' %>">
+              <%= @attendee.waiver_signed ? "Signed" : "Not signed" %>
+            </span>
+            <span class="attendee-details__waiver-actions">
+              <%= link_to "View waiver details", attendee_waiver_organisation_event_path(@organisation, @event, attendee_id: @attendee.id), class: "attendee-details__waiver-link" %>
+              <% if @attendee.signed_waiver.attached? %>
+                <%= link_to "Download copy", rails_blob_path(@attendee.signed_waiver, disposition: "attachment"), class: "attendee-details__waiver-download" %>
+              <% end %>
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  <% else %>
+    <p class="attendee-details__empty">Attendee not found.</p>
   <% end %>
-<% else %>
-  <p>Attendee not found.</p>
-<% end %>
-
-<% if @attendee %>
-  <%= link_to "Edit this attendee", edit_attendee_organisation_event_path(
-        @organisation,
-        @event,
-        attendee_id: @attendee.id
-      ) %>
-<% end %>
-<%= link_to "Back to attendee list", attendees_organisation_event_path(@organisation, @event) %>
+</section>

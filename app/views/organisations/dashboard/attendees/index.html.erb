@@ -1,0 +1,18 @@
+<section class="organisations-page">
+  <header class="organisations-page__header">
+    <div>
+      <h1 class="organisations-page__title">Attendees</h1>
+      <p class="organisations-page__subtitle">Manage your attendees in one place.</p>
+    </div>
+  </header>
+
+  <% if @attendees.any? %>
+    <div class="organisations-grid">
+      <% @attendees.each do |attendee| %>
+        <%= render attendee %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="organisations-page__empty">No attendees are present yet.</p>
+  <% end %>
+</section>
