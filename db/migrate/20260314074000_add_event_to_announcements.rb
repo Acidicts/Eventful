@@ -7,7 +7,15 @@ class AddEventToAnnouncements < ActiveRecord::Migration[8.1]
       remove_foreign_key :announcements, :creators, column: :creator_id
     end
 
-    add_reference :announcements, :event, foreign_key: true, index: true
+    # Some environments may already have an `event_id` column on announcements (for
+    # example, from a schema load or a partial schema migration). Only add the
+    # column/index/foreign-key if it doesn't already exist.
+    unless column_exists?(:announcements, :event_id)
+      add_reference :announcements, :event, foreign_key: true, index: true
+    else
+      add_index :announcements, :event_id unless index_exists?(:announcements, :event_id)
+      add_foreign_key :announcements, :events unless foreign_key_exists?(:announcements, :events)
+    end
 
     # Ensure creator_id points to users (not creators) in all environments.
     unless foreign_key_exists?(:announcements, :users, column: :creator_id)
