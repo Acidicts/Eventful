@@ -306,7 +306,7 @@
             </ul>
 
             <div class="welcome-actions">
-                <%= link_to "Sign In", "/", class: "welcome-btn welcome-btn-primary" %>
+                <%= button_to "Sign in", '/auth/hackclub', data: { turbo: false }, class: "welcome-btn welcome-btn-primary" %>
                 <%= link_to "Browse Events", landing_events_path, class: "welcome-btn welcome-btn-secondary" %>
             </div>
         </div>
