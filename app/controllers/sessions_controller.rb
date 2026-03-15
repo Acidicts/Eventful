@@ -1,9 +1,14 @@
 class SessionsController < ApplicationController
   # omniauth callback typically comes as a GET, which doesn't include a CSRF token
-  skip_before_action :verify_authenticity_token, only: :create
+  skip_before_action :verify_authenticity_token, only: [ :create, :failure ]
 
   def create
     auth = request.env["omniauth.auth"]
+    unless auth.present?
+      redirect_to root_path, alert: "Sign in failed. Please try again."
+      return
+    end
+
     user = User.from_omniauth(auth)
     session[:user_id] = user.id
     # Run any auto‑add rules for organisations that have join requirements.
@@ -13,6 +18,14 @@ class SessionsController < ApplicationController
       org.auto_add_users
     end
     redirect_to root_path, notice: "Signed in successfully"
+  end
+
+  def failure
+    error_message = params[:message].presence || "unknown_error"
+    provider = params[:strategy].presence || "provider"
+    session.delete(:user_id)
+
+    redirect_to root_path, alert: "Sign in with #{provider.humanize} failed (#{error_message.humanize}). Please try again."
   end
 
   def destroy

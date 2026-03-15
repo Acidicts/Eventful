@@ -65,4 +65,17 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal "Signed out", flash[:notice]
     assert_nil session[:user_id]
   end
+
+  test "omniauth failure redirects safely with user-friendly message" do
+    get "/auth/failure", params: {
+      message: "timeout",
+      origin: "https://eventful.bing-bong.uk/",
+      strategy: "hackclub"
+    }
+
+    assert_redirected_to root_path
+    follow_redirect!
+    assert_equal "Sign in with Hackclub failed (Timeout). Please try again.", flash[:alert]
+    assert_nil session[:user_id]
+  end
 end
