@@ -1,31 +1,92 @@
-<h1>Edit Attendee for <%= @event.name %></h1>
+<style>
+  #edit-attendee-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid #bbb;
+    border-radius: 15px;
+    background-color: #f9f9f9;
+  }
 
-<%= form_with model: @attendee,
-              url: attendee_organisation_event_path(
-                     @organisation,
-                     @event,
-                     attendee_id: @attendee.id
-                   ),
-              method: :patch do |form| %>
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
+  #edit-attendee-form-container .field {
+    margin-bottom: 15px;
+  }
 
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.email_field :email %>
-  </div>
+  #edit-attendee-form-container .field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
 
-  <div class="field">
-    <%= form.label :age %>
-    <%= form.number_field :age %>
-  </div>
+  #edit-attendee-form-container .field input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
 
-  <div class="actions">
-    <%= form.submit "Update Attendee" %>
-  </div>
-<% end %>
+  #edit-attendee-form-container .actions {
+    text-align: right;
+  }
 
-<%= link_to "Back to attendee list",
-            attendees_organisation_event_path(@organisation, @event) %>
+  #edit-attendee-form-container .actions input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #edit-attendee-form-container .actions input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  #back-to-attendee-list {
+    position: relative;
+    left:0.5rem;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  .actions {
+    width:100%;
+    display: inline-flex;
+    justify-content: space-between;
+  }
+</style>
+
+<h1 style="margin-left: 2rem;">Edit Attendee for <%= @event.name %></h1>
+
+<div id="edit-attendee-form-container">
+  <%= form_with model: @attendee,
+                url: attendee_organisation_event_path(
+                      @organisation,
+                      @event,
+                      attendee_id: @attendee.id
+                    ),
+                method: :patch do |form| %>
+    <div class="field">
+      <%= form.label :name %>
+      <%= form.text_field :name %>
+    </div>
+
+    <div class="field">
+      <%= form.label :email %>
+      <%= form.email_field :email %>
+    </div>
+
+    <div class="field">
+      <%= form.label :age %>
+      <%= form.number_field :age %>
+    </div>
+
+    <div class="actions">
+      <%= link_to "Back to attendee list",
+              attendees_organisation_event_path(@organisation, @event), id: "back-to-attendee-list" %>
+      <%= form.submit "Update Attendee" %>
+    </div>
+  <% end %>
+
+  
+
+</div>

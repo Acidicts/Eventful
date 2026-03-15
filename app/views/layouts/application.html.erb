@@ -298,15 +298,80 @@
     .branding-link:hover::after {
       transform: scaleX(1);
     }
+
+    #sign-in-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 200;
+      background: #000;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      opacity: 0.4;
+      align-items: center;
+    }
+
+    #sign-in-menu {
+      display: none;
+      position: fixed;
+      flex-direction: column;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 300;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 400px;
+      opacity: 1;
+      gap: 0.75rem;
+    }
+
+    #sign-in-menu #email-sign-in-field {
+      margin-left: 0.5rem;;
+    }
+
+    #sign-in-menu .sign-in-button-hackclub {
+      background-color: #444;
+      color: #fff;
+      width: 100%;
+      border: 2px solid #444;
+      padding: 0.25rem;
+      border-radius: 6px;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    #sign-in-menu .sign-in-button-send-otp {
+      background-color: #1bb2e0;
+      color: #fff;
+      width: 100%;
+      border: 2px solid #007bff;
+      padding: 0.25rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    #sign-in-menu .sign-in-button-hackclub:hover {
+      background-color: #333;
+      border-color: #333;
+    }
+
+    #sign-in-menu .sign-in-button-send-otp:hover {
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+    }
   </style>
 
   <body>
-    <header id="site-header" data-turbo-permanent style="width: 100%; display:inline-flex; position: relative;">
+    <header id="site-header" style="width: 100%; display:inline-flex; position: relative;">
       <% effective_user = current_user || @nil_user %>
       <% custom_branding_org = effective_user&.organisations&.where(eventful_branding: false)&.first %>
       <% branding_label = custom_branding_org&.name || "Eventful" %>
       <% branding_href = custom_branding_org ? organisations_path(effective_user.organisations) : root_path %>
-      <div class="header-left">
+      <div data-turbo-permanent class="header-left">
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
         <% user_organisations = effective_user&.organisations %>
@@ -317,18 +382,70 @@
             <%= button_to "Organisations", organisations_path, method: :get, id: "organisations-button" %>
             <%= button_to "Events", events_path, method: :get, id: "qr-code-button" %>
           <% else %>
-            <%= button_to "Sign in", '/auth/hackclub', data: { turbo: false }, class: "sign-in-button" %>
             <p style="color:white; word-wrap: break-word; max-width: 200px;">Please sign in to access more features.</p>
           <% end %>
         </div>
       </div>
       <% if effective_user == @nil_user %>
-        <%= button_to 'Sign in', '/auth/hackclub', data: { turbo: false }, id: "sign-in-button-menu", class: "sign-in-button" %>
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="sign-in-button" onclick="document.getElementById('sign-in-menu').style.display = 'flex'; document.getElementById('sign-in-overlay').style.display = 'flex';">
+            Sign in
+          </button>
+        </div>
       <% else %>
         <%= button_to 'Sign out', logout_path, method: :delete, data: { turbo: false }, class: "sign-out-button" %>
       <% end %>
     </header>
     <span style="width:100%; margin-top: 10px; margin-bottom: 10px;"> </span>
+
+    <% verify_mode = params[:login_stage] == "verify" %>
+    <% email_value = params[:email].to_s.strip %>
+
+    <div id="sign-in-overlay" style="<%= 'display:flex;' if verify_mode %>"></div>
+    <div id="sign-in-menu" style="<%= 'display:flex;' if verify_mode %>">
+      <span style="display: block; top: 1rem; right: 1rem; text-align: right; font-weight: 600; margin-bottom: 0.75rem; margin-top: -2rem; cursor: pointer;" onclick="document.getElementById('sign-in-menu').style.display = 'none'; document.getElementById('sign-in-overlay').style.display = 'none';">&Cross;</span>
+
+      <div id="sign-in-verify-step" style="<%= 'display:none;' unless verify_mode %>">
+        <p style="margin-bottom: 0.5rem;">Enter the 6-digit code we sent to <strong><%= email_value.presence || 'your email' %></strong>.</p>
+
+        <%= form_with url: login_verify_path, method: :post, local: true do |f| %>
+          <%= hidden_field_tag :email, email_value %>
+
+          <div class="field">
+            <%= f.label :code, "Code" %><br>
+            <%= f.text_field :code, required: true, autocomplete: "one-time-code", autofocus: true %>
+          </div>
+
+          <div class="actions">
+            <%= f.submit "Sign in", class: "sign-in-button-send-otp" %>
+          </div>
+        <% end %>
+
+        <p style="margin-top: 0.75rem; font-size: 0.9rem;">
+          <button
+            type="button"
+            style="background: none; border: none; color: #007bff; padding: 0; font: inherit; cursor: pointer; text-decoration: underline;"
+            onclick="document.getElementById('sign-in-verify-step').style.display = 'none'; document.getElementById('sign-in-email-step').style.display = 'block'; const emailField = document.getElementById('email-sign-in-field'); if (emailField) emailField.focus();"
+          >
+            Use a different email
+          </button>
+        </p>
+      </div>
+
+      <div id="sign-in-email-step" style="<%= 'display:none;' if verify_mode %>">
+        <%= form_with url: login_path, method: :post, local: true do |f| %>
+          <div class="field">
+            <%= f.label :email, "Email" %><br>
+            <%= f.email_field :email, required: true, autofocus: true, id:"email-sign-in-field", value: email_value.presence %>
+          </div>
+
+          <div class="actions">
+            <%= f.submit "Send sign-in code", class: "sign-in-button-send-otp" %>
+          </div>
+        <% end %>
+        <%= button_to 'Sign in with Hack Club', sign_in_hackclub_path, data: { turbo: false }, class:"sign-in-button-hackclub" %>
+      </div>
+    </div>
 
     <% flash.each do |type, message| %>
       <div class="flash flash-<%= type %>">

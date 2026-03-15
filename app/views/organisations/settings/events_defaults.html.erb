@@ -1,0 +1,240 @@
+<%# Customisations page plan %>
+<%# 1. Show current brand settings (name, logo, colors, typography preferences). %>
+<%# 2. Add form sections for visual identity and default event display options. %>
+<%# 3. Include preview area to validate changes before saving. %>
+<%# 4. Track last updated time and actor for accountability. %>
+<%# Idea: add reusable preset themes for quick setup across organisations. %>
+
+<style>
+    .custom-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background-color: #f9fafb;
+        border: 1px solid #bbbbbb;
+    }
+    .custom-sub {
+        margin-top: 1rem;
+        padding-left: 1rem;
+        border-left: 4px solid #3f6191;
+    }
+
+    .custom-section h2 {
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+    }
+    .custom-section p {
+        color: #4b5563;
+    }
+    .custom-sub h3 {
+        margin-bottom: 0.25rem;
+        color: #1f2937;
+    }
+
+    .org-dashboard__hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+        color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+        display: grid;
+        gap: 1.15rem;
+    }
+
+    .org-dashboard__hero::after {
+        content: "";
+        position: absolute;
+        right: -90px;
+        top: -90px;
+        width: 240px;
+        height: 240px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #d6d6d6;
+        border-radius: 8px;
+        padding: 1rem;
+        padding-right: 2rem;
+    }
+
+    .form-group label {
+        display: flex;
+        flex-direction: column;
+        font-family: "Lexend Deca", sans-serif;
+        font-size: 0.875rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-group .form-control {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        margin-left: 0.75rem;
+    }
+
+    .form-group-group {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .form-control-text-area {
+        min-height: 80px;
+        font-size: 1rem;
+        font-family: "Lexend Deca", sans-serif;
+        font-size: 1rem;
+        font-family: "Lexend Deca", sans-serif;
+        border-radius: 6px;
+        border: 1px solid #bbbbbb;
+        padding: 0.5rem 0.75rem;
+        resize: vertical;
+    }
+
+    .form-control-text-field {
+        height: 2.5rem;
+        font-size: 1rem;
+        font-family: "Lexend Deca", sans-serif;
+        border-radius: 6px;
+        border: 1px solid #bbbbbb;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-group-group .form-group {
+        flex: 1;
+    }
+
+    .submit-group {
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Logo upload preview + theming */
+    .logo-preview {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        background: #ffffff;
+        margin-bottom: 1rem;
+    }
+
+    .logo-preview__img {
+        max-width: 160px;
+        max-height: 160px;
+        border-radius: 12px;
+        object-fit: contain;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .logo-preview__placeholder {
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .file-upload {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .file-upload__label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: #374151;
+    }
+
+    .file-upload__input {
+        display: none;
+    }
+
+    .file-upload__input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .file-upload__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        background-color: #1f2937;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .file-upload__button:hover {
+        background-color: #111827;
+    }
+
+    .file-upload__filename {
+        flex: 1;
+        font-size: 0.9rem;
+        color: #4b5563;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+<div id="customisations-page" class="organisations-page">
+    <header class="organisations-page__header org-dashboard__hero">
+        <div>
+            <h1 class="organisations-page__title">Customisations</h1>
+            <p class="organisations-page__subtitle">Manage branding and configuration defaults for your organisation.</p>
+        </div>
+    </header>
+    
+    <div id="location-custom" class="custom-section">
+        <h2>Default Event Settings</h2>
+        <%= form_for @organisation, url: settings_events_defaults_organisation_path(@organisation), method: :patch do |f| %>
+            <div class="form-group">
+                <%= f.label :default_event_location, "Default Event Location" %>
+                <%= f.text_field :default_event_location, class: "form-control form-control-text-field", data: { controller: "location-autocomplete" }, autocomplete: "off", list: "location-results" %>
+                <%= tag.datalist id: "location-results" %>
+            </div>
+
+            <div style="display: flex; flex-direction: row; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <%= f.label :default_event_start_time, "Default Event Start Time" %>
+                    <%= f.time_field :default_event_start_time, class: "form-control form-control-time-field", value: @organisation.default_event_start_time&.strftime("%H:%M") %>
+                </div>
+                <div class="form-group" style="flex: 1">
+                    <%= f.label :default_event_end_time, "Default Event End Time" %>
+                    <%= f.time_field :default_event_end_time, class: "form-control form-control-time-field", value: @organisation.default_event_end_time&.strftime("%H:%M") %>
+                </div>
+            </div>
+            <div class="form-group">
+                <%= f.label :default_event_length, "Default Event Length (Days)" %>
+                <%= f.text_field :default_event_length, type: "number", class: "form-control form-control-time-field", min: 1 %>
+            </div>
+
+            <div class="submit-group">
+                <%= f.submit "Save Customisations", class: "btn btn-primary" %>
+            </div>
+        <% end %>
+        
+    </div>
+</div>

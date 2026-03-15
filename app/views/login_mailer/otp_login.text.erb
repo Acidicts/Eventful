@@ -1,0 +1,10 @@
+Hi <%= @user.name.presence || @user.email %>,
+
+Use the code below to sign in to Eventful. It will expire in 10 minutes.
+
+<%= @otp.code %>
+
+Or open this link in your browser:
+<%= @login_url %>
+
+If you did not request this email, you can safely ignore this message.

@@ -5,6 +5,7 @@ class User < ApplicationRecord
   # when creating new records.
   belongs_to :organisation, optional: true
   has_many :organisations, dependent: :nullify
+  has_many :email_login_otps, dependent: :delete_all
 
 
   # use positional argument style to avoid Ruby 3 keyword demotion issues

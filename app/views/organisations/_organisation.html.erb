@@ -1,12 +1,39 @@
-<div class="org-card">
-    <% if organisation.img%>
-        <img src="<%= organisation.img %>" alt="<%= organisation.name %>" class="org-card__image">
+<style>
+    .goto_btn {
+        background-color: #334155;
+        border: 2px solid #3f6191;
+        color: white;
+        transition: all 0.15s ease;
+    }
+
+    .goto_btn:hover {
+        border-radius: 10px;
+        padding: 0.55rem 1rem;
+        background-color: #3f6191;
+        border: 2px solid #334155;
+        color: white;
+    }
+
+    .event-card__icon {
+        width: 64px;
+        height: 64px;
+    }
+</style>
+
+<div class="event-card" style="width: 395px; height: 84px; padding: 15px; display: flex; align-items: center; gap: 1rem;">
+    <% if organisation.img.present? %>
+        <div class="event-card__icon-wrap">
+            <%= image_tag organisation.img, class: "event-card__icon" %>
+        </div>
     <% end %>
-    <% if organisation.name %>
-        <h2 class="org-card__title"><%= organisation.name %></h2>
-    <% end %>
-    <% if organisation.description %>
-        <p class="org-card__description"><%= organisation.description %></p>
-    <% end %>
-    <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary org-card__action" %>
+    <div class="event-card__body" style="">
+        <% if organisation.name %>
+            <h2 class="event-card__title"><%= organisation.name %></h2>
+        <% end %>
+        <% if organisation.description %>
+            <p class="event-card__description"><%= organisation.description %></p>
+        <% end %>
+    </div>
+
+    <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary event-card__action goto_btn" %>
 </div>

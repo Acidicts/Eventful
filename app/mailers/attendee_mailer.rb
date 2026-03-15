@@ -30,7 +30,11 @@ class AttendeeMailer < ApplicationMailer
 
     mail(
       to: @attendee.email,
-      subject: "Your QR code for #{@event.name || 'the event'}"
+      subject: "Your QR code for #{@event.name || 'the event'}",
+      in_reply_to: nil,
+      references: nil,
+      message_id: "<attendee-qr-#{@attendee.id}-#{SecureRandom.uuid}@eventful.mail>",
+      "X-Entity-Ref-ID" => "attendee-qr-#{@attendee.id}-#{SecureRandom.uuid}"
     )
   end
 end

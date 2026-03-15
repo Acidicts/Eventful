@@ -35,6 +35,17 @@ class EventsController < ApplicationController
 
   def new
     @event = @organisation.events.build
+
+    # `default_event_start_time` and `default_event_end_time` are stored as
+    # `time` columns (which Rails returns as a Time/TimeWithZone with a fixed
+    # date). Convert them into offsets from midnight so we can add them to a
+    # date without raising `TypeError`.
+    start_time_offset = @organisation.default_event_start_time&.seconds_since_midnight
+    end_time_offset = @organisation.default_event_end_time&.seconds_since_midnight
+
+    @event.start_date = Date.current.beginning_of_day + start_time_offset if start_time_offset
+    @event.end_date = Date.current.beginning_of_day + end_time_offset + @organisation.default_event_length.to_i.days if end_time_offset
+    @event.location = @organisation.default_event_location if @organisation.default_event_location
   end
 
   def create

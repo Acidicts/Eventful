@@ -1,0 +1,47 @@
+<section class="organisations-page">
+	<header class="organisations-page__header">
+		<div>
+			<h1 class="organisations-page__title">Settings</h1>
+			<p class="organisations-page__subtitle">Choose an area to manage for this organisation.</p>
+		</div>
+	</header>
+
+	<div class="events-grid">
+		<article class="event-card">
+			<div class="event-card__body">
+				<h2 class="event-card__title">Customisations</h2>
+				<p class="event-card__description">Manage branding and configuration defaults.</p>
+			</div>
+			<%= link_to "Open", settings_customisations_organisation_path(@organisation), class: "btn btn-primary event-card__action" %>
+		</article>
+
+		<article class="event-card">
+			<div class="event-card__body">
+				<h2 class="event-card__title">Manage Event Defaults</h2>
+				<p class="event-card__description">Set default values for new events.</p>
+			</div>
+			<%= link_to "Open", settings_events_defaults_organisation_path(@organisation), class: "btn btn-primary event-card__action" %>
+		</article>
+
+		<article class="event-card">
+			<div class="event-card__body">
+				<h2 class="event-card__title">Manage Members</h2>
+				<p class="event-card__description">Add, remove, and review organisation members.</p>
+			</div>
+			<%= link_to "Open", settings_members_organisation_path(@organisation), class: "btn btn-primary event-card__action" %>
+		</article>
+
+		<article class="event-card">
+			<div class="event-card__body">
+				<h2 class="event-card__title">Manage Roles</h2>
+				<p class="event-card__description">Define role permissions and assignment policies.</p>
+			</div>
+			<%= link_to "Open", settings_roles_organisation_path(@organisation), class: "btn btn-primary event-card__action" %>
+		</article>
+	</div>
+
+	<%# Future settings page ideas: %>
+	<%# - Branding Kit: logo variants, palette presets, email header assets %>
+	<%# - Integrations: webhook endpoints, API keys, third-party sync status %>
+	<%# - Audit Log: configuration change history and who changed what %>
+</section>

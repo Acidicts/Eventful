@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     "/attendee-portal#{query}"
   }, as: nil
 
+  get "/auth/hackclub", as: :sign_in_hackclub
+
   get "landing/" => "home#unregistered", as: :landing
   get "landing/events" => "home#events", as: :landing_events
 
@@ -51,6 +53,12 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+  # Routes for passwordless email login
+  get "/login", to: "sessions#new_email", as: :login
+  post "/login", to: "sessions#create_email"
+  get "/login/verify", to: "sessions#verify_email", as: :login_verify
+  post "/login/verify", to: "sessions#confirm_email"
 
   # Routes for authentication via OmniAuth
   get "/auth/:provider/callback", to: "sessions#create"
@@ -99,6 +107,22 @@ Rails.application.routes.draw do
       get "dashboard/attendees", to: "organisations/dashboard/attendees#index", as: :dashboard_attendees
       get "dashboard/events", to: "organisations/dashboard/events#index", as: :dashboard_events
       get "dashboard/events/attendees", to: "organisations/dashboard/events#attendees", as: :dashboard_events_attendees
+    end
+
+    member do
+      get :settings, to: "organisations/settings#index"
+      get "settings/customisations", to: "organisations/settings#customisations", as: :settings_customisations
+      get "settings/events-defaults", to: "organisations/settings#events_defaults", as: :settings_events_defaults
+      get "settings/members", to: "organisations/settings#members", as: :settings_members
+      get "settings/roles", to: "organisations/settings#roles", as: :settings_roles
+
+      # Future settings ideas:
+      # get "settings/branding", to: "organisations/settings#branding", as: :settings_branding
+      # get "settings/integrations", to: "organisations/settings#integrations", as: :settings_integrations
+      # get "settings/audit-log", to: "organisations/settings#audit_log", as: :settings_audit_log
+      #
+      patch "settings/customisations", to: "organisations/settings#customisations_save"
+      patch "settings/events-defaults", to: "organisations/settings#default_events_save"
     end
 
     resources :events do

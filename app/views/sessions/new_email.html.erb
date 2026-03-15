@@ -1,0 +1,14 @@
+<h1>Sign in with email</h1>
+
+<p>Enter your email address and we’ll send you a one‑time code to sign in.</p>
+
+<%= form_with url: login_path, method: :post, local: true do |f| %>
+  <div class="field">
+    <%= f.label :email, "Email" %><br>
+    <%= f.email_field :email, required: true, autofocus: true %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Send sign-in code" %>
+  </div>
+<% end %>

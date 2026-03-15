@@ -1,0 +1,21 @@
+<h1>Enter your sign-in code</h1>
+
+<p>Check your email for a code. It expires after 10 minutes.</p>
+
+<%= form_with url: login_verify_path, method: :post, local: true do |f| %>
+  <%= hidden_field_tag :token, @token if @token.present? %>
+
+  <div class="field">
+    <%= f.label :email, "Email" %><br>
+    <%= f.email_field :email, value: params[:email], required: true, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :code, "Code" %><br>
+    <%= f.text_field :code, value: @code, required: true, autocomplete: "one-time-code" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Sign in" %>
+  </div>
+<% end %>

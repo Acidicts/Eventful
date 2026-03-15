@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_103234) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -75,6 +75,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_103234) do
     t.index ["event_id"], name: "index_attendees_on_event_id"
   end
 
+  create_table "email_login_otps", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.integer "user_id", null: false
+    t.index ["code"], name: "index_email_login_otps_on_code"
+    t.index ["token"], name: "index_email_login_otps_on_token", unique: true
+    t.index ["user_id"], name: "index_email_login_otps_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.integer "applied"
     t.string "apply_token"
@@ -131,6 +144,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_103234) do
 
   create_table "organisations", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.time "default_event_end_time", default: "2000-01-01 15:00:00"
+    t.integer "default_event_length", default: 2
+    t.string "default_event_location", default: "", null: false
+    t.time "default_event_start_time", default: "2000-01-01 10:00:00"
+    t.string "default_event_title"
     t.text "description"
     t.boolean "eventful_branding", default: true, null: false
     t.string "img"
@@ -139,6 +157,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_103234) do
     t.boolean "nil_org", default: false, null: false
     t.boolean "self_found", default: false, null: false
     t.integer "signing_user_id"
+    t.integer "time_utc_offset", default: 0
+    t.string "timezone", default: "UTC"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["signing_user_id"], name: "index_organisations_on_signing_user_id"
@@ -172,6 +192,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_103234) do
   add_foreign_key "announcements", "organisations"
   add_foreign_key "announcements", "users", column: "creator_id"
   add_foreign_key "attendees", "events"
+  add_foreign_key "email_login_otps", "users"
   add_foreign_key "events", "organisations"
   add_foreign_key "events", "users", column: "organiser_id"
   add_foreign_key "galleries", "organisations"
