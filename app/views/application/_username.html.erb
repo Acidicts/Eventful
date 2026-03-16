@@ -2,16 +2,8 @@
 <% scale ||= 1 %>
 
 <% role = current_user.role %>
-<% if role == "superadmin" %>
-    <% colour = "blue" %>
-    <% text_colour = "white" %>
-<% elsif role == "admin" %>
-    <% text_colour = "white" %>
-    <% colour = "red" %>
-<% else %>
-    <% text_colour = "white" %>
-    <% colour = "gray" %>
-<% end %>
+<% colour = current_user.user_color(0.9) %>
+<% text_colour = "white" %>
 
 <style>
     #role {

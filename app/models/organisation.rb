@@ -71,6 +71,9 @@ class Organisation < ApplicationRecord
     signing_role = OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User")
     member_role  = OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
 
+    # Signing users should always have access to all permissions.
+    signing_role.permissions = RolePermission.all
+
     # Keep the signing role exclusive to the current signing user.
     signing_role.users = [ signing_user ]
 
@@ -88,6 +91,8 @@ class Organisation < ApplicationRecord
 
   def auto_add_users
     return if join_requirements == "nil" || join_requirements.blank?
+    signing_role = OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User")
+    signing_role.role_permissions = RolePermission.all
 
     if join_requirements.include?("omniauth")
       _, provider = join_requirements.split(" ", 2)
@@ -104,9 +109,8 @@ class Organisation < ApplicationRecord
   end
 
   def ensure_default_roles
-    OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User") do |role|
-      role.role_permissions = RolePermission.all
-    end
+    signing_role = OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User")
+    signing_role.role_permissions = RolePermission.all
 
     OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
   end

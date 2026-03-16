@@ -6,9 +6,17 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :current_user, :logged_in?, :current_attendee, :attendee_logged_in?
+  helper_method :current_user, :logged_in?, :user_signed_in?, :current_attendee, :attendee_logged_in?
 
   before_action :load_placeholder_user
+  before_action :load_permissions
+
+  def load_permissions
+    # Roles
+    RolePermission.find_or_create_by!(permission: "role-create")
+    RolePermission.find_or_create_by!(permission: "role-update")
+    RolePermission.find_or_create_by!(permission: "role-destroy")
+  end
 
   def load_placeholder_user
     @nil_user ||= User.find_or_create_by!(provider: "placeholder", uid: "nil") do |user|
@@ -39,6 +47,10 @@ class ApplicationController < ActionController::Base
 
   def logged_in?
     current_user.present?
+  end
+
+  def user_signed_in?
+    logged_in?
   end
 
   def authenticate_user!

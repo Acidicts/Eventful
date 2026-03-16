@@ -1,42 +1,173 @@
-<h1>New role</h1>
-
 <%= render "multi_select_styles" %>
 
-<%= form_with(model: @role, url: create_role_organisation_path(@organisation), local: true) do |form| %>
-  <% if @role.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@role.errors.count, "error") %> prohibited this role from being saved:</h2>
-      <ul>
-        <% @role.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<style>
+  .role-form-page {
+    max-width: 780px;
+    margin: 1.5rem auto 2rem;
+    padding: 0 1rem;
+  }
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
+  .role-form-page__title {
+    margin: 0;
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #0f2f55;
+    letter-spacing: 0.01em;
+  }
 
-  <div class="field">
-    <%= form.label :role_permission_ids, "Permissions" %>
-    <div data-controller="multi-select"
-         data-multi-select-name-value="organisation_role[role_permission_ids][]"
-         data-multi-select-available-value="<%= @permissions.map { |p| { id: p.id, name: p.permission } }.to_json %>"
-         data-multi-select-selected-value="<%= @role.role_permission_ids.to_json %>">
-      <%= hidden_field_tag "organisation_role[role_permission_ids][]", "" %>
-      <div class="multi-select">
-        <input data-action="input->multi-select#filter" data-multi-select-target="filter" type="text" placeholder="Search permissions…" autocomplete="off" class="multi-select__input" />
-        <ul data-multi-select-target="options" class="multi-select__options" role="listbox" aria-label="Available permissions"></ul>
-        <div data-multi-select-target="selected" class="multi-select__selected"></div>
+  .role-form-page__subtitle {
+    margin: 0.4rem 0 1.25rem;
+    color: #5f6f84;
+    font-size: 0.98rem;
+  }
+
+  .role-form-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid #dce8f4;
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(5, 33, 69, 0.06);
+    padding: 1.35rem;
+  }
+
+  .role-form__field + .role-form__field {
+    margin-top: 1rem;
+  }
+
+  .role-form__label {
+    display: block;
+    margin-bottom: 0.42rem;
+    color: #193558;
+    font-weight: 600;
+    font-size: 0.93rem;
+  }
+
+  .role-form__text-input {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #c8d9ea;
+    border-radius: 10px;
+    padding: 0.62rem 0.75rem;
+    background: #fff;
+    color: #12253f;
+    font-size: 0.95rem;
+  }
+
+  .role-form__text-input:focus,
+  .multi-select__input:focus {
+    outline: none;
+    border-color: #2490d0;
+    box-shadow: 0 0 0 3px rgba(36, 144, 208, 0.14);
+  }
+
+  .role-form__actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1.15rem;
+  }
+
+  .role-form__submit {
+    border: 0;
+    border-radius: 10px;
+    padding: 0.62rem 1rem;
+    background: #0c66b2;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .role-form__submit:hover {
+    background: #0a5a9c;
+  }
+
+  .role-form__submit:active {
+    transform: translateY(1px);
+  }
+
+  .role-form__back-link {
+    color: #24598d;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .role-form__back-link:hover {
+    text-decoration: underline;
+  }
+
+  .role-form__errors {
+    margin-bottom: 1rem;
+    border: 1px solid #f1b9bf;
+    background: #fff5f6;
+    border-radius: 10px;
+    padding: 0.85rem 0.95rem;
+    color: #7a202c;
+  }
+
+  .role-form__errors h2 {
+    margin: 0 0 0.45rem;
+    font-size: 0.96rem;
+    font-weight: 700;
+  }
+
+  .role-form__errors ul {
+    margin: 0;
+    padding-left: 1.05rem;
+  }
+
+  @media (max-width: 640px) {
+    .role-form-card {
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .role-form__actions {
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<section class="role-form-page">
+  <h1 class="role-form-page__title">Create Role</h1>
+  <p class="role-form-page__subtitle">Define a role name and assign the permissions this role should have.</p>
+
+  <div class="role-form-card">
+    <%= form_with(model: @role, url: create_role_organisation_path(@organisation), local: true, html: { class: "role-form" }) do |form| %>
+      <% if @role.errors.any? %>
+        <div id="error_explanation" class="role-form__errors">
+          <h2><%= pluralize(@role.errors.count, "error") %> prohibited this role from being saved:</h2>
+          <ul>
+            <% @role.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="role-form__field">
+        <%= form.label :name, class: "role-form__label" %>
+        <%= form.text_field :name, class: "role-form__text-input", placeholder: "e.g. Event Manager" %>
       </div>
-    </div>
-  </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+      <div class="role-form__field">
+        <%= form.label :role_permission_ids, "Permissions", class: "role-form__label" %>
+        <div data-controller="multi-select"
+             data-multi-select-name-value="organisation_role[role_permission_ids][]"
+             data-multi-select-available-value="<%= @permissions.map { |p| { id: p.id, name: p.permission } }.to_json %>"
+             data-multi-select-selected-value="<%= @role.role_permission_ids.to_json %>">
+          <%= hidden_field_tag "organisation_role[role_permission_ids][]", "" %>
+          <div class="multi-select">
+            <input data-action="input->multi-select#filter" data-multi-select-target="filter" type="text" placeholder="Search permissions..." autocomplete="off" class="multi-select__input" />
+            <ul data-multi-select-target="options" class="multi-select__options" role="listbox" aria-label="Available permissions"></ul>
+            <div data-multi-select-target="selected" class="multi-select__selected"></div>
+          </div>
+        </div>
+      </div>
 
-<%= link_to "Back", settings_roles_organisation_path(@organisation) %>
+      <div class="role-form__actions">
+        <%= form.submit "Create role", class: "role-form__submit" %>
+        <%= link_to "Back", settings_roles_organisation_path(@organisation), class: "role-form__back-link" %>
+      </div>
+    <% end %>
+  </div>
+</section>

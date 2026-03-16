@@ -1,5 +1,7 @@
 module Organisations
   class SettingsController < ApplicationController
+    layout "org_settings"
+
     before_action :set_organisation
 
     def index

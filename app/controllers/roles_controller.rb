@@ -2,6 +2,19 @@ class RolesController < ApplicationController
   before_action :set_organisation
   before_action :set_permissions, only: %i[new edit]
   before_action :set_role, only: %i[edit update destroy]
+  before_action :require_login
+  before_action -> { can_perform_action([ "role-create", "roles" ]) }, only: %i[new create]
+  before_action -> { can_perform_action([ "role-update", "roles" ]) }, only: %i[edit update]
+  before_action -> { can_perform_action([ "role-destroy", "roles" ]) }, only: %i[destroy]
+
+  def can_perform_action(actions)
+    if current_user.organisation_roles.where(organisation_id: @organisation.id).joins(:role_permissions).where(role_permissions: { permission: actions }).exists?
+      true
+    else
+      redirect_to settings_roles_organisation_path(@organisation), alert: "You do not have permission to perform this action."
+      false
+    end
+  end
 
   def new
     if params[:existing_role_id].present?

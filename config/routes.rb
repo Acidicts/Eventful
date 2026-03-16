@@ -92,6 +92,9 @@ Rails.application.routes.draw do
   get "/:apply_token/apply", to: "events#apply_by_token", as: :public_apply_event
   post "/:apply_token/apply", to: "events#apply_create"
 
+  # Admin dashboard (single page - no :id required)
+  get "admin" => "admin#index", as: :admin
+
   # organisations with nested events
   resources :organisations, path: "org" do
     collection do

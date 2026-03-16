@@ -10,14 +10,14 @@
  */
 
 :root {
-  --blue-very-dark: #03045E;
-  --blue-dark: #023E8A;
-  --blue: #0077B6;
-  --blue-light: #0096C7;
-  --blue-lighter: #00B4D8;
-  --blue-baby: #48CAE4;
-  --blue-pale: #90E0EF;
-  --blue-hint: #ADE8F4;
+  --blue-very-dark: #03045e;
+  --blue-dark: #023e8a;
+  --blue: #0077b6;
+  --blue-light: #0096c7;
+  --blue-lighter: #00b4d8;
+  --blue-baby: #48cae4;
+  --blue-pale: #90e0ef;
+  --blue-hint: #ade8f4;
   --blue-white: #c0eff8;
 }
 
@@ -44,13 +44,15 @@ unset {
   font-size: 0.95rem;
 }
 
-.flash-notice, .flash-success {
+.flash-notice,
+.flash-success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.flash-alert, .flash-error {
+.flash-alert,
+.flash-error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
@@ -254,6 +256,34 @@ unset {
   .feed-item::after {
     left: 0.4rem;
   }
+}
+
+/* Admin user dropdown */
+.admin-layout__session {
+  position: relative;
+}
+
+.admin-layout__user {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.admin-layout__dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  z-index: 20;
 }
 
 /* Organisation listings */
@@ -477,7 +507,10 @@ unset {
   text-decoration: none;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease,
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
@@ -503,6 +536,98 @@ unset {
 
 .btn-primary:hover {
   background: var(--blue-light);
+}
+
+/* Admin layout */
+.admin-layout {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  color: #e5e7eb;
+  font-family:
+    "Lexend",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.admin-layout__brand-link {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f8fafc;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.admin-layout__brand-link:hover {
+  color: var(--blue-baby);
+}
+
+.admin-layout__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-layout__nav-link {
+  text-decoration: none;
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.admin-layout__nav-link:hover {
+  color: #f8fafc;
+  border-color: rgba(186, 230, 253, 0.55);
+  background: rgba(14, 165, 233, 0.2);
+}
+
+.admin-layout__session {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.admin-layout__user {
+  font-size: 0.82rem;
+  color: #bfdbfe;
+}
+
+.admin-layout__session form {
+  margin: 0;
+}
+
+.admin-layout__main {
+  max-width: 1200px;
+  margin: 1.25rem auto 0;
+  padding: 0 1rem 2rem;
+}
+
+.admin-layout__main .flash {
+  margin-bottom: 0.85rem;
+}
+
+@media (max-width: 820px) {
+  .admin-layout__header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .admin-layout__session {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 640px) {
@@ -559,7 +684,9 @@ unset {
   font-weight: 700;
   text-decoration: none;
   border: 1px solid transparent;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .attendee-details__btn:hover {

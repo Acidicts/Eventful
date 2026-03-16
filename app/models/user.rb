@@ -20,7 +20,46 @@ class User < ApplicationRecord
   # the `role` enum already defines an `admin?` method, so this is mostly
   # here for clarity and to emphasise the difference from ``org_admin?``.
   def admin?
-    role == "admin"
+    role == "admin" || role == "superadmin"
+  end
+
+  # Provides an HSLA color string for the user's role, used by views for badges.
+  # Opacity is parsed from the passed value (e.g. "50%" or 0.5), clamped to 0..1.
+  # Matches the logic in `app/views/application/_username.html.erb`.
+  def user_color(opacity = 1)
+    opacity = case opacity
+    when nil then 1.0
+    when String
+        if opacity.end_with?("%")
+          opacity.to_f / 100.0
+        else
+          opacity.to_f
+        end
+    else
+        opacity.to_f
+    end
+
+    opacity = [ [ opacity, 0.0 ].max, 1.0 ].min
+
+    hue = case role
+    when "superadmin" then 220
+    when "admin" then 0
+    else 0
+    end
+
+    saturation = case role
+    when "superadmin" then 100
+    when "admin" then 100
+    else 0
+    end
+
+    lightness = case role
+    when "superadmin" then 56
+    when "admin" then 56
+    else 50
+    end
+
+    "hsla(#{hue}, #{saturation}%, #{lightness}%, #{opacity})"
   end
 
   # Build or update a User record from OmniAuth auth hash

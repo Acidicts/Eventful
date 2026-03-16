@@ -1,5 +1,35 @@
+<style>
+  .events-index {
+    --bg: #f2f6fb;
+    --panel: #ffffff;
+    --line: #d8e3ef;
+    --ink: #10263b;
+    --muted: #64798e;
+    --brand: #0066cc;
+    --brand-dark: #0051a3;
+    --accent: #008c99;
+    max-width: 1040px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    color: var(--ink);
+  }
+
+  .events-index__hero {
+    background: linear-gradient(130deg, #0f4e89 0%, #006fd4 60%, #00a1ac 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 12px 24px rgba(12, 42, 73, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+</style>
+
 <section class="organisations-page">
-  <header class="organisations-page__header">
+  <header class="organisations-page__header events-index__hero events-index">
     <div>
       <h1 class="organisations-page__title">Attendees</h1>
       <p class="organisations-page__subtitle">Manage your attendees in one place.</p>
