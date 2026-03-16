@@ -17,6 +17,9 @@ class Organisation < ApplicationRecord
   has_many :galleries, dependent: :destroy
   has_many :announcements, dependent: :destroy
 
+  # roles within the organisation (e.g., `Member`, `Signing User`)
+  has_many :organisation_roles, dependent: :destroy
+
   # convenience association to access all attendees across an organisation's events
   has_many :attendees, through: :events
 
@@ -57,6 +60,32 @@ class Organisation < ApplicationRecord
   validate  :signing_user_must_be_member
   validate :auto_add_users
 
+  after_save :give_all_users_roles
+  after_create :ensure_default_roles
+
+  def give_all_users_roles
+    return unless signing_user
+    return if @_give_all_users_roles_in_progress
+
+    @_give_all_users_roles_in_progress = true
+    signing_role = OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User")
+    member_role  = OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
+
+    # Keep the signing role exclusive to the current signing user.
+    signing_role.users = [ signing_user ]
+
+    # Signing users should never be treated as regular members.
+    member_role.users.delete(signing_user) if member_role.users.where(id: signing_user.id).exists?
+
+    # Ensure all other users have the member role.
+    users.each do |user|
+      next if user == signing_user
+      member_role.users << user unless member_role.users.where(id: user.id).exists?
+    end
+  ensure
+    @_give_all_users_roles_in_progress = false
+  end
+
   def auto_add_users
     return if join_requirements == "nil" || join_requirements.blank?
 
@@ -66,9 +95,20 @@ class Organisation < ApplicationRecord
       counter = 0
       User.where(provider: provider, organisation_id: nil).find_each do |user|
         users << user unless users.include?(user)
+        member_role = OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
+        member_role.users << user unless member_role.users.include?(user)
+        counter += 1
       end
       counter
     end
+  end
+
+  def ensure_default_roles
+    OrganisationRole.find_or_create_by!(organisation: self, name: "Signing User") do |role|
+      role.role_permissions = RolePermission.all
+    end
+
+    OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
   end
 
   private
@@ -82,11 +122,9 @@ class Organisation < ApplicationRecord
   def apply_self_found_logic
     return unless self_found
 
-    # force the signing user to the organisation owner.  unlike the previous
-    # implementation this ignores any `signing_user_id` that may have been
-    # supplied by the form when `self_found` is checked; the flag is meant to
-    # indicate that the creator is responsible for the organisation.
-    self.signing_user = user if user.present?
+    # Default to the owner only when no signing user has been chosen yet.
+    # This keeps create behaviour intact without overriding future role edits.
+    self.signing_user ||= user if user.present?
 
     # ensure the signing user is a member as well. the custom validator below
     # will add an error if this step fails, but pre‑emptively pushing the user
@@ -106,6 +144,7 @@ class Organisation < ApplicationRecord
     return unless signing_user
 
     unless users.include?(signing_user)
+      users << signing_user
       errors.add(:signing_user, "must belong to this organisation")
     end
   end

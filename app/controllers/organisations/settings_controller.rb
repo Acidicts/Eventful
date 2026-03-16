@@ -12,6 +12,35 @@ module Organisations
     end
 
     def members
+      @organisation_roles = @organisation.organisation_roles
+    end
+
+    def update_member
+      member_attrs = params.require(:member).permit(:user_id, :organisation_role)
+      user = User.find(member_attrs[:user_id])
+
+      unless [ "Signing User", "Member" ].include?(member_attrs[:organisation_role])
+        redirect_to settings_members_organisation_path(@organisation), alert: "Unknown role selection." and return
+      end
+
+      if member_attrs[:organisation_role] == "Member" && @organisation.signing_user == user
+        redirect_to settings_members_organisation_path(@organisation), alert: "Cannot demote the signing user. Please choose a different signing user first." and return
+      end
+
+      Organisation.transaction do
+        @organisation.users << user unless @organisation.users.exists?(user.id)
+
+        if member_attrs[:organisation_role] == "Signing User"
+          @organisation.update!(signing_user: user)
+        end
+
+        @organisation.give_all_users_roles
+      end
+
+      notice = member_attrs[:organisation_role] == "Signing User" ? "Signing user updated." : "Member role updated."
+      redirect_to settings_members_organisation_path(@organisation), notice: notice
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to settings_members_organisation_path(@organisation), alert: e.record.errors.full_messages.to_sentence.presence || "Failed to update member role."
     end
 
     def roles
@@ -38,7 +67,7 @@ module Organisations
     private
 
     def set_organisation
-      @organisation = current_user.organisations.find(params[:id])
+      @organisation = Organisation.find(params[:id])
     end
 
     def organisation_params

@@ -4,3 +4,245 @@
 <%# 3. Add create/edit/archive role actions with built-in validation. %>
 <%# 4. Include "effective permissions" preview for selected member + role set. %>
 <%# Idea: add role templates for common team structures (ops, event staff, finance). %>
+
+<style>
+    .org-dashboard__hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+        color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+        display: grid;
+        gap: 1.15rem;
+    }
+
+    .org-dashboard__hero::after {
+        content: "";
+        position: absolute;
+        right: -90px;
+        top: -90px;
+        width: 240px;
+        height: 240px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+    }
+
+    #header {
+        position: relative;
+        z-index: 1;
+        width:90%;
+        margin: 0 auto;
+        margin-top: 1rem;
+    }
+
+    /* Table styling (kept in this view per request) */
+    .members-table {
+        width: 100%;
+        max-width: 1020px;
+        margin: 1.5rem auto 2.5rem;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+        font-size: 0.95rem;
+    }
+
+    .members-table thead {
+        background: rgba(0, 119, 182, 0.08);
+    }
+
+    .members-table th,
+    .members-table td {
+        padding: 0.85rem 1.1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .members-table th {
+        color: #003566;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+
+    .members-table tbody tr:hover {
+        background: rgba(0, 119, 182, 0.06);
+    }
+
+    .members-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Form styling */
+    .member-role-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin: 0;
+    }
+
+    .member-role-form select {
+        padding: 0.4rem 0.55rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background: #f5f7fb;
+        font-size: 0.9rem;
+        min-width: 9.5rem;
+    }
+
+    .member-role-form input[type="submit"] {
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        background: #0077b6;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .member-role-form input[type="submit"]:hover {
+        background: #005f8d;
+    }
+
+    .role-dropdown {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin: 1.5rem auto 0;
+        overflow: visible;
+        width: 220px;
+        left: 5%;
+    }
+
+    /* Ensure toggle and dropdown share the same width */
+    .role-dropdown > button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #role-form-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        display: none;
+        flex-direction: column;
+        background-color: #286cb5;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        gap: 0.25rem;
+        border-radius: 0 0 0.4rem 0.4rem;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    #role-dropdown-toggle.open {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    #role-form-dropdown.open {
+        display: flex;
+    }
+    #role-form-dropdown a {
+        display: block;
+        box-sizing: border-box;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.45rem 0.85rem;
+        border-radius: 0.4rem;
+        text-decoration: none;
+        min-width: 0;
+        text-align: left;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .role-actions {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .role-actions form {
+        margin: 0;
+    }
+</style>
+
+<header id="header" class="organisations-page__header org-dashboard__hero">
+    <div>
+        <h1 class="organisations-page__title">Manage Roles</h1>
+        <p class="organisations-page__subtitle">Manage your organisation's roles.</p>
+    </div>
+</header>
+
+<div class="role-dropdown">
+    <button id="role-dropdown-toggle" class="btn btn-primary" type="button">Create New Role</button>
+    <div id="role-form-dropdown">
+        <%= link_to "From Scratch", new_role_organisation_path(@organisation), class: "btn btn-secondary" %>
+        <%= link_to "From Template", new_role_from_template_organisation_path(@organisation), class: "btn btn-secondary" %>
+        <%= link_to "From Existing", new_role_from_existing_organisation_path(@organisation), class: "btn btn-secondary" %>
+    </div>
+</div>
+
+<script>
+    function initRoleDropdown() {
+        var toggle = document.getElementById("role-dropdown-toggle");
+        var menu = document.getElementById("role-form-dropdown");
+
+        if (!toggle || !menu || toggle.dataset.dropdownBound === "true") return;
+        toggle.dataset.dropdownBound = "true";
+
+        toggle.addEventListener("click", function(event) {
+            event.preventDefault();
+            menu.classList.toggle("open");
+            toggle.classList.toggle("open", menu.classList.contains("open"));
+        });
+
+        // Close dropdown when clicking outside.
+        document.addEventListener("click", function(event) {
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove("open");
+                toggle.classList.remove("open");
+            }
+        });
+    }
+
+    document.addEventListener("turbo:load", initRoleDropdown);
+    document.addEventListener("DOMContentLoaded", initRoleDropdown);
+</script>
+
+<table class="members-table">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Permissions</th>
+            <th>Default</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @organisation.organisation_roles.each do |role| %>
+            <tr>
+                <td><%= role.name %></td>
+                <td>
+                    <% role.role_permissions.each do |permission| %>
+                        <span class="badge"><%= permission.permission %></span>
+                    <% end %>
+                </td>
+                <td><%= role.is_default_role ? "No" : "Yes" %></td>
+                <td>
+                    <div class="role-actions">
+                        <%= link_to "Edit", edit_role_organisation_path(@organisation, role_id: role.id), class: "btn btn-secondary" %>
+                        <%= button_to "Delete", destroy_role_organisation_path(@organisation, role_id: role.id), method: :delete, class: "btn btn-danger", data: { turbo_confirm: "Delete role '#{role.name}'?" } %>
+                    </div>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

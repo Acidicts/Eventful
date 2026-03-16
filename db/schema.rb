@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_000001) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -142,6 +142,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
+  create_table "organisation_roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_default_role", default: false, null: false
+    t.string "name", default: "", null: false
+    t.integer "organisation_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organisation_id", "name"], name: "index_organisation_roles_on_organisation_and_name", unique: true
+    t.index ["organisation_id"], name: "index_organisation_roles_on_organisation_id"
+  end
+
+  create_table "organisation_roles_role_permissions", id: false, force: :cascade do |t|
+    t.integer "organisation_role_id", null: false
+    t.integer "role_permission_id", null: false
+    t.index ["organisation_role_id", "role_permission_id"], name: "index_org_roles_role_perms_on_role_and_perm", unique: true
+  end
+
+  create_table "organisation_roles_users", id: false, force: :cascade do |t|
+    t.integer "organisation_role_id", null: false
+    t.integer "user_id", null: false
+    t.index ["organisation_role_id", "user_id"], name: "index_organisation_roles_users_on_org_role_and_user", unique: true
+  end
+
   create_table "organisations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.time "default_event_end_time", default: "2000-01-01 15:00:00"
@@ -165,6 +187,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
     t.index ["user_id"], name: "index_organisations_on_user_id"
   end
 
+  create_table "role_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "permission", default: "", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "access_token"
     t.datetime "created_at", null: false
@@ -172,7 +200,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
     t.datetime "expires_at"
     t.string "name"
     t.integer "organisation_id"
-    t.string "organisation_role", default: "member", null: false
     t.string "provider", null: false
     t.string "refresh_token"
     t.string "role", default: "user", null: false
@@ -183,7 +210,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
     t.index ["access_token"], name: "index_users_on_access_token"
     t.index ["email"], name: "index_users_on_email"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
-    t.index ["organisation_role"], name: "index_users_on_organisation_role"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
@@ -199,6 +225,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_000000) do
   add_foreign_key "gallery_images", "attendees"
   add_foreign_key "gallery_images", "galleries"
   add_foreign_key "messages", "users", column: "answerer_id"
+  add_foreign_key "organisation_roles", "organisations"
+  add_foreign_key "organisation_roles_role_permissions", "organisation_roles"
+  add_foreign_key "organisation_roles_role_permissions", "role_permissions"
+  add_foreign_key "organisation_roles_users", "organisation_roles"
+  add_foreign_key "organisation_roles_users", "users"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
   add_foreign_key "users", "organisations"

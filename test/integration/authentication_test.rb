@@ -49,7 +49,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal "refresh123", user.refresh_token
     assert user.expires_at > Time.current
     assert_equal "member", user.role
-    assert_equal "member", user.organisation_role
 
     # test both DELETE and GET variants – both should clear the session
     delete logout_path

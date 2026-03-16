@@ -23,6 +23,7 @@ Eventful is an **event management and attendance tracking platform** that serves
 ## Core Architecture
 
 ### Framework & Stack
+
 - **Framework**: Rails 8.1.2
 - **Database**: SQLite (dev/test), PostgreSQL (production-ready)
 - **Frontend**: Hotwire (Turbo + Stimulus), vanilla JavaScript
@@ -34,6 +35,7 @@ Eventful is an **event management and attendance tracking platform** that serves
 - **Deployment**: Kamal + Docker + Thruster
 
 ### Key Dependencies
+
 - **QR Codes**: `rqrcode` (generation), `zxing` (decoding)
 - **PDF Handling**: `combine_pdf`, `prawn` (for waiver generation)
 - **HTTP Requests**: `faraday` (for OAuth token refresh)
@@ -48,20 +50,24 @@ Eventful is an **event management and attendance tracking platform** that serves
 ### Models Overview
 
 #### 1. **User**
+
 Represents authenticated users (primarily event organizers and administrators).
 
 **Attributes:**
+
 - OAuth credentials: `provider`, `uid`, `email`, `name`, `slack_id`, `verification_status`
 - Tokens: `access_token`, `refresh_token`, `expires_at`
-- Roles: `role` (member/admin/superadmin), `organisation_role` (member/admin)
+- Roles: `role` (member/admin/superadmin)
 
 **Relationships:**
+
 - `belongs_to :organisation` (optional primary org)
 - `has_many :organisations` (all orgs user is member of)
 - `has_many :announcements` (as creator)
 - `has_many :messages` (as answerer)
 
 **Key Methods:**
+
 - `from_omniauth(auth)` - Creates/updates user from OAuth response
 - `refresh_access_token!` - Rotates OAuth tokens when expired
 - `hackclub_get(path)` - Makes authenticated API calls to Hack Club
@@ -69,15 +75,18 @@ Represents authenticated users (primarily event organizers and administrators).
 ---
 
 #### 2. **Organisation**
+
 Represents an organization that creates and manages events.
 
 **Attributes:**
+
 - `name`, `description`, `img` (logo URL)
 - `user_id` (owner), `signing_user_id` (waiver signer)
 - `self_found` (boolean flag), `join_requirements` (auto-add rule)
 - `nil_org` (placeholder org), `eventful_branding` (display Eventful branding)
 
 **Relationships:**
+
 - `belongs_to :user` (owner)
 - `has_many :users` (members)
 - `has_many :events`, `has_many :announcements`, `has_many :galleries`
@@ -85,6 +94,7 @@ Represents an organization that creates and manages events.
 - `belongs_to :signing_user` (User who signs waivers)
 
 **Key Features:**
+
 - Organization-scoped member access (via `for_user` scope)
 - Auto-add users based on OAuth provider (e.g., all Hack Club members)
 - Signing user management for waiver authentication
@@ -92,9 +102,11 @@ Represents an organization that creates and manages events.
 ---
 
 #### 3. **Event**
+
 Represents a specific event that attendees can join.
 
 **Attributes:**
+
 - `name`, `description`, `location`, `capacity`
 - `start_date`, `end_date`, `finished` (status)
 - `apply_token` (unique public URL for applications)
@@ -103,21 +115,25 @@ Represents a specific event that attendees can join.
 - `applied` (count of applications)
 
 **Relationships:**
+
 - `has_many :attendees` (all signups)
 - `has_many :announcements`
 - `belongs_to :organiser` (User)
 - `belongs_to :organisation`
 
 **File Attachments:**
+
 - `has_one_attached :waiver` (PDF or TXT template)
 - `has_one_attached :icon` (event image)
 
 **Validations:**
+
 - Waiver must be PDF/TXT, max 5MB
 - Icon must be PNG/JPEG/GIF, max 2MB
 - End date must be after start date
 
 **Key Methods:**
+
 - `finished?` - Checks if event has ended
 - `to_param` - Returns apply_token for public URLs
 - `generate_apply_token` - Creates secret token for public event access
@@ -125,9 +141,11 @@ Represents a specific event that attendees can join.
 ---
 
 #### 4. **Attendee**
+
 Represents a person who has applied to or attended an event.
 
 **Attributes:**
+
 - Personal: `name`, `email`, `age`, `under_18`, `allergies`
 - Dietary: `diet` (enum: none/pescitarian/vegetarian/vegan/other), `other_diet`
 - Status: `status` (pending/approved/denied), `attendance` (pending/signed_in/signed_out/no_show)
@@ -136,6 +154,7 @@ Represents a person who has applied to or attended an event.
 - `event_id` (belongs to event)
 
 **Enums:**
+
 ```ruby
 enum :attendance, { pending: 0, signed_in: 1, signed_out: 2, no_show: 3 }
 enum :status, { pending: 0, approved: 1, denied: 2 }
@@ -143,10 +162,12 @@ enum :diet, { none: 0, pescitarian: 1, vegetarian: 2, vegan: 3, other: 4 }
 ```
 
 **Relationships:**
+
 - `belongs_to :event`
 - `has_one_attached :signed_waiver` (PDF/TXT copy)
 
 **Key Validations:**
+
 - Event capacity not exceeded
 - IP address not reused (max 3 per event)
 - Unique identifier code (auto-generated with "!" prefix)
@@ -154,14 +175,17 @@ enum :diet, { none: 0, pescitarian: 1, vegetarian: 2, vegan: 3, other: 4 }
 - Under-18: requires parent signature if waiving
 
 **File Attachments:**
+
 - `has_one_attached :signed_waiver` (uploaded or generated PDF)
 
 ---
 
 #### 5. **Announcement**
+
 Event or organization-wide announcements/updates.
 
 **Attributes:**
+
 - `content` (markdown/rich text)
 - `public` (boolean - visible to public or internal only)
 - `creator_id` (User)
@@ -169,6 +193,7 @@ Event or organization-wide announcements/updates.
 - `organisation_id`
 
 **Relationships:**
+
 - `belongs_to :creator` (User)
 - `belongs_to :event` (optional)
 - `belongs_to :organisation`
@@ -176,9 +201,11 @@ Event or organization-wide announcements/updates.
 ---
 
 #### 6. **Message**
+
 Communication system allowing attendees to contact organizers.
 
 **Attributes:**
+
 - `message` (content)
 - `answer` (organizer response)
 - `read` (boolean)
@@ -187,6 +214,7 @@ Communication system allowing attendees to contact organizers.
 - `answerer_id` (User who responded)
 
 **Relationships:**
+
 - `belongs_to :sender` (Attendee)
 - `belongs_to :reciever` (polymorphic - User or Attendee)
 - `belongs_to :answerer` (User, optional)
@@ -196,13 +224,16 @@ Communication system allowing attendees to contact organizers.
 ---
 
 #### 7. **Gallery & GalleryImage**
+
 Photo galleries for organizations to share event photos.
 
 **Gallery:**
+
 - `organisation_id`
 - `public` (boolean)
 
 **GalleryImage:**
+
 - `attendee_id` (who uploaded/is in photo)
 - `gallery_id`
 - `caption` (optional)
@@ -261,22 +292,21 @@ GalleryImage
 ### 1. Authentication & Authorization
 
 #### OAuth Integration (Hack Club)
+
 - **Provider**: Hack Club's custom OAuth server
 - **Scopes**: `openid profile email slack_id verification_status offline_access`
 - **Token Management**: Automatic token refresh via refresh_token
 - **Custom Strategy**: `lib/omniauth/strategies/hackclub.rb`
 
 #### Role-Based Access Control
+
 - **Global Roles** (User.role):
   - `member` - Regular user
   - `admin` - System administrator
   - `superadmin` - Super administrator
 
-- **Organization Roles** (User.organisation_role):
-  - `member` - Regular organization member
-  - `admin` - Organization admin
-
 #### Session Management
+
 - OAuth via `SessionsController#create`
 - Token refresh on API calls (automatic)
 - Support for Hack Club API requests via `User#hackclub_get`
@@ -286,12 +316,14 @@ GalleryImage
 ### 2. Event Management
 
 #### Event CRUD
+
 - **Create**: New events by organization members
 - **Read**: View event details, attendee lists, announcements
 - **Update**: Edit event details, capacity, location, dates
 - **Delete**: Remove events (cascades to attendees and announcements)
 
 #### Event Features
+
 - **Public Apply Token**: Unique alphanumeric token for public event signup
 - **Capacity Management**: Track attendee limit
 - **Date Range**: Start/end times for event scheduling
@@ -301,11 +333,11 @@ GalleryImage
 - **Description**: Event details in markdown
 
 #### Location Autocomplete
+
 - **Google Maps Places API** (if API key configured)
   - Uses new HTTP POST endpoint `/v1/places:autocomplete`
   - Stimulus controller debounces requests
   - Configurable via `GOOGLE_MAPS_API_KEY` env var
-  
 - **OpenStreetMap/Nominatim** (free fallback)
   - Automatic when no Google key
   - Zero cost, no auth required
@@ -315,6 +347,7 @@ GalleryImage
 ### 3. Attendee Management & QR Codes
 
 #### Attendee Application
+
 - **Public Apply Flow**: Via public event token
 - **Application Form Fields**:
   - Name, email, age, dietary requirements, allergies
@@ -322,6 +355,7 @@ GalleryImage
   - IP-based duplicate prevention (max 3 per IP per event)
 
 #### QR Code System
+
 - **Generation**: `QrCodeGenerator.generate(code)`
   - SVG output (scalable, embeddable)
   - PNG output (Base64-encoded data URI)
@@ -334,13 +368,15 @@ GalleryImage
   - Public QR code viewing via `/qrcode/:code` route
 
 #### Attendance Tracking
+
 - **States**: pending → signed_in → signed_out (or no_show)
-- **QR Scanner Interface**: 
+- **QR Scanner Interface**:
   - Real-time scan processing
   - Operations: sign_in, sign_out, get_info
   - Returns attendee status and confirmation
 
 #### QR Code Decoding
+
 - **Server-Side**: `QrCodeDecoder.decode_file(path)`, `.decode_blob(data)`
 - **Technology**: ZXing (Java-based, lazy-loaded)
 - **Client-Side**: Optional JavaScript-based scanning
@@ -350,6 +386,7 @@ GalleryImage
 ### 4. Waiver Management
 
 #### Waiver Signing Process
+
 1. **Template Upload**: Organizer uploads PDF or TXT waiver to event
 2. **Attendee Signs**: Via attendee portal (/attendee-portal/waiver)
 3. **Signature Capture**: Typed signature or PDF upload
@@ -357,6 +394,7 @@ GalleryImage
 5. **PDF Generation**: Auto-generate signed copy if only signature provided
 
 #### Waiver Features
+
 - **Storage**: Active Storage (local or configurable backend)
 - **Formats**: PDF (template) or plain text
 - **Signed Copy**: Generated via `SignedWaiverGenerator`
@@ -365,6 +403,7 @@ GalleryImage
   - Stamped on all pages
 
 #### Waiver Validations
+
 - Template max 5MB
 - File format: PDF or TXT only
 - Requires signature OR file upload
@@ -377,6 +416,7 @@ GalleryImage
 A self-service portal for attendees (code-based login, no account needed).
 
 #### Routes
+
 - `/attendee-portal/login` - Code entry form
 - `/attendee-portal/` - Dashboard (profile view)
 - `/attendee-portal/qr-code` - Display personal QR
@@ -385,6 +425,7 @@ A self-service portal for attendees (code-based login, no account needed).
 - `/attendee-portal/logout`
 
 #### Features
+
 - **Code-Based Auth**: No account creation, just unique code
 - **Profile**: View/edit attendee information
 - **QR Display**: Printable/scannable personal QR code
@@ -397,6 +438,7 @@ A self-service portal for attendees (code-based login, no account needed).
 ### 6. Messaging System
 
 #### Message Flow
+
 - **Sender**: Attendee
 - **Recipients**: Event organizer or other attendees
 - **Use Case**: Q&A, requests, clarifications
@@ -404,6 +446,7 @@ A self-service portal for attendees (code-based login, no account needed).
 - **Status**: Read flag for tracking
 
 #### Message Model
+
 - Polymorphic receiver (User or Attendee)
 - Optional answerer (User who responded)
 - Content stored as text
@@ -414,6 +457,7 @@ A self-service portal for attendees (code-based login, no account needed).
 ### 7. Announcements
 
 #### Event Announcements
+
 - **Scope**: Organization or Event-specific
 - **Visibility**:
   - Public: Visible to all (via announcements API route)
@@ -422,6 +466,7 @@ A self-service portal for attendees (code-based login, no account needed).
 - **Creator**: Tracked (User)
 
 #### Public Announcements Route
+
 - `GET /events/:id/announcements` - Public endpoint for event announcements
 - Filters for `public: true` only
 - Ordered by creation date (most recent first)
@@ -431,6 +476,7 @@ A self-service portal for attendees (code-based login, no account needed).
 ### 8. Gallery Management
 
 #### Gallery System
+
 - **Organization-level** photo galleries
 - **Images**: Uploaded by attendees
 - **Metadata**: Caption, day_from (date taken)
@@ -442,11 +488,13 @@ A self-service portal for attendees (code-based login, no account needed).
 ### 9. Communication & Notifications
 
 #### Email (via ActionMailer)
+
 - **AttendeeMailer**: Sends QR codes to attendees
 - **System Mailer**: Base configuration
 - Jobs tracked in Solid Queue
 
 #### Announcements
+
 - **Internal**: To organization members
 - **Public**: Published announcements accessible via public routes
 
@@ -455,6 +503,7 @@ A self-service portal for attendees (code-based login, no account needed).
 ## API & Routes
 
 ### Public Routes (No Auth Required)
+
 ```
 GET  /                          → HomeController#index
 GET  /landing                   → HomeController#unregistered
@@ -467,6 +516,7 @@ GET  /up                        → Rails health check
 ```
 
 ### Attendee Portal Routes (Code-based Auth)
+
 ```
 GET    /attendee-portal/login      → Login form
 POST   /attendee-portal/login      → Authenticate with code
@@ -481,6 +531,7 @@ DELETE /attendee-portal/logout     → Logout
 ```
 
 ### OAuth Routes
+
 ```
 GET    /auth/hackclub/callback  → SessionsController#create
 GET    /logout                  → SessionsController#destroy
@@ -488,6 +539,7 @@ DELETE /logout
 ```
 
 ### QR Code Tools
+
 ```
 GET  /qr_code/new     → Form for generating QR
 POST /qr_code         → Generate QR
@@ -495,6 +547,7 @@ GET  /qr_code/decode  → QR decoder form
 ```
 
 ### Organization Scoped Routes
+
 ```
 resources :organisations, path: "org" do
   resources :events do
@@ -507,7 +560,7 @@ resources :organisations, path: "org" do
     get    :actions/sign-in
     get    :actions/sign-out
     get    :actions/get-info
-    
+
     # Attendee nested resources
     get    :attendee/:attendee_id               → View attendee
     patch  :attendee/:attendee_id               → Update attendee
@@ -611,6 +664,7 @@ lib/
 ## Integrations & External Services
 
 ### 1. **Hack Club OAuth**
+
 - **Purpose**: User authentication
 - **Info Captured**: Name, email, Slack ID, verification status
 - **Tokens**: Access & refresh tokens stored for API calls
@@ -618,27 +672,32 @@ lib/
 - **Configuration**: `HACKCLUB_CLIENT_ID`, `HACKCLUB_CLIENT_SECRET`
 
 ### 2. **Google Maps Places API** (Optional)
+
 - **Purpose**: Event location autocomplete
 - **Endpoint**: `https://places.googleapis.com/v1/places:autocomplete`
 - **Fallback**: OpenStreetMap/Nominatim (free)
 - **Configuration**: `GOOGLE_MAPS_API_KEY`
 
 ### 3. **OpenStreetMap / Nominatim** (Always Available)
+
 - **Purpose**: Location autocomplete (free fallback)
 - **No Authentication**: Public API
 - **Automatic Fallback**: Used when no Google key configured
 
 ### 4. **Image Processing**
+
 - **Libraries**: MiniMagick (ImageMagick wrapper) or ruby-vips
 - **Usage**: Generate image variants for event icons
 - **Configuration**: Automatic detection, prefers MiniMagick in dev
 
 ### 5. **PDF Generation & Manipulation**
+
 - **Libraries**: Prawn (PDF creation), CombinePDF (PDF merging)
 - **Usage**: Generate signed waiver PDFs with signature overlays
 - **Features**: Multi-page support, centered text placement
 
 ### 6. **QR Code Processing**
+
 - **Generation**: rqrcode (SVG/PNG output)
 - **Decoding**: zxing (Java-based, optional)
 - **Use**: Attendance tracking via QR scanning
@@ -648,15 +707,18 @@ lib/
 ## User Roles & Permissions
 
 ### User Role Types (Global)
+
 1. **member** - Regular user, can own/manage organizations
 2. **admin** - View/manage all organizations, users
 3. **superadmin** - Full system access
 
 ### Organization Role Types
+
 1. **member** - Regular member, view events/data
 2. **admin** - Full organization management
 
 ### Implicit Roles (by activity)
+
 - **Event Organizer** - User who created/manages an event
 - **Organization Owner** - User who created the organization
 - **Attendee** - Non-authenticated person who signed up for event
@@ -665,29 +727,34 @@ lib/
 ### Access Patterns
 
 **Admin/Superadmin**:
+
 - View all organizations
 - Create/manage users
 - System-wide settings
 
 **Organization Member**:
+
 - Create/edit events within org
 - View attendee lists
 - Send messages to attendees
 - View announcements
 
 **Organization Admin**:
+
 - Full org management
 - Member management
 - Settings configuration
 - Waiver signing authority
 
 **Event Organizer**:
+
 - Full event management
 - Attendee lookup and editing
 - QR scanning operations
 - Send messages to attendees
 
 **Attendee**:
+
 - View personal QR code
 - Sign waiver
 - View event details
@@ -698,6 +765,7 @@ lib/
 ## Key Business Logic
 
 ### 1. Event Application Flow
+
 ```
 1. Organizer creates event with public apply_token
 2. Person visits /APPLY_TOKEN/apply
@@ -709,6 +777,7 @@ lib/
 ```
 
 ### 2. Attendance Tracking (QR Scan)
+
 ```
 1. Event staff scans QR code at check-in
 2. POST to /org/:org_id/events/:event_id/actions/scan
@@ -719,6 +788,7 @@ lib/
 ```
 
 ### 3. Waiver Signing
+
 ```
 1. Attendee visits /attendee-portal/waiver
 2. Views event waiver template (PDF/TXT)
@@ -730,6 +800,7 @@ lib/
 ```
 
 ### 4. Token Refresh
+
 ```
 1. User calls API method (hackclub_get, etc.)
 2. Check if access_token expired (expires_at < now)
@@ -739,6 +810,7 @@ lib/
 ```
 
 ### 5. Organization Auto-Add
+
 ```
 1. Org has join_requirements (e.g., "omniauth hackclub")
 2. User signs in via OAuth
@@ -752,19 +824,23 @@ lib/
 ## Deployment & Configuration
 
 ### Environment Setup
+
 **Development**:
+
 - SQLite database
 - MiniMagick for images
 - Lazy-loaded zxing (QR decoding)
 - Dev Containers support
 
 **Production**:
+
 - PostgreSQL recommended
 - Kamal orchestration
 - Docker container
 - Thruster (HTTP acceleration)
 
 ### Key Environment Variables
+
 - `HACKCLUB_CLIENT_ID` - OAuth client ID
 - `HACKCLUB_CLIENT_SECRET` - OAuth client secret
 - `GOOGLE_MAPS_API_KEY` - Optional location autocomplete
@@ -772,6 +848,7 @@ lib/
 - `DATABASE_URL` - PG connection (optional)
 
 ### Container Setup
+
 - Ruby 3.4.8 slim image
 - ImageMagick + libvips installed
 - Boot optimized with Bootsnap
@@ -782,6 +859,7 @@ lib/
 ## Testing Infrastructure
 
 ### Test Stack
+
 - **Capybara** - System/integration testing
 - **Selenium WebDriver** - Browser automation
 - **Security**: Brakeman (static analysis), bundler-audit (gem audit)
@@ -789,6 +867,7 @@ lib/
 - **OmniAuth Test Mode**: Full OAuth flow testing
 
 ### Database
+
 - Separate test database (SQLite)
 - Parallel test support (database pooling via SQLite replica)
 - Schema loaded before test run
@@ -798,17 +877,20 @@ lib/
 ## Security Considerations
 
 ### Authentication
+
 - OAuth tokens stored encrypted in credentials.yml.enc
 - Refresh token rotation on each API call
 - Session-based for user, code-based for attendees
 
 ### Data Protection
+
 - IP address normalization & duplicate prevention
 - Active Storage handles file security
 - CSRF token verification on all state-changing requests
 - Sanitized HTML in announcements (Redcarpet + Sanitize)
 
 ### File Upload Validations
+
 - File type restrictions (PDF/TXT, PNG/JPEG/GIF)
 - Size limits (5MB waivers, 2MB icons)
 - Scanned for MIME type, not just extension
@@ -818,27 +900,33 @@ lib/
 ## Notable Architectural Patterns
 
 ### 1. **Stimulus Controllers**
+
 - `LocationAutocompleteController` - Debounced API calls for location suggestions
 - Real-time form enhancement
 
 ### 2. **Service Objects**
+
 - `QrCodeGenerator` - Encapsulates generation logic
 - `QrCodeDecoder` - Wraps ZXing dependency
 - `SignedWaiverGenerator` - PDF generation with overlays
 
 ### 3. **Polymorphic Associations**
+
 - `Message.reciever` - Can be User or Attendee
 - Flexible recipient targeting
 
 ### 4. **Concerns** (app/models/concerns)
+
 - Shared model behaviors documented but implementation details in concerns folder
 
 ### 5. **Nested Resources**
+
 - Events nested under Organizations
 - Attendees nested under Events
 - Clear hierarchical routing
 
 ### 6. **OAuth Token Management**
+
 - Automatic refresh on API calls
 - Lazy loading of external dependencies (ZXing)
 
@@ -849,21 +937,25 @@ lib/
 From Planning.md, the following are planned but not yet implemented:
 
 ### Notifications
+
 - [ ] Event announcements push
 - [ ] Schedule reminders
 - [ ] Application deadlines
 
 ### Feedback System
+
 - [ ] Post-event surveys
 - [ ] Feedback analytics
 - [ ] Suggestion tracking
 
 ### Analytics
+
 - [ ] Attendance rates
 - [ ] Demographics analysis
 - [ ] Event feedback reports
 
 ### Enhancements
+
 - [ ] Phone number fields (optional)
 - [ ] Past attendance history (check in/out times)
 - [ ] Admin notification management
@@ -872,20 +964,20 @@ From Planning.md, the following are planned but not yet implemented:
 
 ## Quick Reference: Key Files to Edit
 
-| Feature | Files |
-|---------|-------|
-| Add OAuth scope | `lib/omniauth/strategies/hackclub.rb` |
-| Event fields | `app/models/event.rb` + migration |
-| Attendee fields | `app/models/attendee.rb` + schema |
-| API endpoints | `config/routes.rb` + controller |
-| Event form | Views under `app/views/events/` |
-| Portal portal | `app/views/attendee_portal/` + `attendee_portal_controller.rb` |
-| Emails | `app/mailers/attendee_mailer.rb` |
-| QR generation | `app/services/qr_code_generator.rb` |
-| Waiver logic | `app/services/signed_waiver_generator.rb` + `attendee_portal_controller` |
-| Announcements | `app/models/announcement.rb` |
-| Location search | `app/javascript/controllers/location_autocomplete_controller.js` |
-| Dashboard | `app/controllers/organisations/dashboard_controller.rb` |
+| Feature         | Files                                                                    |
+| --------------- | ------------------------------------------------------------------------ |
+| Add OAuth scope | `lib/omniauth/strategies/hackclub.rb`                                    |
+| Event fields    | `app/models/event.rb` + migration                                        |
+| Attendee fields | `app/models/attendee.rb` + schema                                        |
+| API endpoints   | `config/routes.rb` + controller                                          |
+| Event form      | Views under `app/views/events/`                                          |
+| Portal portal   | `app/views/attendee_portal/` + `attendee_portal_controller.rb`           |
+| Emails          | `app/mailers/attendee_mailer.rb`                                         |
+| QR generation   | `app/services/qr_code_generator.rb`                                      |
+| Waiver logic    | `app/services/signed_waiver_generator.rb` + `attendee_portal_controller` |
+| Announcements   | `app/models/announcement.rb`                                             |
+| Location search | `app/javascript/controllers/location_autocomplete_controller.js`         |
+| Dashboard       | `app/controllers/organisations/dashboard_controller.rb`                  |
 
 ---
 

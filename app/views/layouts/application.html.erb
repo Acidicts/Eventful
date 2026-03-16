@@ -369,13 +369,13 @@
   <body>
     <header id="site-header" style="width: 100%; display:inline-flex; position: relative;">
       <% effective_user = current_user || @nil_user %>
-      <% custom_branding_org = effective_user&.organisations&.where(eventful_branding: false)&.first %>
+      <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
       <% branding_label = custom_branding_org&.name || "Eventful" %>
       <% branding_href = custom_branding_org ? organisations_path(effective_user.organisations) : root_path %>
       <div data-turbo-permanent class="header-left">
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
-        <% user_organisations = effective_user&.organisations %>
+        <% user_organisations = effective_user&.user_organisations %>
         <strong id="site-branding" data-turbo-permanent class="branding"><%= link_to branding_label, branding_href, method: :get, class: "branding-link" %></strong>
         <div id="nav-dropdown">        
           <% if effective_user != @nil_user %>

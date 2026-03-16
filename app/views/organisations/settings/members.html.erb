@@ -4,3 +4,141 @@
 <%# 3. Add actions for deactivate, remove, and transfer ownership safeguards. %>
 <%# 4. Support search and filters for large organisations. %>
 <%# Idea: include pending invitations panel with expiry + reminder controls. %>
+
+<style>
+    .org-dashboard__hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+        color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+        display: grid;
+        gap: 1.15rem;
+    }
+
+    .org-dashboard__hero::after {
+        content: "";
+        position: absolute;
+        right: -90px;
+        top: -90px;
+        width: 240px;
+        height: 240px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+    }
+
+    #header {
+        position: relative;
+        z-index: 1;
+        width:90%;
+        margin: 0 auto;
+        margin-top: 1rem;
+    }
+
+    /* Table styling (kept in this view per request) */
+    .members-table {
+        width: 100%;
+        max-width: 1020px;
+        margin: 1.5rem auto 2.5rem;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+        font-size: 0.95rem;
+    }
+
+    .members-table thead {
+        background: rgba(0, 119, 182, 0.08);
+    }
+
+    .members-table th,
+    .members-table td {
+        padding: 0.85rem 1.1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .members-table th {
+        color: #003566;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+
+    .members-table tbody tr:hover {
+        background: rgba(0, 119, 182, 0.06);
+    }
+
+    .members-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Form styling */
+    .member-role-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin: 0;
+    }
+
+    .member-role-form select {
+        padding: 0.4rem 0.55rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background: #f5f7fb;
+        font-size: 0.9rem;
+        min-width: 9.5rem;
+    }
+
+    .member-role-form input[type="submit"] {
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        background: #0077b6;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .member-role-form input[type="submit"]:hover {
+        background: #005f8d;
+    }
+</style>
+
+<header id="header" class="organisations-page__header org-dashboard__hero">
+    <div>
+        <h1 class="organisations-page__title">Manage Members</h1>
+        <p class="organisations-page__subtitle">Manage your organisation's members and their roles.</p>
+    </div>
+</header>
+
+<table class="members-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>User ID</th>
+            <th>Role</th>
+            <th>Oauth</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @organisation.users.each do |user| %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.id %></td>
+                <td>
+                    <%= form_with url: settings_members_update_organisation_path(@organisation), method: :patch, local: true, scope: :member, html: { class: "member-role-form" } do |f| %>
+                        <%= f.hidden_field :user_id, value: user.id %>
+                        <% current_role = @organisation.signing_user_id == user.id ? "Signing User" : "Member" %>
+                        <%= f.select :organisation_role, options_for_select(["Signing User", "Member"], current_role), { include_blank: false }, { onchange: 'this.form.submit()' } %>
+                    <% end %>
+                </td>
+                <td><%= user.provider.humanize %></td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>

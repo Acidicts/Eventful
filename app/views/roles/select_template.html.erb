@@ -1,0 +1,78 @@
+<style>
+  .role-template-shell {
+    background: linear-gradient(135deg, #f7f9fc 0%, #eef3f8 100%);
+    border: 1px solid #dfe7f0;
+    border-radius: 1rem;
+    box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.08);
+  }
+
+  .role-template-shell .form-select {
+    border-color: #c5d2e0;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+  }
+
+  .role-template-shell .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  }
+
+  .role-template-badge {
+    background: #0d6efd;
+    color: #fff;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  
+  .role-template-shell-container {
+    max-width: 480px;
+    background-color: #fff;
+    border: 2px solid #bbbbbb;
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+
+  .field {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field select {
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-left: 0;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #c5d2e0;
+    border-radius: 0.5rem;
+    background-color: #f8fbff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  }
+</style>
+
+<div style="display: flex; justify-content: center; padding: 2rem;">
+  <div class="role-template-shell-container">
+    <h1>Create a role from an existing template</h1>
+
+    <%= form_with url: new_role_organisation_path(@organisation), method: :get, local: true do |f| %>
+      <%= hidden_field_tag :template_source, @template_source %>
+
+      <div class="field">
+        <%= f.label :existing_role_id, "Select existing role", class: "form-label fw-medium" %>
+        <%= f.select :existing_role_id, options_from_collection_for_select(@existing_roles, :id, :name), { prompt: "Choose a role template" }, { class: "form-select" } %>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row gap-2 justify-content-between align-items-stretch align-items-sm-center">
+        <%= link_to "Back to roles", settings_roles_organisation_path(@organisation), class: "btn btn-outline-secondary px-4" %>
+        <%= f.submit "Continue", class: "btn btn-primary px-4" %>
+      </div>
+    <% end %>
+  </div>
+</div>

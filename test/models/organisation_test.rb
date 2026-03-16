@@ -23,6 +23,14 @@ class OrganisationTest < ActiveSupport::TestCase
     assert org.valid?
   end
 
+  test "signing user is assigned signing role and not member role" do
+    org = Organisation.create!(user: @user, signing_user: @user, users: [ @user ])
+
+    @user.reload
+    assert @user.organisation_roles.exists?(organisation: org, name: "Signing User"), "expected signing user to have Signing User role"
+    assert_not @user.organisation_roles.exists?(organisation: org, name: "Member"), "expected signing user to not have Member role"
+  end
+
   test "for_user scope includes signing user even when not a member" do
     org = Organisation.create!(user: @user, signing_user: @user, users: [ @user ])
     # simulate a later edit that drops membership but leaves signing user

@@ -1,0 +1,47 @@
+<h1>Edit role</h1>
+
+<%= render "multi_select_styles" %>
+
+<%= form_with(model: @role, url: update_role_organisation_path(@organisation, role_id: @role.id), method: :patch, local: true) do |form| %>
+  <% if @role.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@role.errors.count, "error") %> prohibited this role from being saved:</h2>
+      <ul>
+        <% @role.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :role_permission_ids, "Permissions" %>
+    <div data-controller="multi-select"
+         data-multi-select-name-value="organisation_role[role_permission_ids][]"
+         data-multi-select-available-value="<%= @permissions.map { |p| { id: p.id, name: p.permission } }.to_json %>"
+         data-multi-select-selected-value="<%= @role.role_permission_ids.to_json %>">
+      <%= hidden_field_tag "organisation_role[role_permission_ids][]", "" %>
+      <div class="multi-select">
+        <input data-action="input->multi-select#filter" data-multi-select-target="filter" type="text" placeholder="Search permissions…" autocomplete="off" class="multi-select__input" />
+        <ul data-multi-select-target="options" class="multi-select__options" role="listbox" aria-label="Available permissions"></ul>
+        <div data-multi-select-target="selected" class="multi-select__selected"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= form.label :is_default_role, "Default role" %>
+    <%= form.check_box :is_default_role %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<%= link_to "Back", settings_roles_organisation_path(@organisation) %>

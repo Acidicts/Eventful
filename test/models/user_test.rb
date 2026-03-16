@@ -26,7 +26,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "jane@example.com", @user.email
     assert_equal "member", @user.role  # default role, not set from auth info
     refute @user.admin?
-    assert_equal "member", @user.organisation_role
   end
 
   test "from_omniauth updates an existing user" do
@@ -49,7 +48,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "new@example.com", user.email
     assert_equal existing.role, user.role  # role should be unchanged
     assert_equal existing.admin?, user.admin?
-    assert_equal existing.organisation_role, user.organisation_role
   end
 
     test "from_omniauth stores credentials" do

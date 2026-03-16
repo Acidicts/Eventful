@@ -114,6 +114,7 @@ Rails.application.routes.draw do
       get "settings/customisations", to: "organisations/settings#customisations", as: :settings_customisations
       get "settings/events-defaults", to: "organisations/settings#events_defaults", as: :settings_events_defaults
       get "settings/members", to: "organisations/settings#members", as: :settings_members
+      patch "settings/members", to: "organisations/settings#update_member", as: :settings_members_update
       get "settings/roles", to: "organisations/settings#roles", as: :settings_roles
 
       # Future settings ideas:
@@ -123,6 +124,16 @@ Rails.application.routes.draw do
       #
       patch "settings/customisations", to: "organisations/settings#customisations_save"
       patch "settings/events-defaults", to: "organisations/settings#default_events_save"
+    end
+
+    member do
+      get "roles/new", to: "roles#new", as: :new_role
+      get "roles/from-existing", to: "roles#select_template", as: :new_role_from_existing
+      get "roles/from-template", to: "roles#select_template", as: :new_role_from_template
+      post "roles", to: "roles#create", as: :create_role
+      get "roles/:role_id/edit", to: "roles#edit", as: :edit_role
+      patch "roles/:role_id", to: "roles#update", as: :update_role
+      delete "roles/:role_id", to: "roles#destroy", as: :destroy_role
     end
 
     resources :events do

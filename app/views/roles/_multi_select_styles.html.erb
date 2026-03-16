@@ -1,0 +1,63 @@
+<style>
+  .multi-select {
+    border: 1px solid #c5d6e8;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: #fff;
+  }
+
+  .multi-select__input {
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid #c5d6e8;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .multi-select__options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+  }
+
+  .multi-select__options li {
+    padding: 0.45rem 0.65rem;
+    cursor: pointer;
+  }
+
+  .multi-select__options li:hover {
+    background: rgba(0, 102, 204, 0.08);
+  }
+
+  .multi-select__selected {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+  }
+
+  .multi-select__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: #e0f2ff;
+    border: 1px solid #b6dcff;
+    font-size: 0.84rem;
+  }
+
+  .multi-select__pill button {
+    border: none;
+    background: transparent;
+    color: #0b4f87;
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-left: 0.35rem;
+    cursor: pointer;
+    padding: 0;
+  }
+</style>

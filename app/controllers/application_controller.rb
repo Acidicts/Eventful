@@ -15,7 +15,6 @@ class ApplicationController < ActionController::Base
       user.name               = "Nil User"
       user.email              = "nil@example.com"
       user.role               = "member"
-      user.organisation_role  = "member"
     end
 
     @nil_organisation ||= Organisation.find_or_create_by!(user: @nil_user, name: "Nil Organisation") do |org|

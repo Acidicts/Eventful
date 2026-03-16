@@ -4,7 +4,7 @@ class User < ApplicationRecord
   # Organisation so that controllers can do `current_user.organisations.build`
   # when creating new records.
   belongs_to :organisation, optional: true
-  has_many :organisations, dependent: :nullify
+  has_and_belongs_to_many :organisation_roles
   has_many :email_login_otps, dependent: :delete_all
 
 
@@ -12,11 +12,9 @@ class User < ApplicationRecord
   # global role; use `member` key instead of `user` to avoid generating a
   # `user?` predicate that collides with other enums.
   enum :role, { member: "user", admin: "admin", superadmin: "superadmin" }
-  enum :organisation_role, { member: "member", admin: "admin" }, prefix: :org
 
   validates :provider, :uid, presence: true
   validates :role, presence: true, inclusion: { in: roles.keys }
-  validates :organisation_role, presence: true, inclusion: { in: organisation_roles.keys }
 
   # helper predicate used in views/controllers
   # the `role` enum already defines an `admin?` method, so this is mostly
@@ -28,14 +26,26 @@ class User < ApplicationRecord
   # Build or update a User record from OmniAuth auth hash
   # NOTE: role is **not** automatically assigned here; it defaults to "user"
   # and must be set manually by an administrator or another process.
+  def in_organisation?(organisation)
+    organisation_roles.where(organisation: organisation).exists?
+  end
+
+  def user_organisations
+    Organisation.joins(:organisation_roles)
+      .where(organisation_roles: { id: organisation_role_ids })
+      .distinct
+  end
+
+  def active?
+    SessionsController.sessions[id].present?
+  end
+
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_initialize.tap do |user|
       user.name                = auth.info.name
       user.email               = auth.info.email
       user.slack_id            = auth.info.slack_id
       user.verification_status = auth.info.verification_status
-      # organisation_role is independent of OAuth; default to member on
-      # first sign‑in if it hasn’t been set yet.
       user.role ||= "member"
 
       # store the OAuth tokens so we can make API requests on behalf of the

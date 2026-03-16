@@ -2,6 +2,14 @@ class SessionsController < ApplicationController
   # omniauth callback typically comes as a GET, which doesn't include a CSRF token
   skip_before_action :verify_authenticity_token, only: [ :create, :failure ]
 
+  # Track active signed-in users in memory so other parts of the app can
+  # check whether a user currently has an active session.
+  #
+  # NOTE: This is in-memory and will not persist across process restarts.
+  def self.sessions
+    @sessions ||= {}
+  end
+
   def new_email
   end
 
@@ -16,7 +24,6 @@ class SessionsController < ApplicationController
       u.email = email
       u.name = email.split("@", 2).first.to_s.titleize
       u.role = "member"
-      u.organisation_role = "member"
     end
     if EmailLoginOtp.where(user: user).any?
       EmailLoginOtp.where(user: user).update_all(used_at: Time.current)
@@ -84,6 +91,8 @@ class SessionsController < ApplicationController
 
     user = User.from_omniauth(auth)
     session[:user_id] = user.id
+    self.class.sessions[user.id] = Time.current
+
     # Run any auto‑add rules for organisations that have join requirements.
     # `auto_add_users` is a no-op for organisations with a nil/blank join_requirements.
     orgs = Organisation.where.not(join_requirements: [ nil, "" ])
@@ -102,6 +111,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    self.class.sessions.delete(session[:user_id])
     session.delete(:user_id)
     redirect_to root_path, notice: "Signed out"
   end
@@ -111,6 +121,7 @@ class SessionsController < ApplicationController
   def sign_in_user(otp)
     otp.consume!
     session[:user_id] = otp.user.id
+    self.class.sessions[otp.user.id] = Time.current
     redirect_to root_path, notice: "Signed in successfully"
   end
 end

@@ -2,7 +2,7 @@ require "test_helper"
 
 class EventTest < ActiveSupport::TestCase
   setup do
-    user = User.create!(provider: "test", uid: SecureRandom.uuid, role: "member", organisation_role: "member")
+    user = User.create!(provider: "test", uid: SecureRandom.uuid, role: "member")
     organisation = Organisation.create!(user: user, signing_user: user, users: [ user ])
     @event = organisation.events.create!(name: "Test Event", description: "desc")
   end
