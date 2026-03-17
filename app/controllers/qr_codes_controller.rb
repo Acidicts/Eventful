@@ -7,6 +7,10 @@ class QrCodesController < ApplicationController
     @qr_image = QrCodeGenerator.generate(@data) if @data.present?
   end
 
+  def login_phone_demo
+    @qr_svg = QrCodeGenerator.generate(ENV.fetch("APP_URL"))
+  end
+
   # POST action used by the form. we simply redirect back to new with the
   # entered data so that the generated code can be displayed.
   def create

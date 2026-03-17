@@ -279,12 +279,59 @@
         transform: translateY(-3px);
         box-shadow: 0 14px 28px -17px rgba(3, 62, 138, 0.7);
     }
+
+    #phone-bezel {
+        scale: 1;
+        width: 240px;
+        height: 480px;
+        position: relative;
+        place-items: center;
+    }
+
+    #phone-bezel #phone-screen-bezel {
+        position: absolute;
+        top: 12px;
+        border: 12px solid #333;
+        border-radius: 24px;
+    }
+
+    #phone-bezel #phone-screen iframe {
+        position: absolute;
+        border: none;
+        border-radius: 12px;
+        width: 200%;
+        height: 200%;
+        scale: 0.5;
+        transform: translate(-50%, -50%);
+        overflow: hidden;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    #phone-bezel #phone-screen iframe::-webkit-scrollbar {
+        display: none;
+    }
+    #phone-bezel #phone-screen {
+        width: 208px;
+        height: 400px;
+        background: #fff;
+        border-radius: 24px;
+        align-items: center;
+    }
 </style>
 
 <section class="welcome-page">
     <div class="welcome-shell">
         <div class="welcome-illustration">
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Eventful attendee check-in illustration">
+            <div id="qr-code-scanning-phone">
+                <div id="phone-bezel">
+                    <div id="phone-screen-bezel">
+                        <div id="phone-screen">
+                            <iframe src="/qr-code/login-phone-demo" scrolling="no" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div id="phone-home-btn"></div>
+                </div>
+            </div>
         </div>
 
         <div class="welcome-content">
@@ -312,6 +359,21 @@
         </div>
     </div>
 </section>
+
+<style>
+    @media (max-width: 700px) {
+        .features ul {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .features li {
+            width: 80%;
+            height: auto;
+        }
+    }
+</style>
+
 <section class="features">
     <h2>Features</h2>
     <ul>

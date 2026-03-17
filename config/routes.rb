@@ -83,6 +83,7 @@ Rails.application.routes.draw do
 
   # public link for attendee QR pages (used by emails)
   get "/qrcode/:code", to: "qr_codes#show", as: :public_qr_code
+  get "/qr-code/login-phone-demo" => "qr_codes#login_phone_demo", as: :login_phone_demo
 
   # we no longer expose a global /events index; everything is scoped to an
   # organisation. any remaining references to non-nested event routes should

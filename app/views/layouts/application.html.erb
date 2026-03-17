@@ -372,6 +372,9 @@
       <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
       <% branding_label = custom_branding_org&.name || "Eventful" %>
       <% branding_href = custom_branding_org ? organisations_path(effective_user.organisations) : root_path %>
+      <% if request.path == login_phone_demo_path %>
+        <% effective_user = User.new(name:"John Doe") %>
+      <% end %>
       <div data-turbo-permanent class="header-left">
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
@@ -391,13 +394,17 @@
         </div>
       </div>
       <% if effective_user == @nil_user %>
-        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-right: 1rem;">
           <button type="button" class="sign-in-button" onclick="document.getElementById('sign-in-menu').style.display = 'flex'; document.getElementById('sign-in-overlay').style.display = 'flex';">
             Sign in
           </button>
         </div>
       <% else %>
-        <%= button_to 'Sign out', logout_path, method: :delete, data: { turbo: false }, class: "sign-out-button" %>
+        <% if request.path == login_phone_demo_path %>
+          <label style="color:white; font-size: 1.1rem; align-self:center; transform: translateY(-25%);"><strong><%= effective_user.name %></strong></label>
+        <% else %>
+          <%= button_to 'Sign out', logout_path, method: :delete, data: { turbo: false }, class: "sign-out-button" %>
+        <% end %>
       <% end %>
     </header>
     <span style="width:100%; margin-top: 10px; margin-bottom: 10px;"> </span>

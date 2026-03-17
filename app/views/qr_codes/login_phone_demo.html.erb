@@ -9,8 +9,6 @@
         box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
         gap: 1.15rem;
         border-top: 2px dashed rgb(255, 255, 255);
-        max-width: 980px;
-        margin: 0 auto;
     }
 
     .org-dashboard__hero::after {
@@ -26,7 +24,6 @@
     #qr-decoder-demo {
         display: flex;
         width:70%;
-        max-width: 460px;
         justify-content: center;
         align-items: center;
         padding: 0.25rem;
@@ -129,9 +126,8 @@
     }
 
     #back-to-dashboard {
-        margin-left: auto;
-        margin-right: auto;
-        display: flex;
+        margin-left: 1rem;
+        display: inline-flex;
         margin-top: 2rem;
         padding: 0.5rem 1rem;
         border-radius: 999px;
@@ -157,117 +153,40 @@
         background: rgba(5, 237, 55, 0.42);
         border: 1px solid rgba(16, 185, 129, 0.8);
     }
-
-    .manual-entry-form {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-        justify-content: center;
-        margin: 0.75rem auto 0.5rem;
-        width: min(420px, 100%);
-    }
-
-    .manual-entry-form input {
-        flex: 1;
-        padding: 0.55rem 0.7rem;
-        border-radius: 10px;
-        border: 1px solid rgba(0, 119, 182, 0.35);
-    }
-
-    .manual-entry-form button,
-    #restart-camera {
-        border: 1px solid rgba(0, 119, 182, 0.75);
-        background: rgba(0, 119, 182, 0.12);
-        color: #0077b6;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 0.55rem 0.9rem;
-        cursor: pointer;
-    }
-
-    #scanner-status {
-        text-align: center;
-        margin-top: 0.5rem;
-        color: #023e8a;
-        font-weight: 600;
-    }
-
-    div[data-controller="qr-decoder"] {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 0 1rem;
-    }
-
-    @media (min-width: 1024px) {
-        .org-dashboard__hero {
-            padding: 1.9rem 2.2rem;
-        }
-
-        #qr-decoder-demo {
-            width: min(56vw, 520px);
-            border-radius: 25px;
-        }
-
-        .manual-entry-form {
-            width: min(520px, 100%);
-            margin-top: 1rem;
-        }
-
-        #scanner-status {
-            font-size: 1.05rem;
-        }
-    }
 </style>
 
 <div class="org-dashboard__hero" style="border-top-left-radius: 0; border-top-right-radius: 0;">
     <h1>Campfire Bristol</h1>
     <div style="display:inline-flex; width:100%; justify-content: space-between; background:rgba(255,255,255,0.1);padding-left:0.5rem;padding-right:0.5rem;border-radius:8px;max-width:400px;">
-        <h3>Get Info</h3>
-        <h3 id="sign-out-link"><%= link_to "Sign In", attendee_sign_in_organisation_event_path(@organisation, @event) %></h3>
-        <h3 id="sign-out-link"><%= link_to "Sign Out", attendee_sign_out_organisation_event_path(@organisation, @event) %></h3>
+        <h3>Sign In</h3>
+        <h3 id="sign-out-link"><%= link_to "Sign Out" %></h3>
     </div>
 </div>
 
-<div data-controller="qr-decoder"
-     data-qr-decoder-url-value="<%= scan_organisation_event_path(@organisation, @event) %>"
-     data-qr-decoder-code-param-field-value="code"
-     data-qr-decoder-operation-value="get_info">
+<div id="signed-in-message-demo">
+    Signed in <strong>John Doe</strong>
+</div>
 
-    <form class="manual-entry-form" data-action="submit->qr-decoder#manualSubmit">
-        <input type="text" data-qr-decoder-target="manualInput" name="code" autocomplete="off" placeholder="Enter code manually" />
-        <button type="submit">Submit</button>
-    </form>
+<div style="display:flex;justify-content:center;margin-bottom:2rem;margin-top:1rem;">
+    <div id="qr-decoder-demo">
+        <span class="corner top-left"></span>
+        <span class="corner top-right"></span>
+        <span class="corner bottom-left"></span>
+        <span class="corner bottom-right"></span>
 
-    <div style="display:flex;justify-content:center;margin-bottom:2rem;margin-top:1rem;">
-        <div id="qr-decoder-demo">
-            <span class="corner top-left"></span>
-            <span class="corner top-right"></span>
-            <span class="corner bottom-left"></span>
-            <span class="corner bottom-right"></span>
+        <div id="qr-code">
+            <%= raw @qr_svg %>
+        </div>
 
-            <div id="qr-code">
-                <video data-qr-decoder-target="video" data-action="click->qr-decoder#restart"
-                       style="width:100%;height:100%;object-fit:cover;border-radius:inherit; border-radius: 25px;"></video>
-            </div>
-
-            <canvas data-qr-decoder-target="canvas" style="display:none"></canvas>
-
-            <div id="signed-in-tick">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle" style="width:100px;height:100px;color:#10b981;">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-            </div>
+        <div id="signed-in-tick">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle" style="width:100px;height:100px;color:#10b981;">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
         </div>
     </div>
-
-    <p id="scanner-status">Attendee Code: <span data-qr-decoder-target="output"></span></p>
-
-    <div style="display:flex;justify-content:center;">
-        <button id="restart-camera" type="button" data-action="click->qr-decoder#restart">Restart camera</button>
-    </div>
 </div>
 
 
-<%= link_to "Back to dashboard", dashboard_organisation_path(@organisation), id: "back-to-dashboard" %>
+<%= link_to "Back to dashboard", root_path, id: "back-to-dashboard" %>
 

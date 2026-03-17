@@ -7,7 +7,7 @@ class EventsController < ApplicationController
 
   def index
     if request.path == "/events"
-      @events = Event.where(organiser_id: current_user.id).or(Event.where(organisation_id: current_user.organisations.select(:id)))
+      @events = Event.where(organiser_id: current_user.id).or(Event.where(organisation_id: current_user.user_organisations.select(:id)))
       render "events/index"
     else
       unless @organisation

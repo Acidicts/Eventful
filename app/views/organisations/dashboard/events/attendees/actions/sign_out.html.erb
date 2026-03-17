@@ -1,31 +1,272 @@
-<h1>Sign Out</h1>
-<p>Event: <%= @event.id %> (organisation <%= @organisation.id %>)</p>
+<style>
+    .org-dashboard__hero {
+        position: relative;
+        border-radius: 20px;
+        background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+        color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+        gap: 1.15rem;
+        border-top: 2px dashed rgb(255, 255, 255);
+        max-width: 980px;
+        margin: 0 auto;
+    }
 
-<%= link_to "Sign In", attendee_sign_in_organisation_event_path(@organisation, @event) %>
+    .org-dashboard__hero::after {
+        position: absolute;
+        width: 100%;
+        height: 20px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+        margin-top: 1rem;
+    }
+
+    #qr-decoder-demo {
+        display: flex;
+        width:70%;
+        max-width: 460px;
+        justify-content: center;
+        align-items: center;
+        padding: 0.25rem;
+        position: relative;
+        aspect-ratio: 1/1;
+        border-radius: 25px;
+        box-shadow: inset 0 0 0 4px rgba(100, 100, 100, 0.15);
+    }
+
+    #qr-decoder-demo .corner {
+        position: absolute;
+        width: 2rem;
+        height: 2rem;
+        border: 4px solid rgb(100, 100, 100);
+    }
+
+    #qr-decoder-demo .corner.top-left {
+        top: 0;
+        left: 0;
+        border-right: none;
+        border-bottom: none;
+        border-top-left-radius: 25px;
+    }
+
+    #qr-decoder-demo .corner.top-right {
+        top: 0;
+        right: 0;
+        border-left: none;
+        border-bottom: none;
+        border-top-right-radius: 25px;
+    }
+
+    #qr-decoder-demo .corner.bottom-left {
+        bottom: 0;
+        left: 0;
+        border-right: none;
+        border-top: none;
+        border-bottom-left-radius: 25px;
+    }
+
+    #qr-decoder-demo .corner.bottom-right {
+        bottom: 0;
+        right: 0;
+        border-left: none;
+        border-top: none;
+        border-bottom-right-radius: 25px;
+    }
+
+    #qr-decoder-demo #qr-code {
+        aspect-ratio: 1/1;
+        overflow: hidden;
+    }
+
+    #signed-in-tick {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    #signed-in-tick::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        border: 2px solid rgba(16, 185, 129, 0.85);
+        transform: rotate(15deg);
+        mask: conic-gradient(from 15deg, transparent 0%, transparent 15%, black 15%, black 100%);
+        pointer-events: none;
+    }
+
+    #sign-out-link {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    #sign-out-link a {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 150ms ease, transform 150ms ease;
+    }
+
+    #sign-out-link a:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    #back-to-dashboard {
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        margin-top: 2rem;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 119, 182, 0.8);
+        background: rgba(0, 119, 182, 0.15);
+        color: #0077b6;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 150ms ease, transform 150ms ease;
+    }
+
+    #back-to-dashboard:hover {
+        background: rgba(0, 119, 182, 0.3);
+        transform: translateY(-1px);
+    }
+
+    #signed-in-message-demo {
+        width:100%;
+        text-align: center;
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+        padding: 0.75rem;
+        background: rgba(5, 237, 55, 0.42);
+        border: 1px solid rgba(16, 185, 129, 0.8);
+    }
+
+    .manual-entry-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        margin: 0.75rem auto 0.5rem;
+        width: min(420px, 100%);
+    }
+
+    .manual-entry-form input {
+        flex: 1;
+        padding: 0.55rem 0.7rem;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 119, 182, 0.35);
+    }
+
+    .manual-entry-form button,
+    #restart-camera {
+        border: 1px solid rgba(0, 119, 182, 0.75);
+        background: rgba(0, 119, 182, 0.12);
+        color: #0077b6;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 0.55rem 0.9rem;
+        cursor: pointer;
+    }
+
+    #scanner-status {
+        text-align: center;
+        margin-top: 0.5rem;
+        color: #023e8a;
+        font-weight: 600;
+    }
+
+    div[data-controller="qr-decoder"] {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    @media (min-width: 1024px) {
+        .org-dashboard__hero {
+            padding: 1.9rem 2.2rem;
+        }
+
+        #qr-decoder-demo {
+            width: min(56vw, 520px);
+            border-radius: 25px;
+        }
+
+        .manual-entry-form {
+            width: min(520px, 100%);
+            margin-top: 1rem;
+        }
+
+        #scanner-status {
+            font-size: 1.05rem;
+        }
+    }
+</style>
+
+<div class="org-dashboard__hero" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+    <h1>Campfire Bristol</h1>
+    <div style="display:inline-flex; width:100%; justify-content: space-between; background:rgba(255,255,255,0.1);padding-left:0.5rem;padding-right:0.5rem;border-radius:8px;max-width:400px;">
+        <h3>Sign Out</h3>
+        <h3 id="sign-out-link"><%= link_to "Sign In", attendee_sign_in_organisation_event_path(@organisation, @event) %></h3>
+    </div>
+</div>
 
 <div data-controller="qr-decoder"
      data-qr-decoder-url-value="<%= scan_organisation_event_path(@organisation, @event) %>"
      data-qr-decoder-code-param-field-value="code"
      data-qr-decoder-operation-value="sign_out">
 
-  <!-- manual entry form -->
-  <form data-action="submit->qr-decoder#manualSubmit" style="margin-bottom:1em;">
-    <label>
-      Enter code manually:
-      <input type="text" data-qr-decoder-target="manualInput" name="code" autocomplete="off" />
-    </label>
-    <button type="submit">Submit</button>
-  </form>
-  <video data-qr-decoder-target="video" data-action="click->qr-decoder#restart"
-         style="width:100%;max-width:400px;border:1px solid #ccc"></video>
-  <canvas data-qr-decoder-target="canvas" style="display:none"></canvas>
+    <form class="manual-entry-form" data-action="submit->qr-decoder#manualSubmit">
+        <input type="text" data-qr-decoder-target="manualInput" name="code" autocomplete="off" placeholder="Enter code manually" />
+        <button type="submit">Submit</button>
+    </form>
 
-  <p>Attendee Code: <span data-qr-decoder-target="output"></span></p>
+    <div style="display:flex;justify-content:center;margin-bottom:2rem;margin-top:1rem;">
+        <div id="qr-decoder-demo">
+            <span class="corner top-left"></span>
+            <span class="corner top-right"></span>
+            <span class="corner bottom-left"></span>
+            <span class="corner bottom-right"></span>
+
+            <div id="qr-code">
+                <video data-qr-decoder-target="video" data-action="click->qr-decoder#restart"
+                       style="width:100%;height:100%;object-fit:cover;border-radius:inherit; border-radius: 25px;"></video>
+            </div>
+
+            <canvas data-qr-decoder-target="canvas" style="display:none"></canvas>
+
+            <div id="signed-in-tick">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle" style="width:100px;height:100px;color:#10b981;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <p id="scanner-status">Attendee Code: <span data-qr-decoder-target="output"></span></p>
+
+    <div style="display:flex;justify-content:center;">
+        <button id="restart-camera" type="button" data-action="click->qr-decoder#restart">Restart camera</button>
+    </div>
 </div>
 
-<button type="button" data-action="click->qr-decoder#restart">
-  Restart camera
-</button>
 
-<%= link_to "Back to dashboard", dashboard_organisation_path(@organisation) %>
+<%= link_to "Back to dashboard", dashboard_organisation_path(@organisation), id: "back-to-dashboard" %>
 
