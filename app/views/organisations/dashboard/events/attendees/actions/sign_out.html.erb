@@ -199,6 +199,17 @@
         padding: 0 1rem;
     }
 
+    #action-buttons {
+        display:inline-flex;
+        width:100%;
+        justify-content: space-between;
+        background:rgba(255,255,255,0.1);
+        padding-left:0.5rem;
+        padding-right:0.5rem;
+        border-radius:8px;
+        max-width:400px;
+    }
+
     @media (min-width: 1024px) {
         .org-dashboard__hero {
             padding: 1.9rem 2.2rem;
@@ -217,14 +228,19 @@
         #scanner-status {
             font-size: 1.05rem;
         }
+        
+        #action-buttons {
+            max-width: 500px;
+        }
     }
 </style>
 
 <div class="org-dashboard__hero" style="border-top-left-radius: 0; border-top-right-radius: 0;">
     <h1>Campfire Bristol</h1>
-    <div style="display:inline-flex; width:100%; justify-content: space-between; background:rgba(255,255,255,0.1);padding-left:0.5rem;padding-right:0.5rem;border-radius:8px;max-width:400px;">
-        <h3>Sign Out</h3>
+    <div id="action-buttons">
+        <h3 id="sign-out-link"><%= link_to "Get Info", attendee_get_info_organisation_event_path(@organisation, @event)%></h3>
         <h3 id="sign-out-link"><%= link_to "Sign In", attendee_sign_in_organisation_event_path(@organisation, @event) %></h3>
+        <h3 id="sign-out-link"><%= link_to "Sign Out", attendee_sign_out_organisation_event_path(@organisation, @event) %></h3>
     </div>
 </div>
 
