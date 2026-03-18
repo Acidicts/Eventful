@@ -1,0 +1,9 @@
+<div class="photo-card" style="display: inline-block; border: 1px solid #ddd; margin: 10px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <% if photo.image.attached? %>
+        <%= image_tag photo.image, alt: "Event Photo", style: "width: 200px; height: 150px; object-fit: cover;" %>
+        <div style="background: linear-gradient(180deg, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 100%);">
+            <span style="display: block; padding: 5px; font-size: 0.85rem; color: #555;"><%= photo.caption %></span>
+            <span style="display: block; padding: 5px; font-size: 0.85rem; color: #555;">By <%= photo.attendee.name %></span>
+        </div>
+    <% end %>
+</div>

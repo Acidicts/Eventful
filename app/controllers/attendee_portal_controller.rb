@@ -11,14 +11,14 @@ class AttendeePortalController < ApplicationController
   # qr_code should only be visible to a logged‑in attendee; add it to the
   # filter list so unauthenticated requests are redirected to login instead of
   # rendering the "not found" placeholder.
-  before_action :authenticate_attendee!, only: [ :index, :qr_code, :waiver, :sign_waiver, :update ]
-  before_action :set_organisation, only: [ :index, :contact, :qr_code, :waiver ]
+  before_action :authenticate_attendee!, only: [ :index, :gallery, :new_photo, :qr_code, :waiver, :sign_waiver, :update ]
+  before_action :set_organisation, only: [ :index, :contact, :gallery, :new_photo, :qr_code, :waiver ]
   # `current_attendee` and `current_event` were defined below and called
   # recursively, leading to a stack overflow.  Instead we use explicit
   # setters that assign the instance variables we expect.  These run before
   # any actions that need them.
-  before_action :set_attendee, only: [ :index, :contact, :qr_code, :waiver, :sign_waiver, :update, :create_new_message ]
-  before_action :set_event, only: [ :index, :contact, :qr_code, :waiver, :sign_waiver ]
+  before_action :set_attendee, only: [ :index, :contact, :gallery, :new_photo, :qr_code, :waiver, :sign_waiver, :update, :create_new_message ]
+  before_action :set_event, only: [ :index, :contact, :gallery, :new_photo, :qr_code, :waiver, :sign_waiver ]
 
   # GET /attendee_portal/login
   # render a simple code entry form unless already logged in
@@ -80,6 +80,40 @@ class AttendeePortalController < ApplicationController
     @messages = Message.where(sender: @attendee)
                        .or(Message.where(reciever: @attendee))
                        .order(created_at: :desc)
+  end
+
+  def new_photo
+    if request.post?
+      @photo = @event.photos.new(photo_params)
+      @photo.attendee = @attendee
+
+      if @photo.image.blank?
+        @photo.errors.add(:image, "must be selected")
+        flash.now[:alert] = "Please choose an image to upload."
+        render "attendee_portal/gallery/new", status: :unprocessable_entity and return
+      end
+
+      if @photo.save
+        flash[:notice] = "Photo uploaded successfully."
+        redirect_to attendee_portal_gallery_path
+      else
+        flash.now[:alert] = "Could not upload photo. Please try again."
+        render "attendee_portal/gallery/new", status: :unprocessable_entity
+      end
+    else
+      @photo = @event.photos.new
+
+      # render the form for uploading a new photo to the event gallery
+      render "attendee_portal/gallery/new"
+    end
+  end
+
+  def gallery
+    @attendee = current_attendee
+    @photos = @attendee.event.photos.order(created_at: :desc)
+
+    # template lives under app/views/attendee_portal/gallery/index.html.erb
+    render "attendee_portal/gallery/index"
   end
 
   def qr_code
@@ -149,6 +183,10 @@ class AttendeePortalController < ApplicationController
 
   def waiver_params
     params.require(:attendee).permit(:waiver_signature, :signed_waiver, :under_18, :parent_signature)
+  end
+
+  def photo_params
+    params.require(:photo).permit(:image, :caption)
   end
 
   # PATCH /attendee-portal or /attendee_portal via redirect rules

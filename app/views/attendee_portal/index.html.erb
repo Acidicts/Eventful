@@ -122,6 +122,17 @@
     background-color: #218838;
   }
 
+  #form {
+    margin-top: 1rem;
+  }
+
+  .actions {
+    width:100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
   @media (max-width: 768px) {
     .container {
       flex-direction: column;
@@ -187,6 +198,11 @@
               box-sizing: border-box;
               background: #fff;
             }
+
+            #gallery-btn {
+              position: relative;
+              left: 0;
+            }
           </style>
           <div class="rsvp-field">
             <%= form.label :attending, "Will you be attending?" %>
@@ -231,10 +247,11 @@
       </div>
 
       <div class="actions">
+        <%= link_to "Go to Event Gallery", attendee_portal_gallery_path(), method: :get, class: "btn btn-primary", id:"gallery-btn" %>
         <%= form.submit "Update" %>
       </div>
     <% end %>
-  </div>
+    </div>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const dietSelect = document.getElementById('diet-select');

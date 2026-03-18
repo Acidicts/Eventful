@@ -1,0 +1,57 @@
+<style>
+    .org-dashboard__hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
+                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
+        color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
+        display: grid;
+        gap: 1.15rem;
+    }
+
+    .org-dashboard__hero::after {
+        content: "";
+        position: absolute;
+        right: -90px;
+        top: -90px;
+        width: 240px;
+        height: 240px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+    }
+
+    #gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+</style>
+
+<div class="org-dashboard__hero" style="width:80%; margin-left: 10%; margin-right: 10%; margin-top: 2rem;">
+    <div>
+        <h1><strong><%= @attendee.event.name.upcase %></strong> Gallery</h1>
+        <p>Attendee Only Gallery, Upload Your Favorite Photos</p>
+    </div>
+    <%= button_to "Upload Photo", new_attendee_photo_path, class: "btn btn-primary", style:"margin-left: 0.5rem;", method: :get %>
+</div>
+
+<hr style="width: 70%; margin: 2rem auto; border: 0; border-top: 1px solid #abababa0;">
+
+<div id="gallery">
+    <% @photos.each do |photo| %>
+        <%= render "attendee_portal/gallery/photo", photo: photo %>
+    <% end %>
+
+    <% if @photos.empty? %>
+        <div style="text-align: center; padding: 2rem; color: #666;">
+            <p>No photos available.</p>
+            <p>Add the First Photo!</p>
+            <%= button_to "Upload Photo", new_attendee_photo_path, class: "btn btn-primary", method: :get %>
+        </div>
+    <% end %>
+</div>

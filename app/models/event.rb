@@ -10,6 +10,8 @@ class Event < ApplicationRecord
   has_many :attendees, dependent: :nullify
   has_many :announcements, dependent: :nullify
 
+  has_many :photos, dependent: :destroy
+
   # an event may be organised by a user; the foreign key lives on this model
   belongs_to :organiser, class_name: "User", foreign_key: "organiser_id", optional: true
 

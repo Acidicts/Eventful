@@ -1,0 +1,177 @@
+<style>
+  .gallery-upload {
+    --panel-bg: linear-gradient(160deg, #ffffff 0%, #f5faff 100%);
+    --panel-border: rgba(2, 83, 168, 0.16);
+    --text-strong: #0b223f;
+    --text-muted: #4f627a;
+    --accent: #0f72e5;
+    --accent-deep: #0955ac;
+    --field-border: rgba(25, 62, 109, 0.2);
+
+    max-width: 560px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-bg);
+    box-shadow: 0 18px 34px rgba(8, 29, 57, 0.12);
+  }
+
+  .gallery-upload__title {
+    margin: 0;
+    color: var(--text-strong);
+    font-size: 1.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  .gallery-upload__subtitle {
+    margin: 0.35rem 0 1.2rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .gallery-upload__preview-wrap {
+    border: 1px dashed var(--field-border);
+    border-radius: 14px;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.8);
+    min-height: 140px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .gallery-upload__preview {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .gallery-upload__placeholder {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-align: center;
+  }
+
+  .gallery-upload__field {
+    margin-bottom: 1.1rem;
+  }
+
+  .gallery-upload__label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-strong);
+    margin-bottom: 0.5rem;
+  }
+
+  .gallery-upload__picker {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .gallery-upload__picker-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .gallery-upload__picker-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--accent) 0%, var(--accent-deep) 100%);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(6, 61, 128, 0.22);
+    user-select: none;
+  }
+
+  .gallery-upload__filename {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .gallery-upload__caption {
+    width: 100%;
+    min-height: 90px;
+    padding: 0.7rem;
+    border-radius: 10px;
+    border: 1px solid var(--field-border);
+    resize: vertical;
+    font: inherit;
+  }
+
+  .gallery-upload__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .gallery-upload__submit {
+    padding: 0.75rem 1.25rem;
+    border: 0;
+    border-radius: 12px;
+    background: #0f72e5;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(10, 59, 122, 0.22);
+  }
+
+  .gallery-upload__submit:hover {
+    background: #0d63c8;
+  }
+
+  @media (max-width: 640px) {
+    .gallery-upload {
+      margin: 1.1rem;
+      padding: 1.1rem;
+      border-radius: 14px;
+    }
+
+    .gallery-upload__title {
+      font-size: 1.2rem;
+    }
+  }
+</style>
+
+<%= form_for @photo, url: new_attendee_photo_path, html: { multipart: true, data: { controller: "logo-preview" } } do |f| %>
+  <div class="gallery-upload">
+    <h2 class="gallery-upload__title">Upload a Photo</h2>
+    <p class="gallery-upload__subtitle">Share your favorite moment from the event.</p>
+
+    <div class="gallery-upload__preview-wrap">
+      <p class="gallery-upload__placeholder" data-logo-preview-target="placeholder">Preview will appear here after selecting an image.</p>
+      <%= image_tag "", alt: "Photo preview", hidden: true, data: { "logo-preview-target" => "preview" }, class: "gallery-upload__preview" %>
+    </div>
+
+    <div class="gallery-upload__field">
+      <%= f.label :image, "Choose a photo", class: "gallery-upload__label" %>
+      <div class="gallery-upload__picker">
+        <%= f.file_field :image, data: { action: "change->logo-preview#update", "logo-preview-target" => "input" }, class: "gallery-upload__picker-input" %>
+        <span class="gallery-upload__picker-btn">Select an image</span>
+      </div>
+      <div class="gallery-upload__filename" data-logo-preview-target="filename">No file chosen</div>
+    </div>
+
+    <div class="gallery-upload__field">
+      <%= f.label :caption, "Photo caption", class: "gallery-upload__label" %>
+      <%= f.text_area :caption, rows: 3, class: "gallery-upload__caption" %>
+    </div>
+
+    <div class="gallery-upload__actions">
+      <%= f.submit "Upload", class: "gallery-upload__submit" %>
+    </div>
+  </div>
+<% end %>

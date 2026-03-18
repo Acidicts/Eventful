@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_180251) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_214128) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_180251) do
     t.string "allergies"
     t.integer "attendance", default: 0
     t.boolean "attending", default: false, null: false
+    t.boolean "banned", default: false, null: false
     t.string "code"
     t.datetime "created_at", null: false
     t.integer "diet", default: 0, null: false
@@ -188,6 +189,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_180251) do
     t.index ["user_id"], name: "index_organisations_on_user_id"
   end
 
+  create_table "photos", force: :cascade do |t|
+    t.integer "attendee_id", null: false
+    t.string "caption"
+    t.datetime "created_at", null: false
+    t.integer "event_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attendee_id"], name: "index_photos_on_attendee_id"
+    t.index ["event_id"], name: "index_photos_on_event_id"
+  end
+
   create_table "role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "permission", default: "", null: false
@@ -233,5 +244,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_180251) do
   add_foreign_key "organisation_roles_users", "users"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
+  add_foreign_key "photos", "attendees"
+  add_foreign_key "photos", "events"
   add_foreign_key "users", "organisations"
 end

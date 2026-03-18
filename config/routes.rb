@@ -27,6 +27,9 @@ Rails.application.routes.draw do
 
   get "attendee-portal/" => "attendee_portal#index", as: :attendee_portal
   get "attendee-portal/contact" => "attendee_portal#contact", as: :attendee_portal_contact
+  get "attendee-portal/gallery" => "attendee_portal#gallery", as: :attendee_portal_gallery
+  get "attendee-portal/gallery/new" => "attendee_portal#new_photo", as: :new_attendee_photo
+  post "attendee-portal/gallery/new" => "attendee_portal#new_photo"
   # use POST for sending messages; the UI submits a form rather than
   # navigating, so we don’t need a GET action here.
   post "attendee-portal/contact" => "attendee_portal#create_new_message"
