@@ -13,6 +13,9 @@ module Organisations
     def events_defaults
     end
 
+    def custom_branding
+    end
+
     def members
       @organisation_roles = @organisation.organisation_roles
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_180251) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -171,6 +171,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_000001) do
     t.string "default_event_location", default: "", null: false
     t.time "default_event_start_time", default: "2000-01-01 10:00:00"
     t.string "default_event_title"
+    t.string "default_online_event_url", default: "https://eventful.bing-bong.uk"
     t.text "description"
     t.boolean "eventful_branding", default: true, null: false
     t.string "img"

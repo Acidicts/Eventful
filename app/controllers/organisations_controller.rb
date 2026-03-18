@@ -20,7 +20,11 @@ class OrganisationsController < ApplicationController
   def show
   end
 
-  def setting
+  def settings
+  end
+  
+  def public
+    render "organisations/public/index"
   end
 
   def new

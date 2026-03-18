@@ -103,6 +103,10 @@ Rails.application.routes.draw do
       get :admin
     end
 
+    member do
+      get "/public", to: "organisations#public", as: :public
+    end
+
     # introduce a member dashboard route that delegates to a dedicated
     # controller so that views may live under app/views/organisations/dashboard
     member do
@@ -120,6 +124,7 @@ Rails.application.routes.draw do
       get "settings/members", to: "organisations/settings#members", as: :settings_members
       patch "settings/members", to: "organisations/settings#update_member", as: :settings_members_update
       get "settings/roles", to: "organisations/settings#roles", as: :settings_roles
+      get "settings/branding", to: "organisations/settings#custom_branding", as: :settings_custom_branding
 
       # Future settings ideas:
       # get "settings/branding", to: "organisations/settings#branding", as: :settings_branding
