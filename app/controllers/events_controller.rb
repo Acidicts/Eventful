@@ -102,6 +102,11 @@ class EventsController < ApplicationController
     if scanned_code.present? && operation.present?
       attendee = @event.attendees.find_by(code: scanned_code)
 
+      if attendee.banned?
+        message = "Attendee #{attendee.name} is banned and cannot be proccessed."
+        redirect_to attendee_organisation_event_path(@organisation, @event, attendee_id: attendee.id), alert: message and flash_warn("Attendee is banned. Remove from event") and return
+      end
+
       case operation
       when "sign_in"
         if attendee

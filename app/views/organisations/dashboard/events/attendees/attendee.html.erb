@@ -13,6 +13,22 @@
     </div>
   </header>
 
+  <style>
+    .attendee-details__banner {
+      background-color: #ffe5e5;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  </style>
+
+  <% if @attendee.banned? %>
+    <div class="attendee-details__banner">
+      <p class="attendee-details__banner-text">This attendee is banned from the event</p>
+    </div>
+  <% end %>
+
   <% if @attendee %>
     <div class="attendee-details__card">
       <dl class="attendee-details__list">
