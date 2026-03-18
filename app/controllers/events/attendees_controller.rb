@@ -57,7 +57,7 @@ module Events
     private
 
     def attendee_params
-      params.require(:attendee).permit(:name, :age, :email)
+      params.require(:attendee).permit(:name, :age, :email, :banned)
     end
   end
 end

@@ -37,8 +37,13 @@
         </div>
 
         <div class="attendee-details__row">
-          <dt class="attendee-details__term">Code</dt>
-          <dd class="attendee-details__definition"><%= @attendee.code %></dd>
+          <% if !@attendee.banned? %>
+            <dt class="attendee-details__term">Code</dt>
+            <dd class="attendee-details__definition"><%= @attendee.code %></dd>
+          <% else %>
+            <dt class="attendee-details__term">Code</dt>
+            <dd class="attendee-details__definition"><span style="color: red; font-weight: bold;">Void</span> - Banned</dd>
+          <% end %>
         </div>
 
         <div class="attendee-details__row">

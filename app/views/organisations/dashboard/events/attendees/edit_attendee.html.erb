@@ -53,6 +53,22 @@
     display: inline-flex;
     justify-content: space-between;
   }
+
+  #edit-attendee-form-container .field--checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  #edit-attendee-form-container .field--checkbox label {
+    margin-bottom: 0;
+    font-weight: normal;
+  }
+
+  #edit-attendee-form-container .field--checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+  }
 </style>
 
 <h1 style="margin-left: 2rem;">Edit Attendee for <%= @event.name %></h1>
@@ -78,6 +94,11 @@
     <div class="field">
       <%= form.label :age %>
       <%= form.number_field :age %>
+    </div>
+
+    <div class="field field--checkbox">
+      <%= form.check_box :banned %>
+      <strong class="lexend" style="font-weight: bold;"><%= form.label :banned %></strong>
     </div>
 
     <div class="actions">
