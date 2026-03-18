@@ -26,6 +26,9 @@
   <% if @attendee.banned? %>
     <div class="attendee-details__banner">
       <p class="attendee-details__banner-text">This attendee is banned from the event</p>
+      <% if @attendee.ban_reason.present? %>
+        <p class="attendee-details__banner-text">Reason: <%= @attendee.ban_reason %></p>
+      <% end %>
     </div>
   <% end %>
 

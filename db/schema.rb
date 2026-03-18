@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_214128) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_215332) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_214128) do
     t.string "allergies"
     t.integer "attendance", default: 0
     t.boolean "attending", default: false, null: false
+    t.string "ban_reason"
     t.boolean "banned", default: false, null: false
     t.string "code"
     t.datetime "created_at", null: false

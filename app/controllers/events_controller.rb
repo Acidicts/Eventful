@@ -21,6 +21,8 @@ class EventsController < ApplicationController
   end
 
   def show
+    @event.finish_if_ended!
+
     if current_user && @event.organisation.users.include?(current_user)
       render "organisations/dashboard/events/show"
     else

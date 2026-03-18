@@ -81,6 +81,7 @@
                       attendee_id: @attendee.id
                     ),
                 method: :patch do |form| %>
+
     <div class="field">
       <%= form.label :name %>
       <%= form.text_field :name %>
@@ -99,6 +100,11 @@
     <div class="field field--checkbox">
       <%= form.check_box :banned %>
       <strong class="lexend" style="font-weight: bold;"><%= form.label :banned %></strong>
+    </div>
+
+    <div class="field">
+      <%= form.label :ban_reason, "Ban Reason" %>
+      <%= form.text_field :ban_reason %>
     </div>
 
     <div class="actions">

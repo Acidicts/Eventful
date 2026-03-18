@@ -6,7 +6,7 @@ class AttendeePortalController < ApplicationController
   # sign them in automatically rather than forcing them to go through the
   # explicit login page.  this before_action runs _before_ the normal
   # authenticate_attendee! filter so that the code is processed first.
-  before_action :sign_in_via_code, only: [ :index ]
+  before_action :sign_in_via_code, only: [ :index, :contact, :gallery, :new_photo, :qr_code, :waiver ]
 
   # qr_code should only be visible to a logged‑in attendee; add it to the
   # filter list so unauthenticated requests are redirected to login instead of
@@ -217,8 +217,6 @@ class AttendeePortalController < ApplicationController
     code = params[:code].to_s.strip
     if (attendee = Attendee.find_by(code: code))
       session[:attendee_id] = attendee.id
-      # do not redirect – let the normal authenticate_attendee! filter run
-      # and render whatever action was originally requested (usually index).
     end
   end
 

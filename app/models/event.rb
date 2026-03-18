@@ -62,6 +62,7 @@ class Event < ApplicationRecord
   end
 
   validate :end_date_after_start_date
+  after_update_commit :send_finished_emails, if: :saved_change_to_finished_to_true?
 
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?
@@ -75,11 +76,30 @@ class Event < ApplicationRecord
     finished || (end_date.present? && end_date < Time.current)
   end
 
+  def finish_if_ended!
+    return if finished
+    return unless end_date.present? && end_date < Time.current
+
+    update!(finished: true)
+  end
+
+  def send_finished_emails
+    attendees.find_each do |attendee|
+      next if attendee.email.blank?
+
+      EventMailer.with(event: self, user: attendee).event_finished_email.deliver_later
+    end
+  end
+
   def to_param
     apply_token.presence || id.to_s
   end
 
   private
+
+  def saved_change_to_finished_to_true?
+    saved_change_to_finished? && finished
+  end
 
   def generate_apply_token
     self.apply_token ||= SecureRandom.alphanumeric(12)
