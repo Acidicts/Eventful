@@ -2,6 +2,13 @@ class FixOrganisationRoleAndRolePermissions < ActiveRecord::Migration[8.1]
   def up
     # Fix the incorrectly pluralised foreign keys created by earlier migrations.
 
+    # SQLite rebuilds the whole table when removing FKs/columns. If the legacy
+    # permissions FK is still present but the permissions table does not exist,
+    # that rebuild fails. Drop this FK first to unblock subsequent changes.
+    if column_exists?(:organisation_roles, :permissions_id) && foreign_key_exists?(:organisation_roles, column: :permissions_id)
+      remove_foreign_key :organisation_roles, column: :permissions_id
+    end
+
     # org role <-> user is a many-to-many relationship.
     create_table :organisation_roles_users, id: false, if_not_exists: true do |t|
       t.references :organisation_role, null: false, foreign_key: true, index: false
