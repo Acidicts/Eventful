@@ -47,7 +47,7 @@
                 - [ ] Phone Number (optional)
     - [ ] Notifications
         - [ ] Event Updates
-            - [ ] Announcements
+            - [x] Announcements
             - [ ] Schedule Changes
         - [ ] Reminders
             - [ ] Event Date
