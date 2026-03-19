@@ -1,0 +1,77 @@
+<style>
+	.guides-sidebar {
+		width: 280px;
+		background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+		border: 1px solid #dbe3ef;
+		border-radius: 14px;
+		padding: 0.9rem;
+		box-shadow: 0 12px 22px rgba(15, 23, 42, 0.06);
+	}
+
+	.guides-sidebar__title {
+		margin: 0 0 0.8rem;
+		font-size: 1.2rem;
+		font-weight: 800;
+		color: #0f172a;
+	}
+
+	.guides-sidebar__group + .guides-sidebar__group {
+		margin-top: 1rem;
+		padding-top: 0.9rem;
+		border-top: 1px dashed #cdd8ea;
+	}
+
+	.guides-sidebar__folder {
+		margin: 0 0 0.45rem;
+		font-size: 0.82rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		font-weight: 700;
+		color: #475569;
+	}
+
+	.guides-sidebar__list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.22rem;
+	}
+
+	.guides-sidebar__link {
+		display: block;
+		padding: 0.4rem 0.55rem;
+		border-radius: 8px;
+		text-decoration: none;
+		font-weight: 600;
+		color: #1e293b;
+		transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+	}
+
+	.guides-sidebar__link:hover {
+		background: #e2e8f0;
+		color: #0f172a;
+		transform: translateX(2px);
+	}
+
+	.guides-sidebar__link.is-active {
+		background: #0f172a;
+		color: #ffffff;
+	}
+</style>
+
+<aside class="guides-sidebar">
+	<h3 class="guides-sidebar__title">Guides</h3>
+	<% (@guide_tree || {}).sort.each do |folder, files| %>
+		<section class="guides-sidebar__group">
+			<h4 class="guides-sidebar__folder"><%= folder == "root" ? "Root" : folder.humanize %></h4>
+			<ul class="guides-sidebar__list">
+				<% files.sort_by { |f| f[:title] }.each do |file| %>
+					<li>
+						<%= link_to file[:title], guide_doc_path(path: file[:slug]), class: "guides-sidebar__link #{'is-active' if @current_guide == file[:slug]}" %>
+					</li>
+				<% end %>
+			</ul>
+		</section>
+	<% end %>
+</aside>

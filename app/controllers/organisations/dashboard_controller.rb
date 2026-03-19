@@ -3,6 +3,8 @@ module Organisations
     before_action :require_login
     before_action :set_organisation
 
+    layout "org_dashboard"
+
     # GET /org/:id/dashboard
     def index
       @events = @organisation.events.order(start_date: :asc)

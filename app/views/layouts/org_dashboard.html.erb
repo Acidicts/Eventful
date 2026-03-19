@@ -1,0 +1,58 @@
+<% content_for :layout_content do %>
+	<style>
+		.org-settings-layout {
+			width: min(1200px, 100% - 2rem);
+			margin: 1.25rem auto 2.5rem;
+			display: grid;
+			gap: 1rem;
+		}
+
+		.org-settings-layout__nav {
+			background: #ffffff;
+			border: 1px solid #dfe4ea;
+			border-radius: 14px;
+			padding: 0.65rem;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.org-settings-layout__nav-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			text-decoration: none;
+			border-radius: 10px;
+			padding: 0.5rem 0.9rem;
+			border: 1px solid #c7d2fe;
+			color: #1d4ed8;
+			font-weight: 600;
+			background: #eff6ff;
+		}
+
+		.org-settings-layout__nav-link.is-active {
+			background: #1d4ed8;
+			border-color: #1d4ed8;
+			color: #ffffff;
+		}
+
+		.org-settings-layout__body {
+			min-width: 0;
+		}
+	</style>
+
+	<section class="org-settings-layout">
+		<nav class="org-settings-layout__nav" aria-label="Organisation settings navigation">
+			<%= link_to "Dashboard", dashboard_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if controller.controller_path == 'organisations/dashboard' && action_name == 'index'}" %>
+			<%= link_to "Events", dashboard_events_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if controller.controller_path == 'organisations/dashboard/events' && %w[index send_qr_codes].include?(action_name)}" %>
+			<%= link_to "Attendees", dashboard_events_attendees_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if controller.controller_path == 'organisations/dashboard/events' && action_name == 'attendees'}" %>
+			<%= link_to "Sub Teams", dashboard_sub_teams_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if controller.controller_path == 'organisations/dashboard/sub_teams' && action_name == 'index'}" %>
+		</nav>
+
+		<div class="org-settings-layout__body">
+			<%= yield %>
+		</div>
+	</section>
+<% end %>
+
+<%= render template: "layouts/application" %>

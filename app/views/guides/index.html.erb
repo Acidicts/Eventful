@@ -1,0 +1,11 @@
+<title><%= @page_title %></title>
+
+<section class="guides-page">
+    <aside class="guides-page__sidebar" id="sidebar">
+        <%= render "guides_sidebar" %>
+    </aside>
+
+    <article class="guides-page__content" id="content">
+        <%= render_guide_markdown(@content) %>
+    </article>
+</section>
