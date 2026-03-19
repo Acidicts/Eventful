@@ -70,6 +70,7 @@ class GuidesController < ApplicationController
 
     @current_guide = slug
     @content = markdown_file.read
+    @page_title = slug.tr("_-", " ").split.map(&:capitalize).join(" ")
     load_guide_tree
     render :index
   end
