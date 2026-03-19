@@ -99,6 +99,20 @@ Rails.application.routes.draw do
   # Admin dashboard (single page - no :id required)
   get "admin" => "admin#index", as: :admin
 
+  # Serve guide assets from private storage through the Guides controller.
+  get "learn/assets/*path", to: "guides#asset", as: :guide_asset, format: false
+  get "learn/docs/*path", to: "guides#doc", as: :guide_doc, format: false
+
+  resources :guides, path: "learn" do
+    collection do
+      get :getting_started
+      get :organisations
+      get :events
+      get :attendees
+      get :faqs
+    end
+  end
+
   # organisations with nested events
   resources :organisations, path: "org" do
     collection do

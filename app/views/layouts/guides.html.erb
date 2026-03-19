@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+    <style>
+        :root {
+            --guides-bg: #eef4fb;
+            --guides-ink: #0f172a;
+            --guides-muted: #475569;
+            --guides-line: #dbe4f0;
+            --guides-card: #ffffff;
+            --guides-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+            --guides-accent: #0ea5e9;
+            --guides-accent-strong: #2563eb;
+        }
+
+        @font-face {
+            font-family: "Lexend";
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+            src: url("/Lexend-VariableFont_wght.ttf") format("truetype");
+        }
+
+        header, main, footer {
+            font-family: "Lexend";
+        }
+
+        body {
+            margin: 0;
+            color: var(--guides-ink);
+            background:
+                radial-gradient(circle at 18% -10%, #d9fff0 0%, rgba(217, 255, 240, 0) 40%),
+                radial-gradient(circle at 85% 0%, #d6e8ff 0%, rgba(214, 232, 255, 0) 42%),
+                var(--guides-bg);
+        }
+
+        #guides-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1rem;
+            padding-left: 1rem;
+            background: linear-gradient(-90deg, #007bff, 50%, #00ff95);
+            position: relative;
+            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.18);
+        }
+
+        #guides-header h1 {
+            margin: 0;
+            color: #031525;
+            font-size: clamp(1.5rem, 1.8vw, 2rem);
+            letter-spacing: 0.01em;
+        }
+
+        #menu {
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: rotate(0deg);
+            width: 64px;
+            height: 64px;
+            opacity: 0;
+        }
+
+        #menu.loaded {
+            opacity: 1;
+        }
+
+        #menu.open {
+            transform: rotate(90deg);
+        }
+
+        #nav-dropdown {
+            border-top: 2px dashed rgba(255,255,255,0.32);
+            position: absolute;
+            top: calc(100% + 0.2rem);
+            left: 0.65rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: linear-gradient(160deg, #083d9b, #1d4ed8 48%, #0ea5e9 120%);
+            padding: 0 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.26);
+            box-shadow: 0 16px 30px rgba(2, 6, 23, 0.35);
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease, transform 0.25s ease;
+            z-index: 100;
+            min-width: 210px;
+        }
+
+        #nav-dropdown.open {
+            max-height: 280px;
+            opacity: 1;
+            transform: translateY(0);
+            padding: 10px;
+        }
+
+        #nav-dropdown form {
+            margin: 0;
+        }
+
+        #nav-dropdown button {
+            width: 100%;
+            text-align: left;
+            transform: translateX(-10px);
+            opacity: 0;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            border: 1px solid #8ec8ff;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #f8fbff, #dbeafe);
+            color: #1e3a8a;
+            font-weight: 750;
+            font-size: 0.92rem;
+            padding: 0.5rem 0.62rem;
+            box-shadow: 0 5px 12px rgba(15, 23, 42, 0.14);
+        }
+
+        #nav-dropdown button:hover {
+            background: linear-gradient(180deg, #ffffff, #bfdbfe);
+            border-color: #93c5fd;
+            transform: translateX(1px);
+        }
+
+        #nav-dropdown button:active {
+            transform: translateX(0);
+        }
+
+        #nav-dropdown.open button:nth-child(1) { transition-delay: 0.05s; transform: translateX(0); opacity: 1; }
+        #nav-dropdown.open button:nth-child(2) { transition-delay: 0.10s; transform: translateX(0); opacity: 1; }
+        #nav-dropdown.open button:nth-child(3) { transition-delay: 0.15s; transform: translateX(0); opacity: 1; }
+        #nav-dropdown.open button:nth-child(4) { transition-delay: 0.20s; transform: translateX(0); opacity: 1; }
+        #nav-dropdown.open button:nth-child(5) { transition-delay: 0.25s; transform: translateX(0); opacity: 1; }
+
+        main {
+            width: 100%;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .guides-page {
+            display: flex;
+            grid-template-columns: 280px minmax(0, 1fr);
+            align-items: start;
+            gap: 1rem;
+            width: 100%;
+            min-height: calc(100vh - 220px);
+        }
+
+        .guides-page__sidebar {
+            position: sticky;
+            top: 1rem;
+        }
+
+        .guides-page__content {
+            background: var(--guides-card);
+            border: 1px solid var(--guides-line);
+            border-radius: 16px;
+            box-shadow: var(--guides-shadow);
+            padding: clamp(1rem, 1.4vw, 1.7rem);
+            width: 100%;
+        }
+
+        #content > :first-child {
+            margin-top: 0;
+        }
+
+        #content h1,
+        #content h2,
+        #content h3 {
+            color: #0b1324;
+            line-height: 1.2;
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }
+
+        #content h1 {
+            font-size: clamp(1.8rem, 2.3vw, 2.5rem);
+            margin-top: 0;
+        }
+
+        #content h2 {
+            font-size: clamp(1.3rem, 1.7vw, 1.75rem);
+        }
+
+        #content p,
+        #content li {
+            font-size: 1.03rem;
+            line-height: 1.65;
+            color: #1e293b;
+        }
+
+        #content a {
+            color: var(--guides-accent-strong);
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 2px;
+        }
+
+        #content a:hover {
+            color: #1d4ed8;
+            text-decoration-color: #1d4ed8;
+        }
+
+        #content ul,
+        #content ol {
+            padding-left: 1.3rem;
+            margin: 0.65rem 0 1rem;
+        }
+
+        #content code {
+            background: #eef2ff;
+            color: #1e3a8a;
+            border: 1px solid #dbe7ff;
+            border-radius: 6px;
+            padding: 0.1rem 0.35rem;
+            font-size: 0.92em;
+        }
+
+        #content pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            overflow-x: auto;
+        }
+
+        #content pre code {
+            background: transparent;
+            border: 0;
+            color: inherit;
+            padding: 0;
+        }
+
+        #content .task-list-item {
+            list-style: none;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin: 0.4rem 0;
+        }
+
+        #content .task-list-item-checkbox {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.1rem;
+            min-width: 1.1rem;
+            height: 1.1rem;
+            margin-top: 0.1rem;
+        }
+
+        #content .task-list-item-pixel {
+            width: 1.1rem;
+            height: 1.1rem;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
+        #content .task-list-item-fallback {
+            font-size: 1rem;
+            line-height: 1;
+            display: inline-block;
+            margin-left: 0.15rem;
+            color: #475569;
+        }
+
+        #content .task-list-item-label {
+            line-height: 1.45;
+        }
+
+        #content .markdown-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid #d6e4f6;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1);
+            margin: 0.5rem 0 1rem;
+        }
+
+        footer {
+            width: 100%;
+            margin: 0;
+            padding: 0 1rem 1.5rem;
+            box-sizing: border-box;
+            color: #64748b;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                padding: 0.75rem;
+            }
+
+            .guides-page {
+                grid-template-columns: 1fr;
+            }
+
+            .guides-page__sidebar {
+                position: static;
+            }
+
+            .guides-page__content {
+                padding: 1rem;
+            }
+        }
+    </style>
+
+    <header id="guides-header">
+
+        <img id="menu" width="64" height="64" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
+
+        <h1>Eventful Guides</h1>
+        <div id="nav-dropdown">
+                    <%= button_to "Guides Home", guides_path, method: :get %>
+                    <%= button_to "Getting Started", getting_started_guides_path, method: :get %>
+                    <%= button_to "Browse Docs Tree", guide_doc_path(path: "getting_started"), method: :get %>
+                    <%= button_to "Organisations", organisations_path, method: :get %>
+                    <%= button_to "Back to App", root_path, method: :get %>
+        </div>
+    </header>
+
+    <% flash.each do |type, message| %>
+      <div class="flash flash-<%= type %>">
+        <%= message %>
+      </div>
+    <% end %>
+
+    <main>
+      <%= content_for?(:layout_content) ? yield(:layout_content) : yield %>
+    </main>
+
+    <footer>
+      <hr style="width:100%; opacity:0.3; margin-top: 2rem; margin-bottom: 1rem;">
+      <p style="text-align: center; color: #888; font-size: 0.875rem; margin: 2rem 0;">
+        &copy; <%= Time.current.year %> Eventful. All rights reserved. ~ JK
+      </p>
+    </footer>
+  </body>
+    <script>
+        // Handle image fade-in on load
+            function initImageFadeIn() {
+            document.querySelectorAll('img:not(.loaded):not(.no-fade)').forEach(img => {
+                if (img.complete) {
+                img.classList.add('loaded');
+                } else {
+                img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+                }
+            });
+            }
+
+            // Initialize header/menu logic once (guards against Turbo re-initialization)
+            function initHeaderMenu() {
+            if (window.headerMenuInitialized) return;
+            window.headerMenuInitialized = true;
+
+            // Preload menu icons to prevent flicker
+            const menuOpenIcon = new Image();
+            menuOpenIcon.src = "<%= icon_menu_open_path(color: 'white') %>";
+            const menuClosedIcon = new Image();
+            menuClosedIcon.src = "https://icons.hackclub.com/api/icons/white/menu";
+            const MENU_CLOSE_NAV_DELAY_MS = 220;
+
+            function closeMenu(menuBtn, navDropdown, instant = false) {
+                if (instant) {
+                const previousTransition = menuBtn.style.transition;
+                menuBtn.style.transition = "none";
+                navDropdown.classList.remove("open");
+                menuBtn.classList.remove("open");
+                menuBtn.src = menuClosedIcon.src;
+                menuBtn.getBoundingClientRect(); // flush style changes before restoring transitions
+                menuBtn.style.transition = previousTransition;
+                return;
+                }
+
+                navDropdown.classList.remove("open");
+                menuBtn.classList.remove("open");
+                menuBtn.src = menuClosedIcon.src;
+            }
+
+            function closeMenuIfPresent(instant = false) {
+                const menuBtn = document.getElementById("menu");
+                const navDropdown = document.getElementById("nav-dropdown");
+                if (!menuBtn || !navDropdown) return;
+                closeMenu(menuBtn, navDropdown, instant);
+            }
+
+            // use event delegation so listeners only added once
+            document.addEventListener("click", (e) => {
+                const menuBtn = document.getElementById("menu");
+                const navDropdown = document.getElementById("nav-dropdown");
+                if (!menuBtn || !navDropdown) return;
+
+                if (e.target.closest("#menu")) {
+                const isOpen = navDropdown.classList.toggle("open");
+                menuBtn.classList.toggle("open", isOpen);
+                menuBtn.src = isOpen ? menuOpenIcon.src : menuClosedIcon.src;
+                return;
+                }
+
+                const navButton = e.target.closest("#nav-dropdown button");
+                if (navButton) {
+                // Let the close animation finish before navigating away.
+                e.preventDefault();
+                closeMenu(menuBtn, navDropdown);
+
+                const form = navButton.closest("form");
+                if (!form) return;
+
+                navButton.disabled = true;
+                window.setTimeout(() => {
+                    if (typeof form.requestSubmit === "function") {
+                    form.requestSubmit(navButton);
+                    } else {
+                    form.submit();
+                    }
+                }, MENU_CLOSE_NAV_DELAY_MS);
+                return;
+                }
+
+                if (!e.target.closest("#nav-dropdown") && !e.target.closest("#menu")) {
+                // clicked outside both controls
+                closeMenu(menuBtn, navDropdown);
+                }
+            });
+
+            // Ensure Turbo never snapshots an in-transition menu icon state.
+            document.addEventListener("turbo:before-cache", () => closeMenuIfPresent(true));
+            document.addEventListener("turbo:visit", () => closeMenuIfPresent(true));
+            }
+
+            // Run initializers on load events
+            initImageFadeIn();
+            initHeaderMenu();
+
+            // Animate branding only once (initial full load), not on Turbo visits.
+            function animateBrandingOnce() {
+            if (window.brandingAnimatedOnce) return;
+            const branding = document.getElementById("site-branding");
+            if (!branding) return;
+            branding.classList.add("animate-in");
+            window.setTimeout(() => branding.classList.remove("animate-in"), 400);
+            window.brandingAnimatedOnce = true;
+            }
+
+            animateBrandingOnce();
+
+            // Page transition animations with Turbo
+            document.addEventListener("turbo:visit", () => {
+            document.body.classList.add("turbo-loading");
+            });
+
+            document.addEventListener("turbo:before-render", () => {
+            document.body.classList.remove("turbo-loading");
+            });
+
+            // Keep persistent branding stable unless the actual branding string changes.
+            document.addEventListener("turbo:before-render", (event) => {
+            const currentLink = document.querySelector("#site-branding .branding-link");
+            const incomingLink = event.detail.newBody.querySelector("#site-branding .branding-link");
+            if (!currentLink || !incomingLink) return;
+
+            const currentLabel = (currentLink.textContent || "").trim();
+            const incomingLabel = (incomingLink.textContent || "").trim();
+            const currentHref = currentLink.getAttribute("href") || "";
+            const incomingHref = incomingLink.getAttribute("href") || "";
+
+            if (currentLabel === incomingLabel && currentHref === incomingHref) return;
+
+            currentLink.textContent = incomingLabel;
+            currentLink.setAttribute("href", incomingHref);
+            });
+
+            document.addEventListener("turbo:load", () => {
+            document.body.classList.remove("turbo-loading");
+            initImageFadeIn();
+            // header menu already wired globally; no need to re-init
+            });
+
+            // Auto-dismiss flash messages after 5 seconds
+            setTimeout(() => {
+            document.querySelectorAll('.flash').forEach(el => {
+                el.style.animation = 'pageExit 0.3s ease-in forwards';
+                setTimeout(() => el.remove(), 300);
+            });
+            }, 3000);
+    </script>
+</html>

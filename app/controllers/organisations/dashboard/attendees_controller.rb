@@ -4,6 +4,8 @@ module Organisations
       before_action :require_login
       before_action :set_organisation
 
+      layout "org_dashboard"
+
       # GET /org/:id/dashboard/attendees
       def index
         # fetch every attendee belonging to this organisation (across events)

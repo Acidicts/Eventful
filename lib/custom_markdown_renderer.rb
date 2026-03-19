@@ -16,6 +16,19 @@ class CustomMarkdownRenderer < Redcarpet::Render::HTML
     "<a href='#{ERB::Util.html_escape(link)}'#{title_attr} target='_blank' rel='noopener'>#{content}</a>"
   end
 
+  # Support markdown image sizing via title metadata, e.g.
+  # ![Diagram](/learn/assets/x.svg "w=720 h=320")
+  def image(link, title, alt_text)
+    safe_link = ERB::Util.html_escape(link.to_s)
+    safe_alt = ERB::Util.html_escape(alt_text.to_s)
+    meta = parse_image_meta(title)
+    width_attr = meta[:width] ? " width='#{meta[:width]}'" : ""
+    height_attr = meta[:height] ? " height='#{meta[:height]}'" : ""
+    title_attr = meta[:title] ? " title='#{ERB::Util.html_escape(meta[:title])}'" : ""
+
+    "<img class='markdown-image' src='#{safe_link}' alt='#{safe_alt}' loading='lazy'#{title_attr}#{width_attr}#{height_attr}>"
+  end
+
   # Render GitHub-style task list items: "- [x] ..." and "- [ ] ...".
   # We output a span with a checkbox glyph so Sanitize::RELAXED won't strip it.
   def list_item(text, list_type)
@@ -27,30 +40,55 @@ class CustomMarkdownRenderer < Redcarpet::Render::HTML
       content = Regexp.last_match(2)
       state_class = checked ? "task-list-item--checked" : "task-list-item--unchecked"
 
-      # Use SVG asset files for pixel-art checkboxes (prefer asset pipeline; fall back to plain asset paths).
+      # Use SVG files when present, but gracefully fall back to text glyphs
+      # when the assets are not available in the current pipeline/load path.
+      unchecked_svg = nil
+      checked_svg = nil
       if defined?(ActionController::Base) && ActionController::Base.respond_to?(:helpers)
-        unchecked_svg = ERB::Util.html_escape(ActionController::Base.helpers.asset_path("empty_checkbox.svg"))
-        checked_svg   = ERB::Util.html_escape(ActionController::Base.helpers.asset_path("ticked_checkbox.svg"))
-      else
-        # Fallback (development / precompiled asset path)
-        unchecked_svg = "/assets/empty_checkbox.svg"
-        checked_svg   = "/assets/ticked_checkbox.svg"
+        begin
+          unchecked_svg = ERB::Util.html_escape(ActionController::Base.helpers.asset_path("empty_checkbox.svg"))
+          checked_svg = ERB::Util.html_escape(ActionController::Base.helpers.asset_path("ticked_checkbox.svg"))
+        rescue StandardError
+          unchecked_svg = nil
+          checked_svg = nil
+        end
       end
 
-      img_src = checked ? checked_svg : unchecked_svg
-      glyph = checked ? "&#x2611;" : "&#x2610;"  # textual fallback
       sr = checked ? " (checked)" : " (not checked)"
+      icon_markup =
+        if checked_svg && unchecked_svg
+          img_src = checked ? checked_svg : unchecked_svg
+          "<img class='task-list-item-pixel' src='#{img_src}' alt=''>"
+        else
+          fallback_glyph = checked ? "checkbox-checked" : "checkbox"
+          fallback_src = ERB::Util.html_escape("https://icons.hackclub.com/api/icons/slate/#{fallback_glyph}")
+          "<img class='task-list-item-pixel' src='#{fallback_src}' alt=''>"
+        end
 
       "<li class='task-list-item #{state_class}'>" +
         "<span class='task-list-item-checkbox' aria-hidden='true'>" +
-          "<img class='task-list-item-pixel' src='#{img_src}' alt=''>" +
-          "<span class='task-list-item-fallback'>#{glyph}</span>" +
+          icon_markup +
         "</span> " +
         "<span class='task-list-item-label'>#{content}<span class='sr-only'>#{sr}</span></span>" +
       "</li>"
     else
       "<li>#{text}</li>"
     end
+  end
+
+  private
+
+  def parse_image_meta(raw_title)
+    text = raw_title.to_s
+    width = text[/\b(?:w|width)\s*=\s*(\d{1,4})\b/i, 1]
+    height = text[/\b(?:h|height)\s*=\s*(\d{1,4})\b/i, 1]
+    cleaned_title = text.gsub(/\b(?:w|width|h|height)\s*=\s*\d{1,4}\b/i, "").strip
+
+    {
+      width: width,
+      height: height,
+      title: cleaned_title.empty? ? nil : cleaned_title
+    }
   end
 end
 

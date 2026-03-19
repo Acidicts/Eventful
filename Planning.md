@@ -1,6 +1,7 @@
 <div style="border:1px solid #ccc; padding:8px; padding-top:0; border-radius:4px;">
 
 ### Colors
+
 - `#03045E` <span style="color: #03045E">■</span>
 - `#023E8A` <span style="color: #023E8A">■</span>
 - `#0077B6` <span style="color: #0077B6">■</span>
@@ -16,59 +17,106 @@
 # Structure
 
 - [x] Event
-    - [x] Attendee
-      - [x] Apply
-        - [x] Name
-        - [x] Age
-        - [x] Allergies
-        - [x] Dietary Requirements
-        - [x] Contact Information
-          - [x] Email
-          - [ ] Phone Number (optional)
-      - [x] QR Code ID
-        - [x] Quick Info Finder
-        - [x] Attendence Tracking
-          - [x] Current
-          - [ ] Past Attendence (Check in and out times)
-        - [x] Event Check-in
-      - [x] QR Code Emails
-        - [x] QR Code
-    - [x] Waiver Signing
-    - [x] Portal Messaging
-    - [x] Event Details
-        - [x] Name
-        - [x] Date
-        - [x] Location
-        - [x] Description
-        - [x] Organizer Information
-            - [x] Name
-            - [x] Contact Information
-                - [x] Email
-                - [ ] Phone Number (optional)
-    - [ ] Notifications
-        - [ ] Event Updates
-            - [x] Announcements
-            - [ ] Schedule Changes
-        - [ ] Reminders
-            - [ ] Event Date
-            - [ ] Application Deadline
-    - [ ] Feedback
-        - [ ] Post-Event Survey
-            - [ ] Overall Experience
-            - [ ] Suggestions for Improvement
-            - [ ] Likelihood to Recommend
-    - [ ] Analytics
-        - [ ] Attendance Rates
-        - [ ] Demographics
-        - [ ] Feedback Analysis
-    - [x] Admin Dashboard
-        - [x] Event Management
-            - [x] Create/Edit/Delete Events
-            - [x] View Attendee List
-            - [x] View Individual Attendee Profiles
-        - [ ] Notification Management
-            - [ ] Send Announcements
-            - [ ] Schedule Reminders
-        - [ ] Feedback Management
-            - [ ] View Survey Results
-            - [ ] Respond to Feedback
+  - [x] Attendee
+    - [x] Apply
+      - [x] Name
+      - [x] Age
+      - [x] Allergies
+      - [x] Dietary Requirements
+      - [x] Contact Information
+        - [x] Email
+        - [ ] Phone Number (optional)
+    - [x] QR Code ID
+      - [x] Quick Info Finder
+      - [x] Attendence Tracking
+        - [x] Current
+        - [ ] Past Attendence (Check in and out times)
+      - [x] Event Check-in
+    - [x] QR Code Emails
+      - [x] QR Code
+  - [x] Waiver Signing
+  - [x] Portal Messaging
+  - [x] Event Details
+    - [x] Name
+    - [x] Date
+    - [x] Location
+    - [x] Description
+    - [x] Organizer Information
+      - [x] Name
+      - [x] Contact Information
+        - [x] Email
+        - [ ] Phone Number (optional)
+  - [ ] Notifications
+    - [ ] Event Updates
+      - [x] Announcements
+      - [ ] Schedule Changes
+    - [ ] Reminders
+      - [ ] Event Date
+      - [ ] Application Deadline
+  - [ ] Feedback
+    - [ ] Post-Event Survey
+      - [ ] Overall Experience
+      - [ ] Suggestions for Improvement
+      - [ ] Likelihood to Recommend
+  - [ ] Analytics
+    - [ ] Attendance Rates
+    - [ ] Demographics
+    - [ ] Feedback Analysis
+  - [x] Admin Dashboard
+    - [x] Event Management
+      - [x] Create/Edit/Delete Events
+      - [x] View Attendee List
+      - [x] View Individual Attendee Profiles
+    - [ ] Notification Management
+      - [ ] Send Announcements
+      - [ ] Schedule Reminders
+    - [ ] Feedback Management
+      - [ ] View Survey Results
+      - [ ] Respond to Feedback
+  - [ ] Registration Management
+    - [ ] Capacity Limits
+    - [ ] Waitlist
+      - [ ] Auto Promote from Waitlist
+      - [ ] Waitlist Position Visibility
+    - [ ] Approval Workflows
+      - [ ] Manual Review Queue
+      - [ ] Auto Accept Rules
+  - [ ] Tickets and Payments
+    - [ ] Free and Paid Ticket Types
+    - [ ] Promo Codes
+    - [ ] Refund and Cancellation Requests
+    - [ ] Donation Option at Checkout
+  - [ ] Check-in and On-site Tools
+    - [ ] Bulk QR Scanner Mode
+    - [ ] Offline Check-in Mode
+    - [ ] Duplicate Check-in Prevention
+    - [ ] Emergency Contact Quick Access
+  - [ ] Communications
+    - [ ] Email Templates
+      - [ ] Application Received
+      - [ ] Application Approved or Rejected
+      - [ ] Event Reminder 24 Hours Before
+    - [ ] SMS Notifications (optional)
+    - [ ] In-app Message History
+  - [ ] Accessibility and Inclusion
+    - [ ] Accessibility Needs Field
+    - [ ] Pronouns Field (optional)
+    - [ ] Multilingual Portal Content
+    - [ ] Large Text and High Contrast Mode
+  - [ ] Documents
+    - [ ] Upload Required Documents
+    - [ ] Admin Verification Status
+    - [ ] Expiring Document Alerts
+  - [ ] Post-event
+    - [ ] Certificate of Attendance
+    - [ ] Attendance Summary Email
+    - [ ] Follow-up Resource Links
+  - [ ] Integrations
+    - [ ] Calendar Sync (Google, Outlook)
+    - [ ] Export to CSV
+    - [ ] Webhook Support for External Systems
+  - [ ] Security and Compliance
+    - [ ] Role-based Access Controls
+    - [ ] Audit Log for Admin Actions
+    - [ ] Data Retention Rules
+    - [ ] Privacy Consent Tracking

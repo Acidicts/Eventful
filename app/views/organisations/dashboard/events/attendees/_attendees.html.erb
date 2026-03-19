@@ -12,24 +12,6 @@
     border-top: 1px solid rgba(0, 0, 0, 0.12);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   }
-
-  .attendee_details__label_red {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  .attendee_details__label_green {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
 </style>
 
 <div id="actions" class="attendees__actions">
@@ -59,12 +41,8 @@
           <td class="attendees-table__cell"><%= attendee.name %></td>
           <td class="attendees-table__cell"><%= attendee.age %></td>
           <td class="attendees-table__cell"><%= attendee.code %></td>
-          <td class="attendees-table__cell"><%= button_to attendee.event&.name, organisation_event_path(@organisation, attendee.event), method: :get, class: "attendee-details__btn attendee-details__btn--ghost" %></td>
-          <% if attendee.attendance.humanize == "Signed in" %>
-            <td class="attendees-table__cell"><%= label_tag nil, attendee.attendance.to_s.humanize, class: "attendee_details__label_green" %></td>
-          <% else %>
-            <td class="attendees-table__cell"><%= label_tag nil, attendee.attendance.to_s.humanize, class: "attendee_details__label_red" %></td>
-          <% end %>
+          <td class="attendees-table__cell"><%= attendee.event&.name %></td>
+          <td class="attendees-table__cell"><%= attendee.attendance.to_s.humanize %></td>
           <td class="attendees-table__cell">
             <div class="attendees-table__actions">
               <%= link_to 'View', attendee_organisation_event_path(

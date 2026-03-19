@@ -5,8 +5,11 @@
   }
 
   .home-get-started {
+    display: flex;
+    flex-direction: column;
     margin: 2rem auto 0;
     max-width: 700px;
+    gap: 1rem;
   }
 
   .home-get-started h2 {
@@ -41,6 +44,10 @@
 
   .home-get-started-link--organisations {
     background-color: #ec3750;
+  }
+
+  .home-get-started-link--guides {
+    background-color: #38c7a1;
   }
 
   .home-get-started-link--events {
@@ -87,6 +94,9 @@
     <div class="home-get-started-actions">
       <%= link_to "Organisations", organisations_path, class: "home-get-started-link home-get-started-link--organisations" %>
       <%= link_to "Events", events_path, class: "home-get-started-link home-get-started-link--events" %>
+    </div>
+    <div class="home-guides">
+      <%= link_to "Guides", guides_path, class: "home-get-started-link home-get-started-link--guides" %>
     </div>
   </section>
 </div>
