@@ -11,7 +11,7 @@ This section provides documentation on how to use the tool's features effectivel
 - Analytics and reporting
 - A waiver system ( don't rely on this, we recommend your own custom waiver system, or a seperate system like waiversign.com )
 
-## Some Slang
+## Some Abrieviations
 - Orgs: Organisations
 - Dash: Dashboard
 - QR: QR codes
