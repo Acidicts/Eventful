@@ -1,10 +1,26 @@
 <body>
   <div class="org-title">
     <h1><%= @organisation.name.to_s %></h1>
+    <% if @organisation.parent_team.present? %>
+      <p>
+        Parent Team:
+        <%= link_to @organisation.parent_team.name, organisation_path(@organisation.parent_team) %>
+      </p>
+    <% end %>
+
+    <% if @organisation.child_teams.any? %>
+      <p>Child Teams:</p>
+      <ul>
+        <% @organisation.child_teams.order(:name).each do |team| %>
+          <li><%= link_to team.name, organisation_path(team) %></li>
+        <% end %>
+      </ul>
+    <% end %>
   </div>
 </body>
 
 
 <%= link_to 'Edit', edit_organisation_path(@organisation) %> |
 <%= link_to 'Back', organisations_path %> |
-<%= link_to 'Events', organisation_events_path(@organisation) %>
+<%= link_to 'Events', organisation_events_path(@organisation) %> |
+<%= link_to 'Sub Teams', dashboard_sub_teams_organisation_path(@organisation) %>

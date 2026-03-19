@@ -1,0 +1,287 @@
+<style>
+  .sub-teams {
+    max-width: 1120px;
+    margin: 1.5rem auto;
+    padding: 0 1rem 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sub-teams__hero {
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    background: linear-gradient(130deg, #0f3f67, #1d70a2);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(9, 32, 56, 0.25);
+  }
+
+  .sub-teams__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  }
+
+  .sub-teams__subtitle {
+    margin: 0.45rem 0 0;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .sub-teams__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .sub-teams__panel {
+    background: #fff;
+    border: 1px solid #dce7f2;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(15, 33, 52, 0.08);
+    padding: 1rem;
+  }
+
+  .sub-teams__panel-title {
+    margin: 0;
+    color: #104266;
+    font-size: 1.05rem;
+  }
+
+  .sub-teams__panel-copy {
+    margin: 0.35rem 0 0.9rem;
+    color: #63798e;
+  }
+
+  .sub-teams__team {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 10px;
+    border: 1px solid #dbe7f1;
+    background: #f8fbff;
+    padding: 0.7rem 0.75rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .sub-teams__team:last-child {
+    margin-bottom: 0;
+  }
+
+  .sub-teams__name {
+    margin: 0;
+    color: #113d5d;
+    font-weight: 700;
+  }
+
+  .sub-teams__meta {
+    margin: 0.25rem 0 0;
+    color: #677f95;
+    font-size: 0.85rem;
+  }
+
+  .sub-teams__button {
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid #1f73a8;
+    color: #0f5683;
+    background: #eef7ff;
+    font-weight: 700;
+    padding: 0.4rem 0.72rem;
+    white-space: nowrap;
+  }
+
+  .sub-teams__button:hover {
+    background: #dcefff;
+  }
+
+  .sub-teams__empty {
+    margin: 0;
+    color: #6b7f94;
+  }
+
+  .sub-teams__create-toggle {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .sub-teams__details {
+    border: 1px solid #dce7f2;
+    border-radius: 12px;
+    background: #f8fbff;
+    padding: 0.55rem;
+  }
+
+  .sub-teams__details summary {
+    list-style: none;
+  }
+
+  .sub-teams__details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .sub-teams__form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.7rem;
+  }
+
+  .sub-teams__field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .sub-teams__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .sub-teams__field label {
+    color: #34556f;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .sub-teams__field input,
+  .sub-teams__field textarea {
+    width: 100%;
+    border: 1px solid #c8dae9;
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    color: #123a59;
+    background: #ffffff;
+  }
+
+  .sub-teams__field textarea {
+    resize: vertical;
+    min-height: 88px;
+  }
+
+  .sub-teams__errors {
+    margin: 0.7rem 0 0;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #9f1239;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .sub-teams__errors h3 {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .sub-teams__errors ul {
+    margin: 0.45rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  .sub-teams__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 900px) {
+    .sub-teams__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section class="sub-teams">
+  <header class="sub-teams__hero">
+    <h1 class="sub-teams__title">Sub Teams</h1>
+    <p class="sub-teams__subtitle">
+      Manage parent and child organisation links for <strong><%= @organisation.name %></strong>.
+    </p>
+  </header>
+
+  <div class="sub-teams__create-toggle">
+    <details class="sub-teams__details" <%= "open" if @new_sub_team&.errors&.any? %>>
+      <summary>
+        <span class="sub-teams__button">Create Team</span>
+      </summary>
+
+      <%= form_with model: @new_sub_team, url: dashboard_sub_teams_create_organisation_path(@organisation), local: true do |form| %>
+        <% if @new_sub_team.errors.any? %>
+          <div class="sub-teams__errors">
+            <h3><%= pluralize(@new_sub_team.errors.count, "error") %> prevented team creation</h3>
+            <ul>
+              <% @new_sub_team.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="sub-teams__form-grid">
+          <div class="sub-teams__field">
+            <%= form.label :name, "Team Name" %>
+            <%= form.text_field :name, required: true %>
+          </div>
+
+          <div class="sub-teams__field">
+            <%= form.label :img, "Image URL" %>
+            <%= form.url_field :img %>
+          </div>
+
+          <div class="sub-teams__field sub-teams__field--full">
+            <%= form.label :description %>
+            <%= form.text_area :description, rows: 3 %>
+          </div>
+
+          <div class="sub-teams__field sub-teams__field--full sub-teams__form-actions">
+            <%= form.submit "Create Team", class: "sub-teams__button" %>
+          </div>
+        </div>
+      <% end %>
+    </details>
+  </div>
+
+  <div class="sub-teams__grid">
+    <article class="sub-teams__panel">
+      <h2 class="sub-teams__panel-title">Parent Team</h2>
+      <p class="sub-teams__panel-copy">Top-level organisation that this team belongs to.</p>
+
+      <% if @parent_team.present? %>
+        <div class="sub-teams__team">
+          <div>
+            <p class="sub-teams__name"><%= @parent_team.name %></p>
+            <p class="sub-teams__meta"><%= pluralize(@parent_team.events.count, "event") %> in parent team</p>
+          </div>
+          <%= link_to "Open", dashboard_organisation_path(@parent_team), class: "sub-teams__button" %>
+        </div>
+      <% else %>
+        <p class="sub-teams__empty">No parent team linked.</p>
+      <% end %>
+    </article>
+
+    <article class="sub-teams__panel">
+      <h2 class="sub-teams__panel-title">Child Teams</h2>
+      <p class="sub-teams__panel-copy">Sub-teams linked under this organisation.</p>
+
+      <% if @child_teams.any? %>
+        <% @child_teams.each do |team| %>
+          <div class="sub-teams__team">
+            <div>
+              <p class="sub-teams__name"><%= team.name %></p>
+              <p class="sub-teams__meta"><%= pluralize(team.events.count, "event") %> in child team</p>
+            </div>
+            <%= link_to "Open", dashboard_organisation_path(team), class: "sub-teams__button" %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="sub-teams__empty">No child teams linked yet.</p>
+      <% end %>
+    </article>
+  </div>
+
+  <article class="sub-teams__panel">
+    <h2 class="sub-teams__panel-title">Manage Links</h2>
+    <p class="sub-teams__panel-copy">
+      Use organisation edit settings to assign a parent team or a featured child link.
+    </p>
+    <%= link_to "Edit This Organisation", edit_organisation_path(@organisation), class: "sub-teams__button" %>
+  </article>
+</section>

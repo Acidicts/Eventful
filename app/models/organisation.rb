@@ -26,6 +26,16 @@ class Organisation < ApplicationRecord
   # optional reference to the user who "signs" for the organisation
   belongs_to :signing_user, class_name: "User"
 
+  # hierarchy links between organisations.
+  #
+  # `parent_org_id` is the primary path for sub-team relationships.
+  # `child_org_id` is kept for compatibility with older records where a
+  # single child link may have been stored directly on the parent.
+  belongs_to :parent_org, class_name: "Organisation", optional: true, inverse_of: :sub_teams
+  has_many :sub_teams, class_name: "Organisation", foreign_key: :parent_org_id, dependent: :nullify, inverse_of: :parent_org
+  belongs_to :child_org, class_name: "Organisation", optional: true
+  has_one :legacy_parent_org, class_name: "Organisation", foreign_key: :child_org_id, dependent: :nullify, inverse_of: :child_org
+
   # stored in the DB as `nil_org`; this boolean flags a placeholder "nil" org
   alias_attribute :nil_organisation, :nil_org
 
@@ -52,6 +62,7 @@ class Organisation < ApplicationRecord
   # behaviour applies on create *and* update (controllers no longer need to
   # remember to wire it up).
   before_validation :apply_self_found_logic
+  before_validation :sync_top_level_org
 
   attribute :join_requirements, :string, default: "nil"
 
@@ -59,9 +70,24 @@ class Organisation < ApplicationRecord
   validates :signing_user, presence: true
   validate  :signing_user_must_be_member
   validate :auto_add_users
+  validate :hierarchy_links_must_not_self_reference
 
   after_save :give_all_users_roles
+  after_save :sync_featured_child_parent_link
   after_create :ensure_default_roles
+
+  # The most reliable parent reference across legacy/current schema.
+  def parent_team
+    parent_org || legacy_parent_org
+  end
+
+  # Collect child teams from both the modern (`parent_org_id`) and legacy
+  # (`child_org_id`) link styles so callers can render one navigation list.
+  def child_teams
+    teams = sub_teams
+    teams = teams.or(Organisation.where(id: child_org_id)) if child_org_id.present?
+    teams.distinct
+  end
 
   def give_all_users_roles
     return unless signing_user
@@ -72,7 +98,7 @@ class Organisation < ApplicationRecord
     member_role  = OrganisationRole.find_or_create_by!(organisation: self, name: "Member")
 
     # Signing users should always have access to all permissions.
-    signing_role.permissions = RolePermission.all
+    signing_role.role_permissions = RolePermission.all
 
     # Keep the signing role exclusive to the current signing user.
     signing_role.users = [ signing_user ]
@@ -116,6 +142,32 @@ class Organisation < ApplicationRecord
   end
 
   private
+
+  def sync_top_level_org
+    self.top_level_org = parent_org_id.blank?
+  end
+
+  def hierarchy_links_must_not_self_reference
+    if parent_org_id.present? && parent_org_id == id
+      errors.add(:parent_org_id, "cannot point to this organisation")
+    end
+
+    if child_org_id.present? && child_org_id == id
+      errors.add(:child_org_id, "cannot point to this organisation")
+    end
+  end
+
+  def sync_featured_child_parent_link
+    return if child_org_id.blank? || child_org_id == id
+
+    child_org_record = Organisation.find_by(id: child_org_id)
+    return unless child_org_record
+    return if child_org_record.parent_org_id == id
+
+    # Keep parent -> featured child selections navigable without requiring
+    # manual edits on both records.
+    child_org_record.update_columns(parent_org_id: id, top_level_org: false)
+  end
 
   # if the organisation is marked self‑found then the owner should act as the
   # signer. we also take care of adding the signing user to the membership

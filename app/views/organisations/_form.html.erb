@@ -27,6 +27,16 @@
   </div>
 
   <div class="field">
+    <%= form.label :parent_org_id, "Parent Team" %>
+    <%= render "application/dropdown", options: @organisation_options, label_method: :name, value_method: :id, name: "organisation[parent_org_id]", prompt: "No parent team", selected: organisation.parent_org_id, multiple: false %>
+  </div>
+
+  <div class="field">
+    <%= form.label :child_org_id, "Featured Child Team" %>
+    <%= render "application/dropdown", options: @organisation_options, label_method: :name, value_method: :id, name: "organisation[child_org_id]", prompt: "No featured child team", selected: organisation.child_org_id, multiple: false %>
+  </div>
+
+  <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name %>
   </div>

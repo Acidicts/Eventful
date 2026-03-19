@@ -132,6 +132,8 @@ Rails.application.routes.draw do
       get "dashboard/attendees", to: "organisations/dashboard/attendees#index", as: :dashboard_attendees
       get "dashboard/events", to: "organisations/dashboard/events#index", as: :dashboard_events
       get "dashboard/events/attendees", to: "organisations/dashboard/events#attendees", as: :dashboard_events_attendees
+      get "dashboard/sub-teams", to: "organisations/dashboard/sub_teams#index", as: :dashboard_sub_teams
+      post "dashboard/sub-teams", to: "organisations/dashboard/sub_teams#create", as: :dashboard_sub_teams_create
     end
 
     member do

@@ -1,5 +1,6 @@
 class OrganisationsController < ApplicationController
   before_action :set_organisation, only: %i[show edit update destroy]
+  before_action :set_hierarchy_options, only: %i[new create edit update]
   before_action :require_login
 
   def index
@@ -22,7 +23,7 @@ class OrganisationsController < ApplicationController
 
   def settings
   end
-  
+
   def public
     render "organisations/public/index"
   end
@@ -87,10 +88,19 @@ class OrganisationsController < ApplicationController
     params.require(:organisation).permit(
       :user_id,
       :signing_user_id,
+      :parent_org_id,
+      :child_org_id,
       :name,
       :description,
       :img,
       :self_found
     )
+  end
+
+  def set_hierarchy_options
+    current_id = @organisation&.id
+    @organisation_options = Organisation.where(nil_org: false)
+                                        .where.not(id: current_id)
+                                        .order(:name)
   end
 end
