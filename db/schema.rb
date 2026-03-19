@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_215332) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -167,6 +167,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_215332) do
   end
 
   create_table "organisations", force: :cascade do |t|
+    t.integer "child_org_id"
     t.datetime "created_at", null: false
     t.time "default_event_end_time", default: "2000-01-01 15:00:00"
     t.integer "default_event_length", default: 2
@@ -180,12 +181,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_215332) do
     t.string "join_requirements"
     t.string "name", default: "Unamed Organisation", null: false
     t.boolean "nil_org", default: false, null: false
+    t.integer "parent_org_id"
     t.boolean "self_found", default: false, null: false
     t.integer "signing_user_id"
     t.integer "time_utc_offset", default: 0
     t.string "timezone", default: "UTC"
+    t.boolean "top_level_org", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["child_org_id"], name: "index_organisations_on_child_org_id"
+    t.index ["parent_org_id"], name: "index_organisations_on_parent_org_id"
     t.index ["signing_user_id"], name: "index_organisations_on_signing_user_id"
     t.index ["user_id"], name: "index_organisations_on_user_id"
   end
@@ -243,6 +248,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_215332) do
   add_foreign_key "organisation_roles_role_permissions", "role_permissions"
   add_foreign_key "organisation_roles_users", "organisation_roles"
   add_foreign_key "organisation_roles_users", "users"
+  add_foreign_key "organisations", "organisations", column: "child_org_id"
+  add_foreign_key "organisations", "organisations", column: "parent_org_id"
   add_foreign_key "organisations", "users"
   add_foreign_key "organisations", "users", column: "signing_user_id"
   add_foreign_key "photos", "attendees"
