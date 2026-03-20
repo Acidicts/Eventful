@@ -6,6 +6,35 @@ class User < ApplicationRecord
   belongs_to :organisation, optional: true
   belongs_to :favorite_org, class_name: "Organisation", optional: true
 
+  # records where this user is the owner/signer of an organisation
+  has_many :owned_organisations,
+           class_name: "Organisation",
+           foreign_key: :user_id,
+           inverse_of: :user,
+           dependent: :destroy
+  has_many :signed_organisations,
+           class_name: "Organisation",
+           foreign_key: :signing_user_id,
+           inverse_of: :signing_user,
+           dependent: :nullify
+
+  # records with direct FK references to users
+  has_many :created_announcements,
+           class_name: "Announcement",
+           foreign_key: :creator_id,
+           inverse_of: :creator,
+           dependent: :destroy
+  has_many :organised_events,
+           class_name: "Event",
+           foreign_key: :organiser_id,
+           inverse_of: :organiser,
+           dependent: :nullify
+  has_many :answered_messages,
+           class_name: "Message",
+           foreign_key: :answerer_id,
+           inverse_of: :answerer,
+           dependent: :nullify
+
   has_and_belongs_to_many :organisation_roles
   has_many :email_login_otps, dependent: :delete_all
 

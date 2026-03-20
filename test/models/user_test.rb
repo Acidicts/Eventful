@@ -50,6 +50,14 @@ class UserTest < ActiveSupport::TestCase
     assert_equal existing.admin?, user.admin?
   end
 
+  test "user destroy dependencies are configured for foreign keys" do
+    assert_equal :destroy, User.reflect_on_association(:owned_organisations).options[:dependent]
+    assert_equal :nullify, User.reflect_on_association(:signed_organisations).options[:dependent]
+    assert_equal :destroy, User.reflect_on_association(:created_announcements).options[:dependent]
+    assert_equal :nullify, User.reflect_on_association(:organised_events).options[:dependent]
+    assert_equal :nullify, User.reflect_on_association(:answered_messages).options[:dependent]
+  end
+
     test "from_omniauth stores credentials" do
       auth = OmniAuth::AuthHash.new(
         provider: "hackclub",
