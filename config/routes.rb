@@ -122,6 +122,7 @@ Rails.application.routes.draw do
 
     member do
       get "/public", to: "organisations#public", as: :public
+      get "/join", to: "organisations#join", as: :join
     end
 
     # introduce a member dashboard route that delegates to a dedicated

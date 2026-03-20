@@ -52,6 +52,18 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def join
+    team = params[:id]
+    return unless team.present?
+    organisation = Organisation.find(team)
+    if organisation.parent_org.users.include?(current_user) && current_user.organisation_roles.where(organisation_id: @organisation.id).joins(:role_permissions).where(role_permissions: { permission: "join_team_sub_team" }).exists?
+      organisation.users << current_user unless organisation.users.include?(current_user)
+      redirect_to dashboard_organisation_path(organisation), notice: "You have joined #{organisation.name}."
+    else
+      redirect_to root_path, alert: "You do not have permission to join this team."
+    end
+  end
+
   def settings
   end
 

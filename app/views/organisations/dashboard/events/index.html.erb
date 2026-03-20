@@ -201,6 +201,7 @@
           <thead>
             <tr>
               <th>Name</th>
+              <th>Team</th>
               <th>Capacity</th>
               <th>Applied</th>
               <th>Actions</th>
@@ -212,6 +213,7 @@
                 <td>
                   <%= link_to event.name, organisation_event_path(@organisation, event), class: "events-index__event-link" %>
                 </td>
+                <td><%= event.organisation.name %></td>
                 <td><%= event.capacity %></td>
                 <td><%= event.attendees.count %></td>
                 <td>

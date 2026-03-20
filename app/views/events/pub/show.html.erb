@@ -99,6 +99,33 @@
         line-height: 1.6;
     }
 
+    #event-header-base {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #event-header-2 {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    #apply-btn {
+        position: relative;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        background: var(--eventful-primary);
+        color: #fff;
+        border: none;
+        box-shadow: 0 6px 18px rgba(0, 123, 255, 0.24);
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        bottom: 1rem;
+    }
+
     @keyframes eventPubEnter {
         from {
             opacity: 0;
@@ -130,16 +157,21 @@
 
 <section class="event-pub-page">
     <div class="event-pub-hero">
-        <div id="event-header">
-            <h2><%= @event.name %></h2>
+        <div id="event-header-base">
+            <div id="event-header-1">
+                <h2><%= @event.name %></h2>
 
-            <% if @event.description.present? %>
-                <p class="event-pub-description"><%= @event.description %></p>
-            <% else %>
-                <p class="event-pub-description">A new Eventful experience is coming together. Check back soon for the full event details.</p>
-            <% end %>
+                <% if @event.description.present? %>
+                    <p class="event-pub-description"><%= @event.description %></p>
+                <% else %>
+                    <p class="event-pub-description">A new Eventful experience is coming together. Check back soon for the full event details.</p>
+                <% end %>
 
-            <span class="event-pub-details">Public Event Page</span>
+                <span class="event-pub-details">Public Event Page</span>
+            </div>
+            <div id="event-header-2">
+                <%= link_to "Apply", public_apply_event_path(@event), class: "btn btn-primary", id:"apply-btn" %>
+            </div>
         </div>
     </div>
 

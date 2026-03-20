@@ -8,7 +8,11 @@ module Organisations
 
       # GET /org/:id/dashboard/events
       def index
-        @events = @organisation.events
+        # `sub_teams` is a CollectionProxy; `events` is not available directly on
+        # the collection. Fetch events by joining through organisation id instead.
+        sub_team_ids = @organisation.sub_teams.select(:id) + [ @organisation.id ]
+        @events = Event.where(organisation_id: sub_team_ids)
+                       .joins(:organisation)
       end
 
       def attendees

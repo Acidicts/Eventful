@@ -182,6 +182,11 @@
     margin-top: 0.15rem;
   }
 
+  .sub-teams__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+
   @media (max-width: 900px) {
     .sub-teams__grid {
       grid-template-columns: 1fr;
@@ -268,7 +273,10 @@
               <p class="sub-teams__name"><%= team.name %></p>
               <p class="sub-teams__meta"><%= pluralize(team.events.count, "event") %> in child team</p>
             </div>
-            <%= link_to "Open", dashboard_organisation_path(team), class: "sub-teams__button" %>
+            <div class="sub-teams__actions">
+              <%= link_to "Join", join_organisation_path(team), class: "sub-teams__button" %>
+              <%= link_to "Open", dashboard_organisation_path(team), class: "sub-teams__button" %>
+            </div>
           </div>
         <% end %>
       <% else %>

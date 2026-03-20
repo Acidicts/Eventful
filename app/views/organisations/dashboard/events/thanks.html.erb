@@ -1,4 +1,35 @@
-<h1>Thank You for Applying!</h1>
-<p>
-  Your application for <strong><%= @event.name %></strong> has been received.
-</p>
+<style>
+  .org-thanks {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 14px;
+    background: #f5fbff;
+    border: 1px solid #dbe8f4;
+    box-shadow: 0 8px 18px rgba(14, 50, 90, 0.08);
+    color: #0f2740;
+  }
+
+  .org-thanks h1 {
+    margin-top: 0;
+    margin-bottom: 0.9rem;
+    font-size: 1.7rem;
+  }
+
+  .org-thanks p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .org-thanks strong {
+    color: #055191;
+  }
+</style>
+
+<section class="org-thanks">
+  <h1>Thank You for Applying!</h1>
+  <p>
+    Your application for <strong><%= @event.name %></strong> has been received.
+  </p>
+</section>
