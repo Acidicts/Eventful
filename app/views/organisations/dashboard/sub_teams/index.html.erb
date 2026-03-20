@@ -202,47 +202,49 @@
     </p>
   </header>
 
-  <div class="sub-teams__create-toggle">
-    <details class="sub-teams__details" <%= "open" if @new_sub_team&.errors&.any? %>>
-      <summary>
-        <span class="sub-teams__button">Create Team</span>
-      </summary>
+  <% if has_permission?("organisation-dashboard-sub-teams-create", organisation: @organisation) %>
+    <div class="sub-teams__create-toggle">
+      <details class="sub-teams__details" <%= "open" if @new_sub_team&.errors&.any? %>>
+        <summary>
+          <span class="sub-teams__button">Create Team</span>
+        </summary>
 
-      <%= form_with model: @new_sub_team, url: dashboard_sub_teams_create_organisation_path(@organisation), local: true do |form| %>
-        <% if @new_sub_team.errors.any? %>
-          <div class="sub-teams__errors">
-            <h3><%= pluralize(@new_sub_team.errors.count, "error") %> prevented team creation</h3>
-            <ul>
-              <% @new_sub_team.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
+        <%= form_with model: @new_sub_team, url: dashboard_sub_teams_create_organisation_path(@organisation), local: true do |form| %>
+          <% if @new_sub_team.errors.any? %>
+            <div class="sub-teams__errors">
+              <h3><%= pluralize(@new_sub_team.errors.count, "error") %> prevented team creation</h3>
+              <ul>
+                <% @new_sub_team.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="sub-teams__form-grid">
+            <div class="sub-teams__field">
+              <%= form.label :name, "Team Name" %>
+              <%= form.text_field :name, required: true %>
+            </div>
+
+            <div class="sub-teams__field">
+              <%= form.label :img, "Image URL" %>
+              <%= form.url_field :img %>
+            </div>
+
+            <div class="sub-teams__field sub-teams__field--full">
+              <%= form.label :description %>
+              <%= form.text_area :description, rows: 3 %>
+            </div>
+
+            <div class="sub-teams__field sub-teams__field--full sub-teams__form-actions">
+              <%= form.submit "Create Team", class: "sub-teams__button" %>
+            </div>
           </div>
         <% end %>
-
-        <div class="sub-teams__form-grid">
-          <div class="sub-teams__field">
-            <%= form.label :name, "Team Name" %>
-            <%= form.text_field :name, required: true %>
-          </div>
-
-          <div class="sub-teams__field">
-            <%= form.label :img, "Image URL" %>
-            <%= form.url_field :img %>
-          </div>
-
-          <div class="sub-teams__field sub-teams__field--full">
-            <%= form.label :description %>
-            <%= form.text_area :description, rows: 3 %>
-          </div>
-
-          <div class="sub-teams__field sub-teams__field--full sub-teams__form-actions">
-            <%= form.submit "Create Team", class: "sub-teams__button" %>
-          </div>
-        </div>
-      <% end %>
-    </details>
-  </div>
+      </details>
+    </div>
+  <% end %>
 
   <div class="sub-teams__grid">
     <article class="sub-teams__panel">
@@ -274,7 +276,9 @@
               <p class="sub-teams__meta"><%= pluralize(team.events.count, "event") %> in child team</p>
             </div>
             <div class="sub-teams__actions">
-              <%= link_to "Join", join_organisation_path(team), class: "sub-teams__button" %>
+              <% if has_permission?("organisation-join-team-sub-team", organisation: team) && !team.users.include?(current_user) %>
+                <%= link_to "Join", join_organisation_path(team), class: "sub-teams__button" %>
+              <% end %>
               <%= link_to "Open", dashboard_organisation_path(team), class: "sub-teams__button" %>
             </div>
           </div>
@@ -290,6 +294,10 @@
     <p class="sub-teams__panel-copy">
       Use organisation edit settings to assign a parent team or a featured child link.
     </p>
-    <%= link_to "Edit This Organisation", edit_organisation_path(@organisation), class: "sub-teams__button" %>
+    <% if has_permission?("organisation-update", organisation: @organisation) %>
+      <%= link_to "Edit This Organisation", edit_organisation_path(@organisation), class: "sub-teams__button" %>
+    <% else %>
+      <p class="sub-teams__empty">Organisation link management is read-only for your role.</p>
+    <% end %>
   </article>
 </section>

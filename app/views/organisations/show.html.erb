@@ -22,7 +22,9 @@
   </nav>
 
   <div class="organisation-show__links">
-    <%= link_to "Edit", edit_organisation_path(@organisation) %>
+    <% if has_permission?("organisation-update", organisation: @organisation) %>
+      <%= link_to "Edit", edit_organisation_path(@organisation) %>
+    <% end %>
     <%= link_to "Back", organisations_path %>
     <%= link_to "Events", organisation_events_path(@organisation) %>
     <%= link_to "Sub Teams", dashboard_sub_teams_organisation_path(@organisation) %>

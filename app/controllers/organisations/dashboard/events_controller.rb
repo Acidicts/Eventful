@@ -3,6 +3,9 @@ module Organisations
     class EventsController < ApplicationController
       before_action :require_login
       before_action :set_organisation
+      before_action -> { require_permission!("organisation-dashboard-events-view", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[index]
+      before_action -> { require_permission!("organisation-dashboard-attendees-view", fallback: dashboard_events_organisation_path(@organisation), organisation: @organisation) }, only: %i[attendees]
+      before_action -> { require_permission!("event-send-qr-codes", fallback: dashboard_events_organisation_path(@organisation), organisation: @organisation) }, only: %i[send_qr_codes]
 
       layout "org_dashboard"
 

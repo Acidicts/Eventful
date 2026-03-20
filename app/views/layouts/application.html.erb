@@ -39,7 +39,7 @@
     <% effective_user = current_user || @nil_user %>
     <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
     <% branding_label = custom_branding_org&.name || "Eventful" %>
-    <% branding_href = custom_branding_org ? dashboard_organisation_path(effective_user.favorite_org || effective_user.organisations.first) : root_path %>
+    <% branding_href = custom_branding_org ? dashboard_organisation_path(effective_user.favorite_org || effective_user.user_organisations.first || @nil_organisation) : root_path %>
     <% if request.path == login_phone_demo_path %>
       <% effective_user = User.new(name:"John Doe") %>
     <% end %>

@@ -3,6 +3,8 @@ module Organisations
     class SubTeamsController < ApplicationController
       before_action :require_login
       before_action :set_organisation
+      before_action -> { require_permission!("organisation-dashboard-sub-teams-view", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[index]
+      before_action -> { require_permission!("organisation-dashboard-sub-teams-create", fallback: dashboard_sub_teams_organisation_path(@organisation), organisation: @organisation) }, only: %i[create]
 
       layout "org_dashboard"
 

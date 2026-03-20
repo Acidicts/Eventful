@@ -1,5 +1,6 @@
 class GuidesController < ApplicationController
   layout "guides"
+  before_action -> { require_permission!("guides-view", fallback: root_path, organisation: nil) }, if: -> { logged_in? }
 
   GUIDE_SLUGS = {
     index: "getting_started",

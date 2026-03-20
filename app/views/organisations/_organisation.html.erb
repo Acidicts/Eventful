@@ -56,6 +56,10 @@
         <% if organisation.name %>
             <h2 class="event-card__title"><%= organisation.name %></h2>
         <% end %>
+
+        <% if organisation.parent_org.present? %>
+            <p class="event-card__meta" style="margin: 0.25rem 0 0; color: #475569; font-size: 0.9rem;">Parent organisation: <%= organisation.parent_org.name %></p>
+        <% end %>
     </div>
     <div class="event-card__actions" style="display:inline-flex; margin-left: auto; gap: 0.5rem;">
         <% if current_user.favorited?(organisation) %>

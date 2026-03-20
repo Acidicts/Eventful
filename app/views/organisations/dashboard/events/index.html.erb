@@ -189,9 +189,11 @@
       <div class="events-index__subtitle">Manage event details, capacity, and attendee flow in one place.</div>
     </div>
 
-    <div class="events-index__create">
-      <%= button_to "Create Event", new_organisation_event_path(@organisation), method: :get %>
-    </div>
+    <% if has_permission?("event-create", organisation: @organisation) %>
+      <div class="events-index__create">
+        <%= button_to "Create Event", new_organisation_event_path(@organisation), method: :get %>
+      </div>
+    <% end %>
   </header>
 
   <div class="events-index__panel">
@@ -211,15 +213,17 @@
             <% @events.each do |event| %>
               <tr>
                 <td>
-                  <%= link_to event.name, organisation_event_path(@organisation, event), class: "events-index__event-link" %>
+                  <%= link_to event.name, organisation_event_path(event.organisation, event), class: "events-index__event-link" %>
                 </td>
                 <td><%= event.organisation.name %></td>
                 <td><%= event.capacity %></td>
                 <td><%= event.attendees.count %></td>
                 <td>
                   <div class="events-index__actions">
-                    <%= link_to "Show", organisation_event_path(@organisation, event), class: "events-index__btn events-index__btn--show" %>
-                    <%= link_to "Edit", edit_organisation_event_path(@organisation, event), class: "events-index__btn events-index__btn--edit" %>
+                    <%= link_to "Show", organisation_event_path(event.organisation, event), class: "events-index__btn events-index__btn--show" %>
+                    <% if has_permission?("event-update", organisation: @organisation) %>
+                      <%= link_to "Edit", edit_organisation_event_path(event.organisation, event), class: "events-index__btn events-index__btn--edit" %>
+                    <% end %>
                   </div>
                 </td>
               </tr>

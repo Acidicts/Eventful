@@ -4,6 +4,20 @@ class EventsController < ApplicationController
   before_action :require_login, except: %i[show announcements apply apply_create apply_by_token]
   # make sure we load @event for the member actions too (nested only)
   before_action :set_event, only: %i[show edit update destroy sign_in sign_out get_info attendees apply apply_create attendee edit_attendee update_attendee scan attendee_waiver destroy_attendee_waiver], if: -> { params[:organisation_id].present? }
+  before_action -> { require_permission!("event-view", fallback: root_path, organisation: @organisation) }, only: %i[index]
+  before_action -> { require_permission!("event-create", fallback: organisation_events_path(@organisation), organisation: @organisation) }, only: %i[new create]
+  before_action -> { require_permission!("event-update", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[edit update]
+  before_action -> { require_permission!("event-destroy", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[destroy]
+  before_action -> { require_permission!("event-attendees-view", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[attendees]
+  before_action -> { require_permission!("event-attendee-view", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[attendee]
+  before_action -> { require_permission!("event-attendee-edit", fallback: attendee_organisation_event_path(@organisation, @event, attendee_id: params[:attendee_id]), organisation: @organisation) }, only: %i[edit_attendee]
+  before_action -> { require_permission!("event-attendee-update", fallback: attendee_organisation_event_path(@organisation, @event, attendee_id: params[:attendee_id]), organisation: @organisation) }, only: %i[update_attendee]
+  before_action -> { require_permission!("event-attendee-waiver-view", fallback: attendee_organisation_event_path(@organisation, @event, attendee_id: params[:attendee_id]), organisation: @organisation) }, only: %i[attendee_waiver]
+  before_action -> { require_permission!("event-attendee-waiver-destroy", fallback: attendee_organisation_event_path(@organisation, @event, attendee_id: params[:attendee_id]), organisation: @organisation) }, only: %i[destroy_attendee_waiver]
+  before_action -> { require_permission!("event-sign-in", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[sign_in]
+  before_action -> { require_permission!("event-sign-out", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[sign_out]
+  before_action -> { require_permission!("event-get-info", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[get_info]
+  before_action -> { require_permission!("event-scan", fallback: organisation_event_path(@organisation, @event), organisation: @organisation) }, only: %i[scan]
 
   def index
     if request.path == "/events"
@@ -23,7 +37,7 @@ class EventsController < ApplicationController
   def show
     @event.finish_if_ended!
 
-    if current_user && @event.organisation.users.include?(current_user)
+    if logged_in? && (current_user.admin? || current_user.superadmin? || has_permission?("event-view", organisation: @event.organisation))
       render "organisations/dashboard/events/show"
     else
       render "events/pub/show"

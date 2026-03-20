@@ -36,8 +36,18 @@ unset {
   position: relative;
   overflow: hidden;
   border-radius: 20px;
-  background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
-              linear-gradient(138deg, var(--org-dashboard-hero-color-1), var(--org-dashboard-hero-color-2) 52%, var(--org-dashboard-hero-color-3));
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(255, 255, 255, 0.28),
+      transparent 28%
+    ),
+    linear-gradient(
+      138deg,
+      var(--org-dashboard-hero-color-1),
+      var(--org-dashboard-hero-color-2) 52%,
+      var(--org-dashboard-hero-color-3)
+    );
   color: var(--org-dashboard-hero-text);
   padding: 1.5rem;
   box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);

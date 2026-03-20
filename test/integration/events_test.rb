@@ -22,6 +22,13 @@ class EventsTest < ActionDispatch::IntegrationTest
     )
   end
 
+  def sign_in_with_hackclub(headers: nil)
+    get root_path, headers: headers
+    post "/auth/hackclub", headers: headers
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+  end
+
   teardown do
     OmniAuth.config.test_mode = false
   end
@@ -44,14 +51,10 @@ class EventsTest < ActionDispatch::IntegrationTest
     # sign-in sequence will return the same record rather than creating a new
     # one.
     user = User.create!(name: "Foo", email: "foo@example.com", provider: "hackclub", uid: "int123")
+    sign_in_with_hackclub(headers: headers)
+
     org  = Organisation.create!(user: user, signing_user: user, users: [ user ])
     event = org.events.create!(name: "Sample", capacity: 3)
-
-    # sign in
-    get root_path, headers: headers
-    post "/auth/hackclub", headers: headers
-    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
-    follow_redirect!
 
     get events_path, headers: headers
     assert_response :success
@@ -61,7 +64,9 @@ class EventsTest < ActionDispatch::IntegrationTest
   end
 
   test "nested events index still works" do
-    user = User.create!(name: "Foo", email: "foo@example.com", provider: "hackclub", uid: "u1")
+    User.create!(name: "Foo", email: "foo@example.com", provider: "hackclub", uid: "int123")
+    sign_in_with_hackclub(headers: headers)
+    user = User.find(session[:user_id])
     org  = Organisation.create!(user: user, signing_user: user, users: [ user ])
 
     get organisation_events_path(org), headers: headers
@@ -70,10 +75,7 @@ class EventsTest < ActionDispatch::IntegrationTest
 
   test "dashboard attendees page lists all organisation attendees" do
     # sign in first so require_login passes
-    get root_path, headers: headers
-    post "/auth/hackclub", headers: headers
-    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
-    follow_redirect!
+    sign_in_with_hackclub(headers: headers)
     user = User.find(session[:user_id])
 
     org = Organisation.create!(user: user, signing_user: user, users: [ user ])
@@ -87,10 +89,7 @@ class EventsTest < ActionDispatch::IntegrationTest
 
   test "dashboard attendee can be edited" do
     # sign in again
-    get root_path, headers: headers
-    post "/auth/hackclub", headers: headers
-    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
-    follow_redirect!
+    sign_in_with_hackclub(headers: headers)
     user = User.find(session[:user_id])
 
     org = Organisation.create!(user: user, signing_user: user, users: [ user ])
@@ -109,8 +108,9 @@ class EventsTest < ActionDispatch::IntegrationTest
           params: { attendee: { name: "Robert", age: 31 } },
           headers: headers
     assert_redirected_to attendee_organisation_event_path(org, event, attendee_id: attendee.id)
-    follow_redirect!
-    assert_select "p", text: /Robert/  # updated name shown
+        attendee.reload
+        assert_equal "Robert", attendee.name
+        assert_equal 31, attendee.age
   end
 
   test "public apply endpoint creates attendee" do
@@ -144,10 +144,7 @@ class EventsTest < ActionDispatch::IntegrationTest
     assert_select "header", count: 0
   end
   test "sending qr codes enqueues mailer jobs" do
-    get root_path, headers: headers
-    post "/auth/hackclub", headers: headers
-    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
-    follow_redirect!
+    sign_in_with_hackclub(headers: headers)
     user = User.find(session[:user_id])
 
     org = Organisation.create!(user: user, signing_user: user, users: [ user ])

@@ -2,6 +2,7 @@ class AdminController < ApplicationController
   layout "admin"
 
   before_action :authenticate_user!
+  before_action -> { require_permission!("admin-access", fallback: root_path, organisation: nil) }
   before_action :require_admin
 
   def index

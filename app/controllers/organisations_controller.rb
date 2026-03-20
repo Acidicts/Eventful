@@ -1,16 +1,29 @@
 class OrganisationsController < ApplicationController
-  before_action :set_organisation, only: %i[show favorite edit update destroy]
+  before_action :set_organisation, only: %i[show join favorite edit update destroy]
   before_action :set_hierarchy_options, only: %i[new create edit update]
   before_action :require_login, except: %i[show]
+  before_action -> { require_permission!("organisation-create", fallback: organisations_path, organisation: nil) }, only: %i[new create]
+  before_action -> { require_permission!("organisation-update", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[edit update]
+  before_action -> { require_permission!("organisation-destroy", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[destroy]
+  before_action -> { require_permission!("organisation-favorite", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[favorite]
 
   def index
     if current_user.admin? || current_user.superadmin?
       @organisations = Organisation.where(nil_org: false, parent_org_id: nil).order(:name)
       render "organisations/admin/index"
     else
-      # include organisations where the user is a member *or* the signing user
-      @organisations = Organisation.for_user(current_user)
-                                   .where(nil_org: false, parent_org_id: nil)
+      # include top-level organisations the user belongs to directly, plus
+      # parent organisations of teams the user belongs to.
+      user_org_ids = Organisation.for_user(current_user).select(:id)
+      parent_org_ids = Organisation.for_user(current_user).where.not(parent_org_id: nil).select(:parent_org_id)
+      legacy_parent_org_ids = Organisation.where(child_org_id: user_org_ids).select(:id)
+
+      visible_top_level_ids = Organisation.where(id: user_org_ids)
+                                          .or(Organisation.where(id: parent_org_ids))
+                                          .or(Organisation.where(id: legacy_parent_org_ids))
+                                          .select(:id)
+
+      @organisations = Organisation.where(nil_org: false, parent_org_id: nil, id: visible_top_level_ids)
                                    .order(:name)
       render "index"
     end
@@ -21,6 +34,11 @@ class OrganisationsController < ApplicationController
   end
 
   def show
+    @top_organisation = resolve_top_organisation(@organisation) || @organisation
+    @menu_organisations = @top_organisation.child_teams
+                                          .where(nil_org: false)
+                                          .order(:name)
+
     @events = @organisation.events.order(start_date: :asc)
     @event_count = @events.count
     @attendee_scope = Attendee.joins(:event).where(events: { organisation_id: @organisation.id })
@@ -45,23 +63,26 @@ class OrganisationsController < ApplicationController
                             .order(start_date: :asc)
                             .limit(5)
     #
-    if logged_in? && (current_user.admin? || @organisation.users.include?(current_user))
-      render "organisations/show"
+    if logged_in? && (current_user.admin? || @organisation.users.include?(current_user) || @organisation.sub_teams.joins(:users).where(users: { id: current_user.id }).exists?)
+      redirect_to dashboard_organisation_path(@organisation)
     else
       render "organisations/public/show"
     end
   end
 
   def join
-    team = params[:id]
-    return unless team.present?
-    organisation = Organisation.find(team)
-    if organisation.parent_org.users.include?(current_user) && current_user.organisation_roles.where(organisation_id: @organisation.id).joins(:role_permissions).where(role_permissions: { permission: "join_team_sub_team" }).exists?
-      organisation.users << current_user unless organisation.users.include?(current_user)
-      redirect_to dashboard_organisation_path(organisation), notice: "You have joined #{organisation.name}."
-    else
-      redirect_to root_path, alert: "You do not have permission to join this team."
+    parent = @organisation.parent_team
+
+    can_join = current_user.admin? || current_user.superadmin? ||
+      (parent.present? && has_permission?("organisation-join-team-sub-team", organisation: parent))
+
+    if can_join
+      @organisation.users << current_user unless @organisation.users.include?(current_user)
+      redirect_to dashboard_organisation_path(@organisation), notice: "You have joined #{@organisation.name}."
+      return
     end
+
+    redirect_to root_path, alert: "You do not have permission to join this team."
   end
 
   def settings
@@ -104,8 +125,7 @@ class OrganisationsController < ApplicationController
   end
 
   def favorite
-    return unless logged_in?
-    return unless Organisation.for_user(current_user).where(id: @organisation.id).exists?
+    return unless logged_in? && @organisation.users.include?(current_user)
 
     if request.delete?
       current_user.update(favorite_org: nil)

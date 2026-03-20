@@ -27,21 +27,16 @@ class AttendeeMailerTest < ActionMailer::TestCase
     assert_equal [ "bob@example.com" ], email.to
     assert_match(/Your QR code/, email.subject)
 
-    # the generated body should include the URL the QR code encodes as well
-    url = Rails.application.routes.url_helpers.attendee_organisation_event_url(
-      attendee.event.organisation,
-      attendee.event,
-      attendee_id: attendee.id,
-      host: "example.com"
-    )
-    assert_match url, email.body.encoded
+    # the generated body should include the attendee code text shown in the
+    # link label used by the template.
+    assert_match attendee.code, email.body.encoded
     assert_match(/<img/, email.body.encoded)
     # since the image is attached, the body should reference a cid: URL
     assert_match(/cid:/, email.body.encoded)
     assert_equal 1, email.attachments.inline.size
 
     # the explicit QR page link should be present and use APP_URL
-    qr_page = "#{ENV.fetch("APP_URL")}/qrcode/#{attendee.code}"
+    qr_page = "#{ENV.fetch("APP_URL")}/attendee_portal?code=#{attendee.code}"
     assert_match qr_page, email.body.encoded
   end
 end

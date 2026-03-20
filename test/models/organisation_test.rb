@@ -62,6 +62,41 @@ class OrganisationTest < ActiveSupport::TestCase
     assert_includes org.users, @user
   end
 
+  test "child members inherit limited parent access role" do
+    Organisation::PARENT_SUB_TEAM_MEMBER_ALLOWED_PERMISSIONS.each do |permission|
+      RolePermission.find_or_create_by!(permission: permission)
+    end
+
+    parent_owner = User.create!(name: "Parent", email: "parent@example.com", provider: "hackclub", uid: "u-parent")
+    child_user = User.create!(name: "Child", email: "child@example.com", provider: "hackclub", uid: "u-child")
+
+    parent_org = Organisation.create!(user: parent_owner, signing_user: parent_owner, users: [ parent_owner ])
+    Organisation.create!(user: child_user, signing_user: child_user, users: [ child_user ], parent_org: parent_org)
+
+    sub_team_role = OrganisationRole.find_by!(organisation: parent_org, name: "Sub Team Member")
+    assert_includes sub_team_role.users, child_user
+    assert_not child_user.organisation_roles.exists?(organisation: parent_org, name: "Member")
+
+    assert_equal Organisation::PARENT_SUB_TEAM_MEMBER_ALLOWED_PERMISSIONS.sort,
+                 sub_team_role.role_permissions.pluck(:permission).sort
+  end
+
+  test "removing a non-signing member revokes organisation role assignments" do
+    member = User.create!(name: "Member", email: "member@example.com", provider: "hackclub", uid: "u-member")
+    org = Organisation.create!(user: @user, signing_user: @user, users: [ @user, member ])
+
+    custom_role = OrganisationRole.create!(organisation: org, name: "Volunteer")
+    custom_role.users << member
+
+    assert member.organisation_roles.exists?(organisation: org, name: "Member")
+    assert member.organisation_roles.exists?(organisation: org, name: "Volunteer")
+
+    org.users.delete(member)
+    member.reload
+
+    assert_not member.organisation_roles.exists?(organisation: org), "expected removed member to lose organisation role assignments"
+  end
+
   test "destroying an organisation cleans up dependent records" do
     org = Organisation.create!(user: @user, signing_user: @user, users: [ @user ])
     event = org.events.create!(name: "Example", location: "Nowhere", start_date: Time.current, end_date: 1.hour.from_now)

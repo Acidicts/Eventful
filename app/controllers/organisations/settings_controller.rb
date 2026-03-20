@@ -2,7 +2,14 @@ module Organisations
   class SettingsController < ApplicationController
     layout "org_settings"
 
+    before_action :require_login
     before_action :set_organisation
+    before_action -> { require_permission!("organisation-settings-view", fallback: organisation_path(@organisation), organisation: @organisation) }, only: %i[index]
+    before_action -> { require_permission!("organisation-settings-customisations", fallback: settings_organisation_path(@organisation), organisation: @organisation) }, only: %i[customisations customisations_save]
+    before_action -> { require_permission!("organisation-settings-events-defaults", fallback: settings_organisation_path(@organisation), organisation: @organisation) }, only: %i[events_defaults default_events_save]
+    before_action -> { require_permission!("organisation-settings-members", fallback: settings_organisation_path(@organisation), organisation: @organisation) }, only: %i[members update_member]
+    before_action -> { require_permission!("organisation-settings-roles", fallback: settings_organisation_path(@organisation), organisation: @organisation) }, only: %i[roles]
+    before_action -> { require_permission!("organisation-settings-branding", fallback: settings_organisation_path(@organisation), organisation: @organisation) }, only: %i[custom_branding custom_branding_save]
 
     def index
     end

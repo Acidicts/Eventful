@@ -2,6 +2,7 @@ module Organisations
   class DashboardController < ApplicationController
     before_action :require_login
     before_action :set_organisation
+    before_action -> { require_permission!("organisation-dashboard-view", fallback: organisation_path(@organisation), organisation: @organisation) }
 
     layout "org_dashboard"
 

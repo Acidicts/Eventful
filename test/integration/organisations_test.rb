@@ -86,6 +86,96 @@ class OrganisationsTest < ActionDispatch::IntegrationTest
     get organisations_path
     assert_response :success
     # partial renders basic attributes and should include image tag when img present
-    assert_select ".org_container img[src='http://img.example/1.png']"
+    assert_select ".event-card__icon[src='http://img.example/1.png']"
+  end
+
+  test "child member can view parent dashboard and create sub teams but cannot edit parent org" do
+    # sign in as child-team user
+    get root_path
+    post "/auth/hackclub"
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    child_user = User.find(session[:user_id])
+
+    parent_user = User.create!(name: "Parent Owner", email: "parent-owner@example.com", provider: "hackclub", uid: "parent-owner")
+    parent_org = Organisation.create!(user: parent_user, signing_user: parent_user, users: [ parent_user ], name: "Parent Org")
+
+    Organisation.create!(user: child_user, signing_user: child_user, users: [ child_user ], parent_org: parent_org, name: "Child Org")
+
+    get dashboard_organisation_path(parent_org)
+    assert_response :success
+
+    get edit_organisation_path(parent_org)
+    assert_response :redirect
+    assert_equal "You do not have permission to perform this action.", flash[:alert]
+
+    assert_difference -> { parent_org.sub_teams.count }, 1 do
+      post dashboard_sub_teams_create_organisation_path(parent_org), params: {
+        organisation: {
+          name: "Ops Team",
+          description: "Created by inherited sub-team role"
+        }
+      }
+    end
+  end
+
+  test "parent dashboard events link to each event owning organisation" do
+    get root_path
+    post "/auth/hackclub"
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    child_user = User.find(session[:user_id])
+
+    parent_user = User.create!(name: "Parent Owner 2", email: "parent-owner-2@example.com", provider: "hackclub", uid: "parent-owner-2")
+    parent_org = Organisation.create!(user: parent_user, signing_user: parent_user, users: [ parent_user ], name: "Parent Org 2")
+    child_org = Organisation.create!(user: child_user, signing_user: child_user, users: [ child_user ], parent_org: parent_org, name: "Child Org 2")
+    child_event = child_org.events.create!(name: "Child Event", location: "HQ", start_date: Time.current, end_date: 1.hour.from_now)
+
+    get dashboard_events_organisation_path(parent_org)
+    assert_response :success
+    assert_select "a[href='#{organisation_event_path(child_org, child_event)}']", text: /Child Event/
+  end
+
+  test "joining an organisation assigns the member role" do
+    # sign in as joining user
+    get root_path
+    post "/auth/hackclub"
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    joining_user = User.find(session[:user_id])
+
+    owner = User.create!(name: "Org Owner", email: "owner@example.com", provider: "hackclub", uid: "owner-1")
+    parent_org = Organisation.create!(user: owner, signing_user: owner, users: [ owner, joining_user ], name: "Parent Org")
+    org = Organisation.create!(user: owner, signing_user: owner, users: [ owner ], parent_org: parent_org, name: "Joinable Sub Team")
+
+    get join_organisation_path(org)
+    assert_response :redirect
+
+    joining_user.reload
+    assert joining_user.organisation_roles.exists?(organisation: org, name: "Member"), "expected joining user to receive Member role"
+  end
+
+  test "sub-team member added later can traverse parent to child dashboard" do
+    get root_path
+    post "/auth/hackclub"
+    get "/auth/hackclub/callback", env: { "omniauth.auth" => OmniAuth.config.mock_auth[:hackclub] }
+    follow_redirect!
+    member_user = User.find(session[:user_id])
+
+    parent_owner = User.create!(name: "Parent Owner 3", email: "parent-owner-3@example.com", provider: "hackclub", uid: "parent-owner-3")
+    child_owner = User.create!(name: "Child Owner 3", email: "child-owner-3@example.com", provider: "hackclub", uid: "child-owner-3")
+
+    parent_org = Organisation.create!(user: parent_owner, signing_user: parent_owner, users: [ parent_owner ], name: "Parent Org 3")
+    child_org = Organisation.create!(user: child_owner, signing_user: child_owner, users: [ child_owner ], parent_org: parent_org, name: "Child Org 3")
+
+    # Add this member after the child team already exists to simulate stale
+    # parent-role sync state.
+    child_org.users << member_user unless child_org.users.include?(member_user)
+
+    get dashboard_organisation_path(parent_org)
+    assert_response :success
+
+    get dashboard_organisation_path(child_org)
+    assert_response :success
   end
 end
