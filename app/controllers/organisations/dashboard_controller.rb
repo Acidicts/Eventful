@@ -26,9 +26,10 @@ module Organisations
       @signed_in_count = @attendee_scope.where(attendance: Attendee.attendances[:signed_in]).count
       @signed_out_count = @attendee_scope.where(attendance: Attendee.attendances[:signed_out]).count
 
-      @upcoming_events = @events.where("start_date >= ?", now)
-                                .order(start_date: :asc)
-                                .limit(5)
+      @upcoming_events = @events.where(organisation_id: @organisation.id)
+                            .where(finished: false)
+                            .order(start_date: :asc)
+                            .limit(5)
       @recent_attendees = @attendee_scope.includes(:event)
                                          .order(created_at: :desc)
                                          .limit(8)

@@ -30,9 +30,6 @@
         <% if organisation.name %>
             <h2 class="event-card__title"><%= organisation.name %></h2>
         <% end %>
-        <% if organisation.description %>
-            <p class="event-card__description"><%= organisation.description %></p>
-        <% end %>
     </div>
 
     <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary event-card__action goto_btn" %>

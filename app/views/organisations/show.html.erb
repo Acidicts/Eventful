@@ -1,26 +1,30 @@
-<body>
-  <div class="org-title">
+<section class="organisation-show">
+  <header class="organisation-show__header">
     <h1><%= @organisation.name.to_s %></h1>
-    <% if @organisation.parent_team.present? %>
-      <p>
-        Parent Team:
-        <%= link_to @organisation.parent_team.name, organisation_path(@organisation.parent_team) %>
-      </p>
-    <% end %>
+    <p>
+      Top Team:
+      <%= link_to @top_organisation.name, organisation_path(@top_organisation) %>
+    </p>
+  </header>
 
-    <% if @organisation.child_teams.any? %>
-      <p>Child Teams:</p>
-      <ul>
-        <% @organisation.child_teams.order(:name).each do |team| %>
-          <li><%= link_to team.name, organisation_path(team) %></li>
-        <% end %>
-      </ul>
-    <% end %>
+  <nav class="organisation-show__menu" aria-label="Top organisation teams">
+    <h2><%= @top_organisation.name %> Teams</h2>
+    <ul>
+      <li>
+        <%= link_to @top_organisation.name, organisation_path(@top_organisation), class: (@organisation.id == @top_organisation.id ? "is-active" : nil) %>
+      </li>
+      <% @menu_organisations.each do |team| %>
+        <li>
+          <%= link_to team.name, organisation_path(team), class: (@organisation.id == team.id ? "is-active" : nil) %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+
+  <div class="organisation-show__links">
+    <%= link_to "Edit", edit_organisation_path(@organisation) %>
+    <%= link_to "Back", organisations_path %>
+    <%= link_to "Events", organisation_events_path(@organisation) %>
+    <%= link_to "Sub Teams", dashboard_sub_teams_organisation_path(@organisation) %>
   </div>
-</body>
-
-
-<%= link_to 'Edit', edit_organisation_path(@organisation) %> |
-<%= link_to 'Back', organisations_path %> |
-<%= link_to 'Events', organisation_events_path(@organisation) %> |
-<%= link_to 'Sub Teams', dashboard_sub_teams_organisation_path(@organisation) %>
+</section>

@@ -1,15 +1,17 @@
 class OrganisationsController < ApplicationController
   before_action :set_organisation, only: %i[show edit update destroy]
   before_action :set_hierarchy_options, only: %i[new create edit update]
-  before_action :require_login
+  before_action :require_login, except: %i[show]
 
   def index
     if current_user.admin? || current_user.superadmin?
-      @organisations = Organisation.where(nil_org: false).all
+      @organisations = Organisation.where(nil_org: false, parent_org_id: nil).order(:name)
       render "organisations/admin/index"
     else
       # include organisations where the user is a member *or* the signing user
       @organisations = Organisation.for_user(current_user)
+                                   .where(nil_org: false, parent_org_id: nil)
+                                   .order(:name)
       render "index"
     end
   end
@@ -19,6 +21,35 @@ class OrganisationsController < ApplicationController
   end
 
   def show
+    @events = @organisation.events.order(start_date: :asc)
+    @event_count = @events.count
+    @attendee_scope = Attendee.joins(:event).where(events: { organisation_id: @organisation.id })
+    @attendee_count = @attendee_scope.count
+
+    now = Time.current
+    @active_events_count = @events.where(finished: false)
+                                .where("start_date <= :now AND (end_date IS NULL OR end_date >= :now)", now: now)
+                                .count
+    @upcoming_events_count = @events.where("start_date > ?", now).count
+    @recent_events_count = @events.where("created_at >= ?", 30.days.ago).count
+
+    @total_capacity = @events.sum(:capacity)
+    @available_spots = [ @total_capacity - @attendee_count, 0 ].max
+
+    @waiver_signed_count = @attendee_scope.where(waiver_signed: true).count
+    @signed_in_count = @attendee_scope.where(attendance: Attendee.attendances[:signed_in]).count
+    @signed_out_count = @attendee_scope.where(attendance: Attendee.attendances[:signed_out]).count
+
+    @upcoming_events = Event.where(organisation_id: @organisation.id)
+                            .where(finished: false)
+                            .order(start_date: :asc)
+                            .limit(5)
+    #
+    if logged_in? && (current_user.admin? || @organisation.users.include?(current_user))
+      render "organisations/show"
+    else
+      render "organisations/public/show"
+    end
   end
 
   def settings
@@ -102,5 +133,17 @@ class OrganisationsController < ApplicationController
     @organisation_options = Organisation.where(nil_org: false)
                                         .where.not(id: current_id)
                                         .order(:name)
+  end
+
+  def resolve_top_organisation(organisation)
+    current = organisation
+    visited_ids = []
+
+    while current.parent_team.present? && !visited_ids.include?(current.id)
+      visited_ids << current.id
+      current = current.parent_team
+    end
+
+    current
   end
 end
