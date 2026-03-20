@@ -123,6 +123,8 @@ Rails.application.routes.draw do
     member do
       get "/public", to: "organisations#public", as: :public
       get "/join", to: "organisations#join", as: :join
+      post "/favorite", to: "organisations#favorite", as: :favorite
+      delete "/favorite", to: "organisations#favorite", as: :unfavorite
     end
 
     # introduce a member dashboard route that delegates to a dedicated
@@ -142,7 +144,6 @@ Rails.application.routes.draw do
       get "settings/customisations", to: "organisations/settings#customisations", as: :settings_customisations
       get "settings/events-defaults", to: "organisations/settings#events_defaults", as: :settings_events_defaults
       get "settings/members", to: "organisations/settings#members", as: :settings_members
-      patch "settings/members", to: "organisations/settings#update_member", as: :settings_members_update
       get "settings/roles", to: "organisations/settings#roles", as: :settings_roles
       get "settings/branding", to: "organisations/settings#custom_branding", as: :settings_custom_branding
 
@@ -153,6 +154,8 @@ Rails.application.routes.draw do
       #
       patch "settings/customisations", to: "organisations/settings#customisations_save"
       patch "settings/events-defaults", to: "organisations/settings#default_events_save"
+      patch "settings/members", to: "organisations/settings#update_member", as: :settings_members_update
+      patch "settings/branding", to: "organisations/settings#custom_branding_save", as: :settings_custom_branding_save
     end
 
     member do

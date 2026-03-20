@@ -14,6 +14,32 @@
         color: white;
     }
 
+    .favorite-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: #6b7280;
+      font-size: 1.125rem;
+      line-height: 1;
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.4rem;
+      transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      font-weight: bold;
+      min-width: 32px;
+      font-size: 2rem;
+    }
+
+    .favorite-btn.active {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .favorite-btn:hover {
+      color: #d97706;
+      background: rgba(253, 230, 138, 0.3);
+      transform: translateY(-1px);
+    }
+
     .event-card__icon {
         width: 64px;
         height: 64px;
@@ -31,6 +57,12 @@
             <h2 class="event-card__title"><%= organisation.name %></h2>
         <% end %>
     </div>
-
-    <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary event-card__action goto_btn" %>
+    <div class="event-card__actions" style="display:inline-flex; margin-left: auto; gap: 0.5rem;">
+        <% if current_user.favorited?(organisation) %>
+            <%= button_to "★", favorite_organisation_path(organisation), method: :delete, class: "favorite-btn active", id: "favorite-organisation-btn" %>
+        <% else %>
+            <%= button_to "☆", favorite_organisation_path(organisation), method: :post, class: "favorite-btn", id: "favorite-organisation-btn" %>
+        <% end %>
+        <%= button_to "Goto", dashboard_organisation_path(organisation), method: :get, class: "btn btn-primary event-card__action goto_btn" %>
+    </div>
 </div>

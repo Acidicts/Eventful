@@ -48,6 +48,7 @@
 			<%= link_to "Event Defaults", settings_events_defaults_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if action_name == 'events_defaults'}" %>
 			<%= link_to "Members", settings_members_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if action_name == 'members' || action_name == 'update_member'}" %>
 			<%= link_to "Roles", settings_roles_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if action_name == 'roles'}" %>
+			<%= link_to "Custom Branding", settings_custom_branding_organisation_path(@organisation), class: "org-settings-layout__nav-link #{'is-active' if action_name == 'custom_branding'}" %>
 		</nav>
 
 		<div class="org-settings-layout__body">

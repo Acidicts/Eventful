@@ -60,6 +60,15 @@ module Organisations
       end
     end
 
+    def custom_branding_save
+      if @organisation.update(organisation_params)
+        redirect_to settings_custom_branding_organisation_path(@organisation), notice: "Custom branding updated successfully."
+      else
+        flash.now[:alert] = "Failed to update custom branding. Please check the form for errors."
+        render :custom_branding
+      end
+    end
+
     def default_events_save
       if @organisation.update(organisation_params)
         redirect_to settings_events_defaults_organisation_path(@organisation), notice: "Default event settings updated successfully."
@@ -85,7 +94,10 @@ module Organisations
         :default_event_location,
         :default_event_start_time,
         :default_event_end_time,
-        :default_event_length
+        :default_event_length,
+        :primary_color,
+        :secondary_color,
+        :default_online_event_url
       )
     end
   end

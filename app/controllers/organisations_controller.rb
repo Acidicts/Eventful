@@ -1,5 +1,5 @@
 class OrganisationsController < ApplicationController
-  before_action :set_organisation, only: %i[show edit update destroy]
+  before_action :set_organisation, only: %i[show favorite edit update destroy]
   before_action :set_hierarchy_options, only: %i[new create edit update]
   before_action :require_login, except: %i[show]
 
@@ -101,6 +101,21 @@ class OrganisationsController < ApplicationController
     # admins and superadmins just like the `new` action does.  this removes
     # the unwanted superadmin from the dropdown.
     @users = User.where.not(role: :admin).where.not(role: :superadmin)
+  end
+
+  def favorite
+    return unless logged_in?
+    return unless Organisation.for_user(current_user).where(id: @organisation.id).exists?
+
+    if request.delete?
+      current_user.update(favorite_org: nil)
+      flash[:notice] = "Favorite organisation removed."
+    else
+      current_user.update(favorite_org: @organisation)
+      flash[:notice] = "Favorite organisation set to #{@organisation.name}."
+    end
+
+    redirect_back fallback_location: organisations_path
   end
 
   def update

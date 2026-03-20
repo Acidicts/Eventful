@@ -4,6 +4,8 @@ class User < ApplicationRecord
   # Organisation so that controllers can do `current_user.organisations.build`
   # when creating new records.
   belongs_to :organisation, optional: true
+  belongs_to :favorite_org, class_name: "Organisation", optional: true
+
   has_and_belongs_to_many :organisation_roles
   has_many :email_login_otps, dependent: :delete_all
 
@@ -21,6 +23,10 @@ class User < ApplicationRecord
   # here for clarity and to emphasise the difference from ``org_admin?``.
   def admin?
     role == "admin" || role == "superadmin"
+  end
+
+  def favorited?(organisation)
+    favorite_org == organisation
   end
 
   # Provides an HSLA color string for the user's role, used by views for badges.

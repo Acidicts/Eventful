@@ -3,8 +3,8 @@
         position: relative;
         border-radius: 20px;
         background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
-                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
-        color: #fff;
+                    linear-gradient(138deg, var(--org-dashboard-hero-color-1), var(--org-dashboard-hero-color-2) 52%, var(--org-dashboard-hero-color-3));
+        color: var(--org-dashboard-hero-text);
         padding: 1.5rem;
         box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
         gap: 1.15rem;
@@ -18,7 +18,7 @@
         width: 100%;
         height: 20px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.12);
+        background: var(--org-dashboard-hero-overlay);
         pointer-events: none;
         margin-top: 1rem;
     }
@@ -118,7 +118,7 @@
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.6);
         background: rgba(255, 255, 255, 0.15);
-        color: #fff;
+        color: var(--org-dashboard-hero-text);
         font-weight: 600;
         text-decoration: none;
         transition: background 150ms ease, transform 150ms ease;

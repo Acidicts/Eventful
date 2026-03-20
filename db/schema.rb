@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -182,6 +182,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
     t.string "name", default: "Unamed Organisation", null: false
     t.boolean "nil_org", default: false, null: false
     t.integer "parent_org_id"
+    t.string "primary_color"
+    t.string "secondary_color"
     t.boolean "self_found", default: false, null: false
     t.integer "signing_user_id"
     t.integer "time_utc_offset", default: 0
@@ -216,6 +218,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
     t.datetime "created_at", null: false
     t.string "email"
     t.datetime "expires_at"
+    t.integer "favorite_org_id"
     t.string "name"
     t.integer "organisation_id"
     t.string "provider", null: false
@@ -227,6 +230,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
     t.string "verification_status"
     t.index ["access_token"], name: "index_users_on_access_token"
     t.index ["email"], name: "index_users_on_email"
+    t.index ["favorite_org_id"], name: "index_users_on_favorite_org_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
@@ -255,4 +259,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_223520) do
   add_foreign_key "photos", "attendees"
   add_foreign_key "photos", "events"
   add_foreign_key "users", "organisations"
+  add_foreign_key "users", "organisations", column: "favorite_org_id"
 end

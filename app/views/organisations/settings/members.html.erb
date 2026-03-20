@@ -11,8 +11,8 @@
         overflow: hidden;
         border-radius: 20px;
         background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
-                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
-        color: #fff;
+                    linear-gradient(138deg, var(--org-dashboard-hero-color-1), var(--org-dashboard-hero-color-2) 52%, var(--org-dashboard-hero-color-3));
+        color: var(--org-dashboard-hero-text);
         padding: 1.5rem;
         box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
         display: grid;
@@ -27,7 +27,7 @@
         width: 240px;
         height: 240px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.12);
+        background: var(--org-dashboard-hero-overlay);
         pointer-events: none;
     }
 
@@ -99,7 +99,7 @@
         border-radius: 0.4rem;
         border: 1px solid rgba(0, 0, 0, 0.18);
         background: #0077b6;
-        color: #fff;
+        color: var(--org-dashboard-hero-text);
         font-weight: 600;
         cursor: pointer;
     }

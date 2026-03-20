@@ -37,8 +37,8 @@
         overflow: hidden;
         border-radius: 20px;
         background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.28), transparent 28%),
-                    linear-gradient(138deg, #003566 0%, #0077b6 52%, #00b4d8 100%);
-        color: #fff;
+                    linear-gradient(138deg, var(--org-dashboard-hero-color-1), var(--org-dashboard-hero-color-2) 52%, var(--org-dashboard-hero-color-3));
+        color: var(--org-dashboard-hero-text);
         padding: 1.5rem;
         box-shadow: 0 16px 34px rgba(0, 44, 92, 0.28);
         display: grid;
@@ -53,7 +53,7 @@
         width: 240px;
         height: 240px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.12);
+        background: var(--org-dashboard-hero-overlay);
         pointer-events: none;
     }
 
@@ -178,7 +178,7 @@
         padding: 0.55rem 1.1rem;
         border-radius: 999px;
         background-color: #1f2937;
-        color: #fff;
+        color: var(--org-dashboard-hero-text);
         font-weight: 600;
         cursor: pointer;
         user-select: none;
@@ -209,7 +209,19 @@
     
     <div id="location-custom" class="custom-section">
         <h2>Default Event Settings</h2>
-        <%= form_for @organisation, url: settings_events_defaults_organisation_path(@organisation), method: :patch do |f| %>
+        <%= form_for @organisation, url: settings_custom_branding_save_organisation_path(@organisation), method: :patch do |f| %>
+            <div class="form-group-group">
+                <div class="form-group" style="display: inline-flex;">
+                    <label for="organisation_primary_color_picker">Primary Color</label>
+                    <%= f.color_field :primary_color, id: "organisation_primary_color_picker", class: "form-control form-control-text-field" %>
+                </div>
+
+                <div class="form-group" style="display: inline-flex;">
+                    <label for="organisation_secondary_color_picker">Secondary Color</label>
+                    <%= f.color_field :secondary_color, id: "organisation_secondary_color_picker", class: "form-control form-control-text-field" %>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="default_online_event_url">Default Online Event URL</label>
                 <%= f.text_field :default_online_event_url, class: "form-control form-control-text-field", placeholder: "https://eventful.bing-bong.uk/" %>
@@ -222,3 +234,50 @@
         
     </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function normalizeHex(value) {
+      if (!value) return '';
+      let v = value.trim();
+      if (!v.startsWith('#')) v = '#' + v;
+      if (/^#[0-9a-fA-F]{3}$/.test(v)) {
+        v = v
+          .split('#')[1]
+          .split('')
+          .map(c => c + c)
+          .join('');
+        v = '#' + v;
+      }
+      if (!/^#[0-9a-fA-F]{6}$/.test(v)) return null;
+      return v.toLowerCase();
+    }
+
+    function bindSync(pickerId, textId) {
+      var picker = document.getElementById(pickerId);
+      var text = document.getElementById(textId);
+      if (!picker || !text) return;
+
+      var setTextFromPicker = function () {
+        text.value = picker.value.toLowerCase();
+      };
+
+      var setPickerFromText = function () {
+        var normalized = normalizeHex(text.value);
+        if (normalized) {
+          text.value = normalized;
+          picker.value = normalized;
+        }
+      };
+
+      setTextFromPicker();
+      picker.addEventListener('input', setTextFromPicker);
+      text.addEventListener('input', setPickerFromText);
+      text.addEventListener('blur', setPickerFromText);
+    }
+
+    bindSync('organisation_primary_color_picker', 'organisation_primary_color_text');
+    bindSync('organisation_secondary_color_picker', 'organisation_secondary_color_text');
+  });
+</script>
+

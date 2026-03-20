@@ -35,6 +35,14 @@
         }
       </script>
     <% end %>
+    
+    <% effective_user = current_user || @nil_user %>
+    <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
+    <% branding_label = custom_branding_org&.name || "Eventful" %>
+    <% branding_href = custom_branding_org ? dashboard_organisation_path(effective_user.favorite_org || effective_user.organisations.first) : root_path %>
+    <% if request.path == login_phone_demo_path %>
+      <% effective_user = User.new(name:"John Doe") %>
+    <% end %>
   </head>
 
   <style>
@@ -60,14 +68,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #007bff;
+      background: <%= (custom_branding_org&.primary_color) || "#007bff" %>;
       padding: 0.5rem 1rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     header button {
       background: #fff;
-      color: #007bff;
+      color: <%= (custom_branding_org&.primary_color) || "#007bff" %>;
       border: none;
       padding: 0.5rem 1rem;
       border-radius: 4px;
@@ -77,6 +85,12 @@
 
     header button:hover {
       background: #e6e6e6;
+    }
+
+    :root {
+      --org-dashboard-hero-color-1: <%= (custom_branding_org&.primary_color) || "#003566" %>;
+      --org-dashboard-hero-color-2: <%= (custom_branding_org&.secondary_color) || "#0077b6" %>;
+      --org-dashboard-hero-color-3: <%= (custom_branding_org&.secondary_color) || "#00b4d8" %>;
     }
 
     .flash {
@@ -191,7 +205,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      background: #007bff;
+      background: <%= (custom_branding_org&.primary_color) || "#007bff" %>;
       padding: 0 8px;
       border-radius: 0 0 6px 6px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -335,7 +349,7 @@
 
     #sign-in-menu .sign-in-button-hackclub {
       background-color: #444;
-      color: #fff;
+      color: var(--org-dashboard-hero-text);
       width: 100%;
       border: 2px solid #444;
       padding: 0.25rem;
@@ -346,7 +360,7 @@
 
     #sign-in-menu .sign-in-button-send-otp {
       background-color: #1bb2e0;
-      color: #fff;
+      color: var(--org-dashboard-hero-text);
       width: 100%;
       border: 2px solid #007bff;
       padding: 0.25rem;
@@ -368,13 +382,6 @@
 
   <body>
     <header id="site-header" style="width: 100%; display:inline-flex; position: relative;">
-      <% effective_user = current_user || @nil_user %>
-      <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
-      <% branding_label = custom_branding_org&.name || "Eventful" %>
-      <% branding_href = custom_branding_org ? organisations_path(effective_user.organisations) : root_path %>
-      <% if request.path == login_phone_demo_path %>
-        <% effective_user = User.new(name:"John Doe") %>
-      <% end %>
       <div data-turbo-permanent class="header-left">
         <img id="menu" width="48" height="48" src="https://icons.hackclub.com/api/icons/white/menu" onload="this.classList.add('loaded')">
         
