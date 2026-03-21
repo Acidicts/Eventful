@@ -43,16 +43,82 @@
     .event-card__icon {
         width: 64px;
         height: 64px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+
+    .event-card {
+        width: min(100%, 395px);
+        min-height: 84px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .event-card__body {
+        min-width: 0;
+    }
+
+    .event-card__title {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .event-card__actions {
+        display: inline-flex;
+        margin-left: auto;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 500px) {
+        .event-card {
+            width: 100%;
+            height: auto;
+            padding: 0.75rem;
+            gap: 0.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-card__icon {
+            width: 52px;
+            height: 52px;
+        }
+
+        .event-card__title {
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+
+        .event-card__meta {
+            font-size: 0.8rem !important;
+        }
+
+        .event-card__actions {
+            display: flex;
+            margin-left: 0;
+            align-self: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .favorite-btn {
+            font-size: 1.6rem;
+            padding: 0 0.3rem;
+            min-width: 28px;
+        }
     }
 </style>
 
-<div class="event-card" style="width: 395px; height: 84px; padding: 15px; display: flex; align-items: center; gap: 1rem;">
+<div class="event-card">
     <% if organisation.img.present? %>
         <div class="event-card__icon-wrap">
             <%= image_tag organisation.img, class: "event-card__icon" %>
         </div>
     <% end %>
-    <div class="event-card__body" style="">
+    <div class="event-card__body">
         <% if organisation.name %>
             <h2 class="event-card__title"><%= organisation.name %></h2>
         <% end %>
@@ -61,7 +127,7 @@
             <p class="event-card__meta" style="margin: 0.25rem 0 0; color: #475569; font-size: 0.9rem;">Parent organisation: <%= organisation.parent_org.name %></p>
         <% end %>
     </div>
-    <div class="event-card__actions" style="display:inline-flex; margin-left: auto; gap: 0.5rem;">
+    <div class="event-card__actions">
         <% if current_user.favorited?(organisation) %>
             <%= button_to "★", favorite_organisation_path(organisation), method: :delete, class: "favorite-btn active", id: "favorite-organisation-btn" %>
         <% else %>

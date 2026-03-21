@@ -176,8 +176,88 @@
     }
 
     .events-index__hero {
+      display: block;
       border-radius: 14px;
       padding: 1.1rem;
+    }
+
+    .events-index__subtitle {
+      font-size: 0.88rem;
+    }
+
+    .events-index__create {
+      margin-top: 0.8rem;
+    }
+
+    .events-index__create button {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+    }
+
+    .events-index__panel {
+      overflow: visible;
+      background: transparent;
+      border: 0;
+    }
+
+    .events-index__table-wrap {
+      overflow: visible;
+    }
+
+    .events-index__table {
+      min-width: 0;
+      border-collapse: separate;
+      border-spacing: 0 0.75rem;
+    }
+
+    .events-index__table thead {
+      display: none;
+    }
+
+    .events-index__table tbody,
+    .events-index__table tr,
+    .events-index__table td {
+      display: block;
+      width: 100%;
+    }
+
+    .events-index__table tbody {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .events-index__table tr {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.35rem 0.85rem;
+      box-shadow: 0 8px 18px rgba(14, 42, 70, 0.07);
+    }
+
+    .events-index__table td {
+      text-align: left;
+      border-bottom: 1px solid #edf3f9;
+      padding: 0.72rem 0;
+    }
+
+    .events-index__table td:last-child {
+      border-bottom: 0;
+      padding-bottom: 0.85rem;
+    }
+
+    .events-index__table td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5a738b;
+      margin-bottom: 0.3rem;
+    }
+
+    .events-index__actions {
+      justify-content: flex-start;
     }
   }
 </style>
@@ -212,13 +292,13 @@
           <tbody>
             <% @events.each do |event| %>
               <tr>
-                <td>
+                <td data-label="Name">
                   <%= link_to event.name, organisation_event_path(event.organisation, event), class: "events-index__event-link" %>
                 </td>
-                <td><%= event.organisation.name %></td>
-                <td><%= event.capacity %></td>
-                <td><%= event.attendees.count %></td>
-                <td>
+                <td data-label="Team"><%= event.organisation.name %></td>
+                <td data-label="Capacity"><%= event.capacity %></td>
+                <td data-label="Applied"><%= event.attendees.count %></td>
+                <td data-label="Actions">
                   <div class="events-index__actions">
                     <%= link_to "Show", organisation_event_path(event.organisation, event), class: "events-index__btn events-index__btn--show" %>
                     <% if has_permission?("event-update", organisation: @organisation) %>

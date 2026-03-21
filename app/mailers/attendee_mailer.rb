@@ -15,7 +15,7 @@ class AttendeeMailer < ApplicationMailer
     # also expose a simple endpoint that renders just the QR code image; this is
     # consumed by some clients that prefer a stable URL rather than embedded
     # data.  the path is expected to be `/qrcode/:code` on the public app host.
-    base = ENV.fetch("APP_URL")
+    base = app_base_url
     @qr_page = base + "/attendee_portal?code=" + @attendee.code.to_s
 
     # generate a PNG and attach it inline so mail clients that strip out

@@ -172,6 +172,80 @@
     .role-actions form {
         margin: 0;
     }
+
+    @media (max-width: 760px) {
+        #header {
+            width: 100%;
+            margin-top: 0.75rem;
+        }
+
+        .role-dropdown {
+            width: 100%;
+            left: 0;
+            margin: 1rem 0 0;
+        }
+
+        .members-table {
+            display: block;
+            margin: 1rem auto 2rem;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .members-table thead {
+            display: none;
+        }
+
+        .members-table tbody,
+        .members-table tr,
+        .members-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .members-table tr {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 12px;
+            padding: 0.25rem 0.85rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .members-table td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 0.7rem 0;
+            text-align: left;
+        }
+
+        .members-table td:last-child {
+            border-bottom: 0;
+        }
+
+        .members-table td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #546173;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .role-actions {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .role-actions .btn,
+        .role-actions form,
+        .role-actions form .btn {
+            width: 100%;
+        }
+    }
 </style>
 
 <header id="header" class="organisations-page__header org-dashboard__hero">
@@ -229,14 +303,14 @@
     <tbody>
         <% @organisation.organisation_roles.each do |role| %>
             <tr>
-                <td><%= role.name %></td>
-                <td>
+                <td data-label="Role"><%= role.name %></td>
+                <td data-label="Permissions">
                     <% role.role_permissions.each do |permission| %>
                         <span class="badge"><%= permission.permission %></span>
                     <% end %>
                 </td>
-                <td><%= role.is_default_role ? "No" : "Yes" %></td>
-                <td>
+                <td data-label="Default"><%= role.is_default_role ? "No" : "Yes" %></td>
+                <td data-label="Actions">
                     <div class="role-actions">
                         <%= link_to "Edit", edit_role_organisation_path(@organisation, role_id: role.id), class: "btn btn-secondary" %>
                         <%= button_to "Delete", destroy_role_organisation_path(@organisation, role_id: role.id), method: :delete, class: "btn btn-danger", data: { turbo_confirm: "Delete role '#{role.name}'?" } %>

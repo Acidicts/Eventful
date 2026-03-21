@@ -107,6 +107,76 @@
     .member-role-form input[type="submit"]:hover {
         background: #005f8d;
     }
+
+    @media (max-width: 760px) {
+        #header {
+            width: 100%;
+            margin-top: 0.75rem;
+        }
+
+        .members-table {
+            display: block;
+            margin: 1rem auto 2rem;
+            border-collapse: separate;
+            border-spacing: 0 0.75rem;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .members-table thead {
+            display: none;
+        }
+
+        .members-table tbody,
+        .members-table tr,
+        .members-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .members-table tr {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 12px;
+            padding: 0.25rem 0.85rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .members-table td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 0.7rem 0;
+        }
+
+        .members-table td:last-child {
+            border-bottom: 0;
+        }
+
+        .members-table td::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #546173;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .member-role-form {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+        }
+
+        .member-role-form select {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .member-role-form input[type="submit"] {
+            width: 100%;
+        }
+    }
 </style>
 
 <header id="header" class="organisations-page__header org-dashboard__hero">
@@ -128,16 +198,16 @@
     <tbody>
         <% @organisation.users.each do |user| %>
             <tr>
-                <td><%= user.name %></td>
-                <td><%= user.id %></td>
-                <td>
+                <td data-label="Name"><%= user.name %></td>
+                <td data-label="User ID"><%= user.id %></td>
+                <td data-label="Role">
                     <%= form_with url: settings_members_update_organisation_path(@organisation), method: :patch, local: true, scope: :member, html: { class: "member-role-form" } do |f| %>
                         <%= f.hidden_field :user_id, value: user.id %>
                         <% current_role = @organisation.signing_user_id == user.id ? "Signing User" : "Member" %>
                         <%= f.select :organisation_role, options_for_select(["Signing User", "Member"], current_role), { include_blank: false }, { onchange: 'this.form.submit()' } %>
                     <% end %>
                 </td>
-                <td><%= user.provider.humanize %></td>
+                <td data-label="Oauth"><%= user.provider.humanize %></td>
             </tr>
         <% end %>
     </tbody>

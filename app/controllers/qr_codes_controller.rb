@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class QrCodesController < ApplicationController
-  before_action :require_login, except: %i[show]
-  before_action -> { require_permission!("qr-code-generate", fallback: root_path, organisation: nil) }, only: %i[new create login_phone_demo]
+  before_action :require_login, except: %i[show login_phone_demo]
+  before_action -> { require_permission!("qr-code-generate", fallback: root_path, organisation: nil) }, only: %i[new create]
   before_action -> { require_permission!("qr-code-decode", fallback: root_path, organisation: nil) }, only: %i[decode]
-  before_action -> { require_permission!("qr-code-public-view", fallback: root_path, organisation: nil) }, only: %i[show], if: -> { logged_in? }
-
   # form for entering text to generate a QR code
   def new
     @data = params[:data]
@@ -13,7 +11,8 @@ class QrCodesController < ApplicationController
   end
 
   def login_phone_demo
-    @qr_svg = QrCodeGenerator.generate(ENV.fetch("APP_URL"))
+    demo_url = ENV["APP_URL"].presence || request.base_url
+    @qr_svg = QrCodeGenerator.generate(demo_url)
   end
 
   # POST action used by the form. we simply redirect back to new with the

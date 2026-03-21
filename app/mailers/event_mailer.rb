@@ -2,7 +2,7 @@ class EventMailer < ApplicationMailer
   def event_finished_email
     @event = params[:event]
     @user = params[:user]
-    @gallery_url = ENV.fetch("APP_URL") + "/" + attendee_portal_gallery_url.to_s.split("/").last(2).join("/") + "?" + "code=" + @user.code.to_s
+    @gallery_url = app_base_url + "/" + attendee_portal_gallery_url.to_s.split("/").last(2).join("/") + "?" + "code=" + @user.code.to_s
 
     mail(
       to: @user.email,

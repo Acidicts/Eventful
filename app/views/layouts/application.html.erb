@@ -333,6 +333,8 @@
       flex-direction: column;
       top: 50%;
       left: 50%;
+      width: 40%;
+      height: 500px;
       transform: translate(-50%, -50%);
       z-index: 300;
       background: white;
@@ -344,18 +346,24 @@
     }
 
     #sign-in-menu #email-sign-in-field {
-      margin-left: 0.5rem;;
+      margin-left: 2.5%;
+      height: 36px;
+      width:97.5%;
     }
 
     #sign-in-menu .sign-in-button-hackclub {
-      background-color: #444;
+      position: absolute;
+      background-color: #ec3750;
       color: var(--org-dashboard-hero-text);
-      width: 100%;
-      border: 2px solid #444;
+      width: 90%;
+      border: 2px solid #ec3750;
       padding: 0.25rem;
       border-radius: 6px;
       transition: background-color 0.25s ease, border-color 0.25s ease;
       margin-top: 0.5rem;
+      height: 36px;
+      bottom: 0;
+      transform: translate(0, -50%);
     }
 
     #sign-in-menu .sign-in-button-send-otp {
@@ -366,17 +374,24 @@
       padding: 0.25rem;
       border-radius: 6px;
       margin-top: 0.5rem;
+      height: 36px;
       transition: background-color 0.25s ease, border-color 0.25s ease;
     }
 
     #sign-in-menu .sign-in-button-hackclub:hover {
-      background-color: #333;
-      border-color: #333;
+      background-color: #cb3333;
+      border-color: #8f0000;
     }
 
     #sign-in-menu .sign-in-button-send-otp:hover {
       background-color: #17a2b8;
       border-color: #17a2b8;
+    }
+
+    @media (max-width: 600px) {
+      #sign-in-menu {
+        width: 90%;
+      }
     }
   </style>
 
@@ -421,10 +436,10 @@
 
     <div id="sign-in-overlay" style="<%= 'display:flex;' if verify_mode %>"></div>
     <div id="sign-in-menu" style="<%= 'display:flex;' if verify_mode %>">
-      <span style="display: block; top: 1rem; right: 1rem; text-align: right; font-weight: 600; margin-bottom: 0.75rem; margin-top: -2rem; cursor: pointer;" onclick="document.getElementById('sign-in-menu').style.display = 'none'; document.getElementById('sign-in-overlay').style.display = 'none';">&Cross;</span>
+      <span style="display: block; margin-top:0rem; top: 1rem; right: 1rem; text-align: right; font-weight: 600; margin-bottom: 0.75rem; cursor: pointer;" onclick="document.getElementById('sign-in-menu').style.display = 'none'; document.getElementById('sign-in-overlay').style.display = 'none';">&Cross;</span>
 
       <div id="sign-in-verify-step" style="<%= 'display:none;' unless verify_mode %>">
-        <p style="margin-bottom: 0.5rem;">Enter the 6-digit code we sent to <strong><%= email_value.presence || 'your email' %></strong>.</p>
+        <p style="margin-bottom: 0.5rem;">Enter the 5 or 6-digit code we sent to <strong><%= email_value.presence || 'your email' %></strong>.</p>
 
         <%= form_with url: login_verify_path, method: :post, local: true do |f| %>
           <%= hidden_field_tag :email, email_value %>

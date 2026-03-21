@@ -3,6 +3,7 @@ class HomeController < ApplicationController
     if current_user
       render :index
     else
+      flash.discard
       render :unregistered
     end
   end

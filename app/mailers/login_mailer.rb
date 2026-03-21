@@ -3,8 +3,8 @@ class LoginMailer < ApplicationMailer
     @user = user
     @otp = otp
 
-    # token link for one-click sign-in (use APP_URL so it isn't bound to localhost)
-    app_base = ENV.fetch("APP_URL") { Rails.application.routes.default_url_options[:host] }
+    # token link for one-click sign-in using a safe app base URL fallback.
+    app_base = app_base_url
     app_uri = URI.parse(app_base)
 
     @login_url = Rails.application.routes.url_helpers.login_verify_url(

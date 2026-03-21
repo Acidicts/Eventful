@@ -353,7 +353,7 @@
             </ul>
 
             <div class="welcome-actions">
-                <%= button_to "Sign in", '/auth/hackclub', data: { turbo: false }, class: "welcome-btn welcome-btn-primary" %>
+                <button type="button" class="welcome-btn welcome-btn-primary" onclick="document.getElementById('sign-in-menu').style.display = 'flex'; document.getElementById('sign-in-overlay').style.display = 'flex';">Sign in</button>
                 <%= link_to "Browse Events", landing_events_path, class: "welcome-btn welcome-btn-secondary" %>
             </div>
         </div>

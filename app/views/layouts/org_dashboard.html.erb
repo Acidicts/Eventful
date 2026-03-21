@@ -1,4 +1,13 @@
 <% content_for :layout_content do %>
+
+	<% effective_user = current_user || @nil_user %>
+    <% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
+    <% branding_label = custom_branding_org&.name || "Eventful" %>
+    <% branding_href = custom_branding_org ? dashboard_organisation_path(effective_user.favorite_org || effective_user.user_organisations.first || @nil_organisation) : root_path %>
+    <% if request.path == login_phone_demo_path %>
+      <% effective_user = User.new(name:"John Doe") %>
+    <% end %>
+
 	<style>
 		.org-settings-layout {
 			width: min(1200px, 100% - 2rem);
@@ -13,14 +22,40 @@
 			border-radius: 14px;
 			padding: 0.65rem;
 			display: flex;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
 			gap: 0.5rem;
+			overflow-x: auto;
+			overflow-y: hidden;
+			scrollbar-width: thin;
+			scrollbar-color: <%= (custom_branding_org&.primary_color) || "#007bff" %> #e2e8f0;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.org-settings-layout__nav::-webkit-scrollbar {
+			height: 9px;
+		}
+
+		.org-settings-layout__nav::-webkit-scrollbar-track {
+			background: #e2e8f0;
+			border-radius: 999px;
+		}
+
+		.org-settings-layout__nav::-webkit-scrollbar-thumb {
+			background: linear-gradient(90deg, #93c5fd 0%, #60a5fa 100%);
+			border-radius: 999px;
+			border: 2px solid #e2e8f0;
+		}
+
+		.org-settings-layout__nav::-webkit-scrollbar-thumb:hover {
+			background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%);
 		}
 
 		.org-settings-layout__nav-link {
 			display: inline-flex;
+			flex: 0 0 auto;
 			align-items: center;
 			justify-content: center;
+			white-space: nowrap;
 			text-decoration: none;
 			border-radius: 10px;
 			padding: 0.5rem 0.9rem;

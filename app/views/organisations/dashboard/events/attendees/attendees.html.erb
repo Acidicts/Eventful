@@ -1,5 +1,13 @@
 <h1 style="margin-left: 1rem;"><%= @organisation.name %> Events</h1>
 
+<% effective_user = current_user || @nil_user %>
+<% custom_branding_org = effective_user&.user_organisations&.where(eventful_branding: false)&.first %>
+<% branding_label = custom_branding_org&.name || "Eventful" %>
+<% branding_href = custom_branding_org ? dashboard_organisation_path(effective_user.favorite_org || effective_user.user_organisations.first || @nil_organisation) : root_path %>
+<% if request.path == login_phone_demo_path %>
+  <% effective_user = User.new(name:"John Doe") %>
+<% end %>
+
 <style>
   .attendees__actions {
     padding: 1rem;
@@ -11,6 +19,18 @@
     background-color: #ffffff;
     border-top: 1px solid rgba(0, 0, 0, 0.12);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    background: #ffffff;
+    border: 1px solid #dfe4ea;
+    border-radius: 14px;
+    padding: 0.65rem;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: <%= (custom_branding_org&.primary_color) || "#007bff" %> #e2e8f0;
+    -webkit-overflow-scrolling: touch;
   }
 
   .attendee_details__label_red {
@@ -29,6 +49,65 @@
     border-radius: 4px;
     font-size: 0.875rem;
     font-weight: 500;
+  } 
+
+  @media (max-width: 640px) {
+    .attendees__actions {
+      width: 100%;
+      margin: 0;
+    }
+
+    .attendees-table {
+      min-width: 0;
+      border-collapse: separate;
+      border-spacing: 0 0.75rem;
+    }
+
+    .attendees-table thead {
+      display: none;
+    }
+
+    .attendees-table tbody,
+    .attendees-table tr,
+    .attendees-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .attendees-table tbody {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .attendees-table tr {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.35rem 0.85rem;
+      box-shadow: 0 8px 18px rgba(14, 42, 70, 0.07);
+    }
+
+    .attendees-table td {
+      text-align: left;
+      border-bottom: 1px solid #edf3f9;
+      padding: 0.72rem 0;
+    }
+
+    .attendees-table td:last-child {
+      border-bottom: 0;
+      padding-bottom: 0.85rem;
+    }
+
+    .attendees-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5a738b;
+      margin-bottom: 0.3rem;
+    }
   }
 </style>
 
