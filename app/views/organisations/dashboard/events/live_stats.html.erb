@@ -1,0 +1,106 @@
+<style>
+    .meal-live-stats__card {
+        flex: 1;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(15, 23, 42, 0.62);
+        box-shadow: 0 10px 24px rgba(2, 6, 23, 0.24);
+        padding: 0.95rem 1rem;
+    }
+
+    .meal-live-stats__summary {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .meal-live-stats__card h2 {
+        margin: 0;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        }
+
+    .meal-live-stats__card p {
+        margin: 0.35rem 0 0;
+        color: #f8fafc;
+        font-size: 1.7rem;
+        font-weight: 800;
+    }
+
+    #dietary-requirements {
+        margin-top: 2rem;
+        color: #cbd5e1;
+        background:
+        radial-gradient(
+        circle at 10% 90%,
+        rgba(56, 189, 248, 0.22),
+        transparent 30%
+        ),
+        linear-gradient(160deg, rgba(30, 41, 59, 0.82), rgba(15, 23, 42, 0.92));
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+    }
+</style>
+
+<section class="event-live-stats">
+	<header class="event-live-stats__header">
+		<h1>Live Stats</h1>
+		<p>
+			<strong><%= @event.name %></strong>
+			•
+			<%= link_to "Back to event", organisation_event_path(@organisation, @event) %>
+		</p>
+	</header>
+
+	<div class="event-live-stats__summary">
+		<article class="event-live-stats__card">
+			<h2>Signed In</h2>
+			<p><%= @signed_in_count %></p>
+		</article>
+
+		<article class="event-live-stats__card">
+			<h2>Total Attendees</h2>
+			<p><%= @total_count %></p>
+		</article>
+	</div>
+    <h3 id="dietary-requirements">Dietary Requirements</h3>
+	<div class="meal-live-stats__summary">
+		<article class="meal-live-stats__card">
+			<h2>No Requirements</h2>
+			<p><%= @food_none %></p>
+		</article>
+
+		<article class="meal-live-stats__card">
+			<h2>Vegetarian</h2>
+			<p><%= @food_veg %></p>
+		</article>
+
+		<article class="meal-live-stats__card">
+			<h2>Vegan</h2>
+			<p><%= @food_vegan %></p>
+		</article>
+
+		<article class="meal-live-stats__card">
+			<h2>Pescitarian</h2>
+			<p><%= @food_pescitarian %></p>
+		</article>
+
+		<article class="meal-live-stats__card">
+			<h2>Other</h2>
+			<p><%= @food_other %></p>
+		</article>
+	</div>
+
+	<%= turbo_stream_from "event_#{@event.id}_stats" %>
+
+	<section class="event-live-stats__changes">
+		<h2>Recent Attendance Changes</h2>
+		<div id="recent_changes" class="event-live-stats__changes-list">
+			<% if @recent_changes.any? %>
+				<%= render partial: "organisations/dashboard/events/attendence_change", collection: @recent_changes, as: :attendence_change %>
+			<% else %>
+				<p class="event-live-stats__empty">No attendance changes yet.</p>
+			<% end %>
+		</div>
+	</section>
+</section>

@@ -179,6 +179,8 @@ Rails.application.routes.draw do
     resources :events do
       member do
         get "attendees", to: "events#attendees", as: :attendees
+        get "live", to: "organisations#live_stats", as: :live_stats
+        get "live_stats", to: "organisations#live_stats"
         post "send_qr_codes", to: "organisations/dashboard/events#send_qr_codes"
 
         # show a specific attendee linked from the events list

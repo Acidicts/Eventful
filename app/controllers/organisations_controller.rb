@@ -70,6 +70,38 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def live_stats
+    @organisation = Organisation.find_by(id: params[:organisation_id])
+    unless @organisation
+      redirect_to organisations_path, alert: "Organisation not found."
+      return
+    end
+
+    event_ref = params[:event_id].presence || params[:id].presence
+    @event = Event.where(organisation_id: @organisation.id)
+                  .find_by(id: event_ref) || Event.where(organisation_id: params[:organisation_id])
+                                                   .find_by(apply_token: event_ref)
+
+    unless @event
+      redirect_to organisations_path, alert: "Event not found for live stats."
+      return
+    end
+
+    @signed_in_count = @event.attendees.attendance_signed_in.count
+    @total_count = @event.attendees.count
+    @recent_changes = AttendenceChange.where(attendee: @event.attendees)
+                                      .order(created_at: :desc).limit(10)
+
+    # none: 0, pescitarian: 1, vegetarian: 2, vegan: 3, other: 4
+    @food_none = @event.attendees.where(diet: 0).count
+    @food_pescitarian = @event.attendees.where(diet: 1).count
+    @food_veg = @event.attendees.where(diet: 2).count
+    @food_vegan = @event.attendees.where(diet: 3).count
+    @food_other = @event.attendees.where(diet: 4).count
+
+    render "organisations/dashboard/events/live_stats", layout: "org_dashboard"
+  end
+
   def join
     parent = @organisation.parent_team
 

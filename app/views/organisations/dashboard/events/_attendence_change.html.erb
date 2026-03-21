@@ -1,0 +1,8 @@
+<article class="event-live-stats__change">
+  <p>
+    <strong><%= attendence_change.attendee&.name.presence || "Unknown attendee" %></strong>
+    changed to
+    <strong><%= attendence_change.attendance.to_s.humanize %></strong>
+  </p>
+  <small><%= attendence_change.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small>
+</article>

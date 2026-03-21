@@ -253,6 +253,7 @@
 
   <div class="event-show__actions">
     <%= link_to "Apply", apply_organisation_event_path(@organisation, @event), class: "event-show__btn event-show__btn--primary" %>
+    <%= link_to "Live Stats", live_stats_organisation_event_path(@organisation, @event), class: "event-show__btn event-show__btn--primary" %>
     <%= button_to "Send QR Codes", send_qr_codes_organisation_event_path(@organisation, @event), method: :post %>
     <%= link_to "Edit", edit_organisation_event_path(@organisation, @event), class: "event-show__btn event-show__btn--secondary" %>
     <%= link_to "Back", organisation_events_path(@organisation), class: "event-show__btn event-show__btn--ghost" %>

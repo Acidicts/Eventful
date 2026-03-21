@@ -1151,3 +1151,114 @@ unset {
   flex-wrap: wrap;
   margin: 1.25rem 0 1.5rem;
 }
+
+/* Event live stats */
+.event-live-stats {
+  max-width: 980px;
+  margin: 1.25rem auto;
+  display: grid;
+  gap: 1rem;
+}
+
+.event-live-stats__header {
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(56, 189, 248, 0.22),
+      transparent 30%
+    ),
+    linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.82));
+}
+
+.event-live-stats__header h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+}
+
+.event-live-stats__header p {
+  margin: 0.45rem 0 0;
+  color: #cbd5e1;
+}
+
+.event-live-stats__header a {
+  color: #7dd3fc;
+}
+
+.event-live-stats__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.event-live-stats__card {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.24);
+  padding: 0.95rem 1rem;
+}
+
+.event-live-stats__card h2 {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.event-live-stats__card p {
+  margin: 0.35rem 0 0;
+  color: #f8fafc;
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.event-live-stats__changes {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.24);
+  padding: 0.95rem 1rem;
+}
+
+.event-live-stats__changes h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.96rem;
+  color: #e2e8f0;
+}
+
+.event-live-stats__changes-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.event-live-stats__change {
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.56);
+}
+
+.event-live-stats__change p {
+  margin: 0;
+  color: #e2e8f0;
+}
+
+.event-live-stats__change small {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: #94a3b8;
+}
+
+.event-live-stats__empty {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+@media (max-width: 700px) {
+  .event-live-stats__summary {
+    grid-template-columns: 1fr;
+  }
+}
