@@ -1,0 +1,19 @@
+<%= form_with model: @organisation_application, url: apply_create_path, method: :post, local: true, class: "org-apply-form" do |f| %>
+  <% if @organisation_application.errors.any? %>
+    <section class="org-apply-form__errors" aria-live="polite">
+      <h2><%= pluralize(@organisation_application.errors.count, "error") %> prevented this application from being submitted:</h2>
+      <ul>
+        <% @organisation_application.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <div class="org-apply-form__group">
+    <%= f.label :name, "Organisation Name", class: "org-apply-form__label" %>
+    <%= f.text_field :name, class: "org-apply-form__input", required: true, placeholder: "e.g. City Robotics Club" %>
+  </div>
+
+  <%= f.submit "Apply", class: "btn btn-primary" %>
+<% end %>

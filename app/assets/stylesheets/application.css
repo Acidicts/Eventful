@@ -386,6 +386,111 @@ unset {
   color: #374151;
 }
 
+/* Organisation application page */
+.org-apply-page {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  padding: 0 1rem 2rem;
+}
+
+.org-apply-page__hero {
+  border-radius: 18px;
+  padding: 1.4rem;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.28),
+      transparent 34%
+    ),
+    linear-gradient(145deg, #023e8a, #0077b6 52%, #00b4d8);
+  color: #f8fafc;
+  box-shadow: 0 16px 34px rgba(2, 62, 138, 0.32);
+}
+
+.org-apply-page__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  line-height: 1.15;
+}
+
+.org-apply-page__subtitle {
+  margin: 0.65rem 0 0;
+  color: rgba(248, 250, 252, 0.9);
+  line-height: 1.45;
+}
+
+.org-apply-page__card {
+  margin-top: 1rem;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 119, 182, 0.22);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  padding: 1.1rem;
+}
+
+.org-apply-form {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.org-apply-form__group {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.org-apply-form__label {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.org-apply-form__input {
+  width: 100%;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 0.68rem 0.78rem;
+  font-size: 0.96rem;
+  color: #0f172a;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.org-apply-form__input:focus {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+}
+
+.org-apply-form__errors {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(185, 28, 28, 0.2);
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
+.org-apply-form__errors h2 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+}
+
+.org-apply-form__errors ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+@media (max-width: 640px) {
+  .org-apply-page__hero {
+    padding: 1rem;
+  }
+
+  .org-apply-page__card {
+    padding: 0.85rem;
+  }
+}
+
 .org-card {
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -580,6 +685,30 @@ unset {
   background: var(--blue-light);
 }
 
+.btn-success {
+  background: #059669;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #047857;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.82rem;
+  border-radius: 8px;
+}
+
 /* Admin layout */
 .admin-layout {
   margin: 0;
@@ -658,6 +787,79 @@ unset {
 
 .admin-layout__main .flash {
   margin-bottom: 0.85rem;
+}
+
+/* Admin content pages */
+.admin-index {
+  color: #e5e7eb;
+}
+
+.admin-index__header h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.3vw, 1.9rem);
+  color: #f8fafc;
+}
+
+.admin-index__header p {
+  margin: 0.45rem 0 0;
+  color: #cbd5e1;
+}
+
+.admin-index__table-wrap {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.28);
+}
+
+.admin-index__audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.admin-index__audit-table th,
+.admin-index__audit-table td {
+  padding: 0.75rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.admin-index__audit-table th {
+  background: rgba(30, 41, 59, 0.82);
+  color: #f8fafc;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.admin-index__audit-table tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.admin-index__audit-table tbody tr:hover {
+  background: rgba(14, 165, 233, 0.14);
+}
+
+.admin-index__audit-empty {
+  margin-top: 1rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  color: #cbd5e1;
+}
+
+.admin-index__actions {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-index__action-form {
+  margin: 0;
 }
 
 @media (max-width: 820px) {

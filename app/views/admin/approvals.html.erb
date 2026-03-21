@@ -1,0 +1,38 @@
+<main class="admin-index">
+	<header class="admin-index__header">
+		<h1>Organisation Applications</h1>
+		<p>Review submitted applications to create or join organisations.</p>
+	</header>
+
+	<% if @organisation_applications.any? %>
+		<div class="admin-index__table-wrap">
+			<table class="admin-index__audit-table">
+				<thead>
+					<tr>
+						<th>Submitted</th>
+						<th>Applicant</th>
+						<th>Organisation Name</th>
+                        <th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @organisation_applications.each do |application| %>
+						<tr>
+							<td><%= application.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+							<td><%= application.user&.name.presence || "Unknown" %></td>
+							<td><%= application.name %></td>
+							<td>
+								<div class="admin-index__actions">
+									<%= button_to "Approve", admin_approve_application_path(application), method: :post, class: "btn btn-success btn-sm", form_class: "admin-index__action-form" %>
+									<%= button_to "Reject", admin_reject_application_path(application), method: :post, class: "btn btn-danger btn-sm", form_class: "admin-index__action-form" %>
+								</div>
+							</td>
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+		</div>
+	<% else %>
+		<p class="admin-index__audit-empty">No applications have been submitted yet.</p>
+	<% end %>
+</main>

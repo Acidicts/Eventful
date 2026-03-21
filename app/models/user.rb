@@ -37,6 +37,7 @@ class User < ApplicationRecord
 
   has_and_belongs_to_many :organisation_roles
   has_many :email_login_otps, dependent: :delete_all
+  has_many :audit_logs, dependent: :nullify
 
 
   # use positional argument style to avoid Ruby 3 keyword demotion issues

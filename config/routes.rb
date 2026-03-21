@@ -96,12 +96,20 @@ Rails.application.routes.draw do
   get "/:apply_token/apply", to: "events#apply_by_token", as: :public_apply_event
   post "/:apply_token/apply", to: "events#apply_create"
 
-  # Admin dashboard (single page - no :id required)
-  get "admin" => "admin#index", as: :admin
+  get "/adm/applications", to: "admin#approvals", as: :admin_applications
+  post "/adm/applications/:id/approve", to: "admin#approve_application", as: :admin_approve_application
+  post "/adm/applications/:id/reject", to: "admin#reject_application", as: :admin_reject_application
+
+  resources :admin, path: "adm" do
+    get "/" => "admin#index", as: :admin_root
+  end
 
   # Serve guide assets from private storage through the Guides controller.
   get "learn/assets/*path", to: "guides#asset", as: :guide_asset, format: false
   get "learn/docs/*path", to: "guides#doc", as: :guide_doc, format: false
+
+  get "/apply", to: "organisations/apply#new", as: :apply_form
+  post "/apply", to: "organisations/apply#create", as: :apply_create
 
   resources :guides, path: "learn" do
     collection do

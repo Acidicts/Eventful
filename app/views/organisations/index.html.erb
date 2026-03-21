@@ -4,6 +4,9 @@
       <h1 class="organisations-page__title">Organisations</h1>
       <p class="organisations-page__subtitle">Choose an organisation to open its dashboard.</p>
     </div>
+    <div>
+      <%= link_to "Apply for Org", apply_form_path, class: "btn btn-primary" %>
+    </div>
   </header>
 
   <% if @organisations.any? %>

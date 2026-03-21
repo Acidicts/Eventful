@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_21_123000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -75,6 +75,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
     t.boolean "waiver_signed", default: false, null: false
     t.datetime "waiver_signed_at"
     t.index ["event_id"], name: "index_attendees_on_event_id"
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "action", null: false
+    t.datetime "created_at", null: false
+    t.text "details", default: "{}", null: false
+    t.string "ip_address"
+    t.string "path", null: false
+    t.string "request_method", null: false
+    t.integer "status_code"
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
   create_table "email_login_otps", force: :cascade do |t|
@@ -142,6 +157,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
     t.index ["reciever_id"], name: "index_messages_on_reciever_id"
     t.index ["reciever_type", "reciever_id"], name: "index_messages_on_reciever_type_and_reciever_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
+  create_table "organisation_applications", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_organisation_applications_on_user_id"
   end
 
   create_table "organisation_roles", force: :cascade do |t|
@@ -240,6 +263,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
   add_foreign_key "announcements", "organisations"
   add_foreign_key "announcements", "users", column: "creator_id"
   add_foreign_key "attendees", "events"
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "email_login_otps", "users"
   add_foreign_key "events", "organisations"
   add_foreign_key "events", "users", column: "organiser_id"
@@ -247,6 +271,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_20_192123) do
   add_foreign_key "gallery_images", "attendees"
   add_foreign_key "gallery_images", "galleries"
   add_foreign_key "messages", "users", column: "answerer_id"
+  add_foreign_key "organisation_applications", "users"
   add_foreign_key "organisation_roles", "organisations"
   add_foreign_key "organisation_roles_role_permissions", "organisation_roles"
   add_foreign_key "organisation_roles_role_permissions", "role_permissions"

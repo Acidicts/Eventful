@@ -1,0 +1,116 @@
+<style>
+    :root {
+        --org-dashboard-hero-bg: #f0f4f8;
+        --org-dashboard-hero-text: #333;
+        --org-dashboard-hero-border: #ccc;
+    }
+
+    .admin-index__metric-grid {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        font-size: 1.5rem;
+        font-weight: 600;
+        gap: 1rem;
+    }
+
+    .admin-index__metric-card {
+        flex: 1;
+        background-color: var(--org-dashboard-hero-bg);
+        color: var(--org-dashboard-hero-text);
+        border: 1px solid var(--org-dashboard-hero-border);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+	.admin-index__audit-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 0.75rem;
+	}
+
+	.admin-index__audit-table th,
+	.admin-index__audit-table td {
+		border: 1px solid #d8dde3;
+		padding: 0.5rem;
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.admin-index__audit-table th {
+		background: #f6f8fa;
+		font-weight: 700;
+	}
+
+	.admin-index__audit-empty {
+		margin-top: 0.75rem;
+		color: #666;
+	}
+</style>
+
+<main class="admin-index">
+	<header class="admin-index__header">
+		<h1>Admin Dashboard</h1>
+		<p>High-level overview and management tools for Eventful.</p>
+	</header>
+
+	<section class="admin-index__metrics" aria-labelledby="metrics-title">
+		<h2 id="metrics-title">Key Metrics</h2>
+		<div class="admin-index__metric-grid">
+			<article class="admin-index__metric-card">
+				<h3>Total Events</h3>
+				<p><%= Event.count %></p>
+			</article>
+
+			<article class="admin-index__metric-card">
+				<h3>Active Organisations</h3>
+				<p><%= Organisation.count %></p>
+			</article>
+
+			<a href="<%= admin_applications_path %>" class="admin-index__metric-card-link">
+                <article class="admin-index__metric-card">
+                    <h3>Pending Approvals</h3>
+                    <p><%= OrganisationApplication.count %></p>
+                </article>
+            </a>
+
+			<article class="admin-index__metric-card">
+				<h3>Recent Sign-ins</h3>
+				<p><%= SessionsController.sessions.count %></p>
+			</article>
+		</div>
+	</section>
+
+	<section class="admin-index__recent" aria-labelledby="recent-activity-title">
+		<h2 id="recent-activity-title">Recent Activity</h2>
+		<% if @audit_logs.present? %>
+			<table class="admin-index__audit-table">
+				<thead>
+					<tr>
+						<th>When</th>
+						<th>Actor</th>
+						<th>Action</th>
+						<th>Method</th>
+						<th>Status</th>
+						<th>Path</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @audit_logs.each do |log| %>
+						<tr>
+							<td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+							<td><%= log.user&.name.presence || "System/Unknown" %></td>
+							<td><%= log.action %></td>
+							<td><%= log.request_method %></td>
+							<td><%= log.status_code %></td>
+							<td><%= log.path %></td>
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+		<% else %>
+			<p class="admin-index__audit-empty">No audit entries yet. Actions will appear here once users make changes.</p>
+		<% end %>
+	</section>
+</main>

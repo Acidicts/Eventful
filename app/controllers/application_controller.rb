@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
 
   before_action :load_placeholder_user
   before_action :load_permissions
+  around_action :track_audit_log_entry
 
   PERMISSION_CATALOG = [
     # Organisation management
@@ -216,5 +217,42 @@ class ApplicationController < ActionController::Base
 
   def flash_info(message)
     flash[:notice] = message
+  end
+
+  def track_audit_log_entry
+    started_at = Time.current
+    yield
+  ensure
+    return unless should_audit_request?
+
+    AuditLog.create(
+      user: current_user,
+      action: "#{controller_name}##{action_name}",
+      request_method: request.request_method,
+      path: request.fullpath,
+      status_code: response.status,
+      ip_address: request.remote_ip,
+      details: build_audit_details(started_at).to_json
+    )
+  end
+
+  def should_audit_request?
+    return false unless request.post? || request.patch? || request.put? || request.delete?
+    return false if request.path.start_with?("/rails/")
+
+    current_user.present?
+  end
+
+  def build_audit_details(started_at)
+    {
+      params: request.filtered_parameters.except(
+        "controller",
+        "action",
+        "authenticity_token",
+        "utf8",
+        "commit"
+      ),
+      duration_ms: ((Time.current - started_at) * 1000).round
+    }
   end
 end

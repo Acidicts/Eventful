@@ -408,7 +408,7 @@
             <%= button_to "Organisations", organisations_path, method: :get, id: "organisations-button" %>
             <%= button_to "Events", events_path, method: :get, id: "qr-code-button" %>
             <% if current_user&.admin? %>
-              <%= button_to "Admin", admin_path, method: :get, id: "admin-button" %>
+              <%= button_to "Admin", admin_index_path, method: :get, id: "admin-button" %>
             <% end %>
           <% else %>
             <p style="color:white; word-wrap: break-word; max-width: 200px;">Please sign in to access more features.</p>
