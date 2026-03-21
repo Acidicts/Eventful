@@ -805,6 +805,67 @@ unset {
   color: #cbd5e1;
 }
 
+.admin-index__metrics {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-index__metrics h2,
+.admin-index__recent h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+.admin-index__metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.admin-index__metric-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.admin-index__metric-card {
+  height: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.86),
+    rgba(30, 41, 59, 0.72)
+  );
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.24);
+  padding: 0.95rem;
+  text-align: center;
+}
+
+.admin-index__metric-card h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.admin-index__metric-card p {
+  margin: 0.45rem 0 0;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.admin-index__metric-card-link:hover .admin-index__metric-card {
+  border-color: rgba(56, 189, 248, 0.68);
+  box-shadow: 0 16px 28px rgba(14, 165, 233, 0.25);
+}
+
+.admin-index__recent {
+  margin-top: 1.15rem;
+}
+
 .admin-index__table-wrap {
   margin-top: 1rem;
   overflow-x: auto;
@@ -872,9 +933,17 @@ unset {
   .admin-layout__session {
     justify-content: center;
   }
+
+  .admin-index__metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
+  .admin-index__metric-grid {
+    grid-template-columns: 1fr;
+  }
+
   .event-card {
     flex-direction: column;
   }

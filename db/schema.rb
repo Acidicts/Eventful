@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_21_123000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_21_123001) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", null: false
@@ -75,6 +75,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_123000) do
     t.boolean "waiver_signed", default: false, null: false
     t.datetime "waiver_signed_at"
     t.index ["event_id"], name: "index_attendees_on_event_id"
+  end
+
+  create_table "attendence_changes", force: :cascade do |t|
+    t.integer "attendee_id", null: false
+    t.integer "attendence"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attendee_id"], name: "index_attendence_changes_on_attendee_id"
   end
 
   create_table "audit_logs", force: :cascade do |t|
@@ -263,6 +271,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_123000) do
   add_foreign_key "announcements", "organisations"
   add_foreign_key "announcements", "users", column: "creator_id"
   add_foreign_key "attendees", "events"
+  add_foreign_key "attendence_changes", "attendees"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "email_login_otps", "users"
   add_foreign_key "events", "organisations"

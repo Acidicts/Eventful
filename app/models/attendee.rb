@@ -30,6 +30,21 @@ class Attendee < ApplicationRecord
   validates :diet, inclusion: { in: diets.keys }        # ensures integrity
   after_initialize { self.diet ||= :none }              # default
 
+  after_update_commit :log_current_attendence, if: :saved_change_to_attendance?
+  def log_current_attendence
+    previous_attendance = saved_change_to_attendance&.first
+    return if previous_attendance.nil?
+
+    AttendenceChange.create!(
+      attendee: self,
+      attendence: previous_attendance
+    )
+  end
+
+  def attendence_history
+    AttendenceChange.where(attendee: self).order(created_at: :asc)
+  end
+
   def diet_label
     if diet == "other"
       return "Other: Write In Allergies Section"

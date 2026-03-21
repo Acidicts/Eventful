@@ -81,6 +81,14 @@
         </div>
       </dl>
     </div>
+    <div>
+      <h2>Attendance History</h2>
+      <ul>
+        <% @attendee.attendence_history.each do |change| %>
+          <li><%= change.created_at.strftime("%Y-%m-%d %H:%M:%S") %> - <%= change.attendance.humanize %></li>
+        <% end %>
+      </ul>
+    </div>
   <% else %>
     <p class="attendee-details__empty">Attendee not found.</p>
   <% end %>
