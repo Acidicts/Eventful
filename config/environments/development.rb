@@ -30,7 +30,7 @@ Rails.application.configure do
 
   # allow local development requests from custom hostnames
   # see https://edgeguides.rubyonrails.org/action_dispatch_overview.html#host-authorization
-  config.hosts << "dev.bing-bong.uk"
+  config.hosts.clear
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

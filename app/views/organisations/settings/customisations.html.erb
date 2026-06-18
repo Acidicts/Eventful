@@ -171,6 +171,12 @@
         flex-wrap: wrap;
     }
 
+    .left-align {
+        align-self: left;
+        position: relative;
+        left: 1rem;
+    }
+
     .file-upload__button {
         display: inline-flex;
         align-items: center;
@@ -276,6 +282,14 @@
                 <%= f.label :description, "Description" %>
                 <%= f.text_area :description, class: "form-control form-control-text-area" %>
             </div>
+
+            <% if current_user.admin? %>
+                <div class="form-group">
+                    <%= f.label :eventful_branding, "Use Eventful Branding" %>
+                    <%= f.checkbox :eventful_branding, class: "left-align" %>
+                </div>
+            <% end %>
+
             <div class="submit-group">
                 <%= f.submit "Save Customisations", class: "btn btn-primary" %>
             </div>

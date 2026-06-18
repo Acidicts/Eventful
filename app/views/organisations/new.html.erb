@@ -1,5 +1,14 @@
-<h1>New Organisation</h1>
+<section class="org-new-page">
+  <header class="org-new-page__hero">
+    <h1 class="org-new-page__title">New Organisation</h1>
+    <p class="org-new-page__subtitle">Create a new organisation to start managing events and teams.</p>
+  </header>
 
-<%= render 'form', organisation: @organisation %>
+  <div class="org-new-page__card">
+    <%= render 'form', organisation: @organisation %>
+  </div>
 
-<%= link_to 'Back', organisations_path %>
+  <div class="org-new-page__back">
+    <%= link_to 'Back', organisations_path, class: "btn btn-ghost" %>
+  </div>
+</section>

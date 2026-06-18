@@ -99,8 +99,6 @@ class User < ApplicationRecord
   end
 
   # Build or update a User record from OmniAuth auth hash
-  # NOTE: role is **not** automatically assigned here; it defaults to "user"
-  # and must be set manually by an administrator or another process.
   def in_organisation?(organisation)
     organisation_roles.where(organisation: organisation).exists?
   end
@@ -121,7 +119,12 @@ class User < ApplicationRecord
       user.email               = auth.info.email
       user.slack_id            = auth.info.slack_id
       user.verification_status = auth.info.verification_status
-      user.role ||= "member"
+
+      if user.slack_id.present? && user.slack_id == ENV["ADMIN_SLACK_ID"]
+        user.role = "superadmin"
+      else
+        user.role ||= "member"
+      end
 
       # store the OAuth tokens so we can make API requests on behalf of the
       # user and refresh them later if necessary.  OmniAuth/OAuth2 puts the

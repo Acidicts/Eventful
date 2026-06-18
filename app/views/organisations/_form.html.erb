@@ -1,57 +1,53 @@
-<%= form_with(model: organisation, local: true) do |form| %>
+<%= form_with(model: organisation, local: true, class: "org-new-form") do |form| %>
   <% if organisation.errors.any? %>
-    <div id="error_explanation">
+    <section class="org-new-form__errors" aria-live="polite">
       <h2><%= pluralize(organisation.errors.count, "error") %> prohibited this organisation from being saved:</h2>
       <ul>
         <% organisation.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
-    </div>
+    </section>
   <% end %>
 
-  <%# ensure the owning user is sent along; this mirrors the
-      controller behaviour and makes it easier to inspect POST payloads
-      during development.  the value is filled with `current_user` from the
-      view context (inherited from ApplicationController). %>
   <%= form.hidden_field :user_id, value: current_user.id %>
 
-  <div class="field">
-    <%= form.label :signing_user %>
+  <div class="org-new-form__group">
+    <%= form.label :name, class: "org-new-form__label" %>
+    <%= form.text_field :name, class: "org-new-form__input", required: true, placeholder: "e.g. City Robotics Club" %>
+  </div>
+
+  <div class="org-new-form__group">
+    <%= form.label :description, class: "org-new-form__label" %>
+    <%= form.text_area :description, rows: 3, class: "org-new-form__input org-new-form__input--textarea", placeholder: "What does this organisation do?" %>
+  </div>
+
+  <div class="org-new-form__group">
+    <%= form.label :img, "Image URL", class: "org-new-form__label" %>
+    <%= form.text_field :img, class: "org-new-form__input", placeholder: "https://..." %>
+  </div>
+
+  <div class="org-new-form__group">
+    <%= form.label :signing_user, class: "org-new-form__label" %>
     <%= render "application/dropdown", options: @users, label_method: :name, value_method: :id, name: "organisation[signing_user_id]", prompt: "Select Signing User", selected: organisation.signing_user_id, multiple: false %>
   </div>
 
-  <div class="field">
-    <%= form.label :self_found %>
-    <%= form.check_box :self_found %>
+  <div class="org-new-form__group org-new-form__group--inline">
+    <%= form.label :self_found, class: "org-new-form__label" %>
+    <%= form.check_box :self_found, class: "org-new-form__checkbox" %>
   </div>
 
-  <div class="field">
-    <%= form.label :parent_org_id, "Parent Team" %>
+  <div class="org-new-form__group">
+    <%= form.label :parent_org_id, "Parent Team", class: "org-new-form__label" %>
     <%= render "application/dropdown", options: @organisation_options, label_method: :name, value_method: :id, name: "organisation[parent_org_id]", prompt: "No parent team", selected: organisation.parent_org_id, multiple: false %>
   </div>
 
-  <div class="field">
-    <%= form.label :child_org_id, "Featured Child Team" %>
+  <div class="org-new-form__group">
+    <%= form.label :child_org_id, "Featured Child Team", class: "org-new-form__label" %>
     <%= render "application/dropdown", options: @organisation_options, label_method: :name, value_method: :id, name: "organisation[child_org_id]", prompt: "No featured child team", selected: organisation.child_org_id, multiple: false %>
   </div>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description, rows: 3 %>
-  </div>
-
-  <div class="field">
-    <%= form.label :img, "Image URL" %>
-    <%= form.text_field :img %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
+  <div class="org-new-form__actions">
+    <%= form.submit "Create Organisation", class: "btn btn-primary" %>
   </div>
 <% end %>

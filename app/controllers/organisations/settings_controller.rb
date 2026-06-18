@@ -104,7 +104,8 @@ module Organisations
         :default_event_length,
         :primary_color,
         :secondary_color,
-        :default_online_event_url
+        :default_online_event_url,
+        :eventful_branding
       )
     end
   end

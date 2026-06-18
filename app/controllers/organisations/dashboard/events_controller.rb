@@ -36,7 +36,7 @@ module Organisations
         end
 
         @event.attendees.each do |attendee|
-          AttendeeMailer.qr_code(attendee).deliver_now
+          AttendeeMailer.qr_code(attendee).deliver_later
         end
         redirect_to organisation_event_path(@organisation, @event), notice: "QR codes are being sent to attendees."
       end
